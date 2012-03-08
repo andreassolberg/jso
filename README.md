@@ -108,7 +108,7 @@ Here is an example of retrieving the Facebook newsstream using OAuth:
 ```
 
 
-## Some convenient tool
+## Some convenient debugging functions
 
 For debugging, open the javascript console. And you might type:
 
