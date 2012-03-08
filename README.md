@@ -108,11 +108,22 @@ Here is an example of retrieving the Facebook newsstream using OAuth:
 ```
 
 
+## Some convenient tool
+
+For debugging, open the javascript console. And you might type:
 
 
+```javascript
+	jso_dump();
+```
 
+to list all cached tokens, and 
 
+```javascript
+	jso_wipe();
+```
 
+to remove all tokens.
 
 
 
