@@ -1,0 +1,90 @@
+<!doctype html>
+<head>
+	<meta charset="utf-8">
+
+	<title>JSO Demo</title>
+
+	<!-- All JavaScript at the bottom, except this Modernizr build.
+			 Modernizr enables HTML5 elements & feature detects for optimal performance.
+			 Create your own custom Modernizr build: www.modernizr.com/download/ -->
+
+	<script src="js/libs/json2.js"></script>
+	<!-- https://github.com/wojodesign/local-storage-js -->
+	<script src="js/libs/localstorage.js"></script>
+	<script src="js/libs/modernizr-2.5.3.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+	<script src="../jso.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+
+			// Add configuration for one or more providers.
+			jso_configure({
+				"facebook": {
+					client_id: "403088283041700",
+					redirect_uri: "http://localhost/~andreas/jso/demo/",
+					authorization: "https://www.facebook.com/dialog/oauth",
+					presenttoken: "qs"
+				},
+				"linkedin": {
+					client_id: "833mbknz4c1o",
+					redirect_uri: "http://localhost/~andreas/jso/demo/",
+					authorization: "https://www.linkedin.com/oauth"
+				},
+				"google": {
+					client_id: "947231518672.apps.googleusercontent.com",
+					redirect_uri: "http://localhost/~andreas/jso/demo/",
+					authorization: "https://accounts.google.com/o/oauth2/auth"
+				}
+			});
+
+			// Make sure that you have 
+			jso_ensureTokens({
+				"facebook": ["read_stream"],
+				"google": ["https://www.googleapis.com/auth/userinfo.profile"]
+			});
+
+			// This dumps all cached tokens to console, for easyer debugging.
+			jso_dump();
+
+			// Perform a data request
+			$.oajax({
+				url: "https://graph.facebook.com/me/home",
+				jso_provider: "facebook",
+				jso_scopes: ["read_stream"],
+				jso_allowia: true,
+				dataType: 'json',
+				success: function(data) {
+					console.log("Response (facebook):");
+					console.log(data);
+				}
+			});
+
+			console.log("Token to use with google: " + jso_getToken("google"));
+
+			// Perform a data request
+			// $.oajax({
+			// 	url: "https://www.googleapis.com/oauth2/v1/userinfo",
+			// 	jso_provider: "google",
+			// 	jso_allowia: true,
+			// 	jso_scopes: ["https://www.googleapis.com/auth/userinfo.profile"],
+			// 	dataType: 'json',
+			// 	success: function(data) {
+			// 		console.log("Response (google):");
+			// 		console.log(data);
+			// 	}
+			// });
+
+			// jso_wipe();
+
+		});
+	</script>
+
+</head>
+<body>
+
+
+
+</body>
+</html>
