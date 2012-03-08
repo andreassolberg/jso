@@ -2,6 +2,11 @@
 
 This library was written by Andreas Åkre Solberg (UNINETT AS) in March 2012.
 
+* [Read the blog of Andreas Åkre Solberg](http://rnd.feide.no)
+* [Follow Andreas Åkre Solberg on twitter](https://twitter.com/erlang)
+* [Read more about UNINETT](http://uninett.no)
+* Contact address: <mailto:andreas.solberg@uninett.no>
+
 It's intended use is for web applications (javascript) that connects to one or more APIs using OAuth 2.0.
 
 Current status is that the library is not well tested, due to lack of known providers with support for OAuth 2.0
