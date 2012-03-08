@@ -51,9 +51,9 @@
 			// Perform a data request
 			$.oajax({
 				url: "https://graph.facebook.com/me/home",
-				jso_provider: "facebook",
-				jso_scopes: ["read_stream"],
-				jso_allowia: true,
+				jso_provider: "facebook", // Will match the config identifier
+				jso_scopes: ["read_stream"], // List of scopes (OPTIONAL)
+				jso_allowia: true, // Allow user interaction (OPTIONAL, default: false) 
 				dataType: 'json',
 				success: function(data) {
 					console.log("Response (facebook):");
