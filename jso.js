@@ -44,7 +44,7 @@
 	 * Redirects the user to a specific URL
 	 */
 	var redirect = function(url) {
-		window.location.href(url, "authorize");
+		window.location = url;
 		// $("body").append('<p><a href="' + url + '">Go here...</a></p>');
 	}
 
