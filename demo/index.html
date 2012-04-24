@@ -12,7 +12,7 @@
 	<!-- https://github.com/wojodesign/local-storage-js -->
 	<script src="js/libs/localstorage.js"></script>
 	<script src="js/libs/modernizr-2.5.3.min.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
 	<script src="../jso.js"></script>
 	<script type="text/javascript">
@@ -36,13 +36,36 @@
 					client_id: "-----.googleusercontent.com",
 					redirect_uri: "http://localhost/~andreas/jso/demo/",
 					authorization: "https://accounts.google.com/o/oauth2/auth"
+				},
+				"ibm": {
+					client_id: "-----.googleusercontent.com",
+					redirect_uri: "http://localhost/~andreas/jso/demo/",
+					authorization: "https://accounts.google.com/o/oauth2/auth"
+				},
+				"solberg": {
+					client_id: "andreas2",
+					redirect_uri: "file://localhost/Users/andreas/Sites/jso/demo/index.html",
+					authorization: "http://bridge.uninett.no/solberg-oauth/www/server/server.php/authorization"
+				},
+				"solberg2": {
+					client_id: "andreas",
+					redirect_uri: "http://localhost/~andreas/jso/demo/",
+					authorization: "http://bridge.uninett.no/solberg-oauth/www/server/server.php/authorization"
+				},
+				"solberg3": {
+					client_id: "jsodemo",
+					redirect_uri: "http://localhost/~andreas/jso/demo/",
+					authorization: "http://proxydemo.app.bridge.uninett.no/_/oauth/auth.php/authorization"
 				}
 			});
 
+			// if (!confirm('Continue')) return;
+
 			// Make sure that you have 
 			jso_ensureTokens({
-				"facebook": ["read_stream"],
-				"google": ["https://www.googleapis.com/auth/userinfo.profile"]
+				// "facebook": ["read_stream"],
+				// "google": ["https://www.googleapis.com/auth/userinfo.profile"],
+				"solberg3": ["openid", "foo", "baz"]
 			});
 
 			// This dumps all cached tokens to console, for easyer debugging.
@@ -50,18 +73,18 @@
 
 			// Perform a data request
 			$.oajax({
-				url: "https://graph.facebook.com/me/home",
-				jso_provider: "facebook", // Will match the config identifier
-				jso_scopes: ["read_stream"], // List of scopes (OPTIONAL)
-				jso_allowia: true, // Allow user interaction (OPTIONAL, default: false) 
+				url: "http://proxydemo.app.bridge.uninett.no/api/rest.php",
+				jso_provider: "solberg3", // Will match the config identifier
+				jso_scopes: ["openid"], // List of scopes (OPTIONAL)
 				dataType: 'json',
 				success: function(data) {
-					console.log("Response (facebook):");
+					console.log("Response (bridge):");
 					console.log(data);
+				},
+				error: function() {
+					console.log("ERROR Custom callback()");
 				}
 			});
-
-			console.log("Token to use with google: " + jso_getToken("google"));
 
 			// Perform a data request
 			// $.oajax({
