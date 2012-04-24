@@ -23,7 +23,7 @@
 	 * Takes an URL as input and a params object.
 	 * Each property in the params is added to the url as query string parameters
 	 */
-	var encodeURL= function(url, params) {
+	var encodeURL = function(url, params) {
 		var res = url;
 		var k, i = 0;
 		for(k in params) {
@@ -386,6 +386,30 @@
 		scopes = settings.jso_scopes;
 		token = getToken(providerid, scopes);
 		co = config[providerid];
+
+		// var successOverridden = settings.success;
+
+		// settings.success = function(response) {
+
+		// }
+
+		var errorOverridden = settings.error || null;
+
+		settings.error = function(jqXHR, textStatus, errorThrown) {
+			console.log('error(jqXHR, textStatus, errorThrown)');
+			console.log(jqXHR);
+			console.log(textStatus);
+			console.log(errorThrown);
+
+			if (jqXHR.status === 401) {
+				console.log("Token expired. About to delete this token");
+				console.log(token);
+				wipeTokens(providerid);
+			}
+			if (errorOverridden && typeof errorOverridden === 'function') {
+				errorOverridden(jqXHR, textStatus, errorThrown);
+			}
+		}
 
 		if (!token) {
 			if (allowia) {
