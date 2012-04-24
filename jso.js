@@ -231,7 +231,7 @@
 		 * 4. Default library lifetime:
 		 */
 		if (atoken["expires_in"]) {
-			atoken["expires"] = now + parseInt(atoken["expires_in"]);
+			atoken["expires"] = now + parseInt(atoken["expires_in"], 10);
 		} else if (co["default_lifetime"] === false) {
 			// Token is permanent.
 		} else if (co["default_lifetime"]) {
