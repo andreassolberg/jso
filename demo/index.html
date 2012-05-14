@@ -25,8 +25,8 @@
 					client_id: "-----",
 					redirect_uri: "http://localhost/~andreas/jso/demo/",
 					authorization: "http://proxydemo.app.bridge.uninett.no/_/oauth/auth.php/authorization"
-				},
-				"facebook": {
+				}
+				,"facebook": {
 					client_id: "-----",
 					redirect_uri: "http://localhost/~andreas/jso/demo/",
 					authorization: "https://www.facebook.com/dialog/oauth",
@@ -61,6 +61,13 @@
 					client_id: "jsodemo",
 					redirect_uri: "http://localhost/~andreas/jso/demo/",
 					authorization: "http://proxydemo.app.bridge.uninett.no/_/oauth/auth.php/authorization"
+				},
+				"instagram": {
+					client_id: "xxx",
+					redirect_uri: "http://localhost/~andreas/jso/demo/",
+					authorization: "https://instagram.com/oauth/authorize/",
+					scope: ["basic", "likes"],
+					isDefault: true
 				}
 			});
 
@@ -70,7 +77,7 @@
 			jso_ensureTokens({
 				// "facebook": ["read_stream"],
 				// "google": ["https://www.googleapis.com/auth/userinfo.profile"],
-				"solberg3": ["openid", "foo", "baz"]
+				"instagram": ["basic", "likes"]
 			});
 
 			// This dumps all cached tokens to console, for easyer debugging.
@@ -78,9 +85,9 @@
 
 			// Perform a data request
 			$.oajax({
-				url: "http://proxydemo.app.bridge.uninett.no/api/rest.php",
-				jso_provider: "solberg3", // Will match the config identifier
-				jso_scopes: ["openid"], // List of scopes (OPTIONAL)
+				url: "https://api.instagram.com/v1/subscriptions",
+				jso_provider: "instagram", // Will match the config identifier
+				jso_scopes: false, // List of scopes (OPTIONAL)
 				dataType: 'json',
 				success: function(data) {
 					console.log("Response (bridge):");

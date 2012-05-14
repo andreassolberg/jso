@@ -198,7 +198,7 @@
 	 * And if it do, extract the state, compare with
 	 * config, and store the access token for later use.
 	 */
-	var jso_checkfortoken = function() {
+	var jso_checkfortoken = function(providerID) {
 		var 
 			atoken,
 			h = window.location.hash,
@@ -206,21 +206,38 @@
 			state,
 			co;
 
+		console.log("jso_checkfortoken(" + providerID + ")");
+
 		/*
 		 * Start with checking if there is a token in the hash
 		 */
 		if (h.length < 2) return;
 		if (h.indexOf("access_token") === -1) return;
 		h = h.substring(1);
-		var atoken = parseQueryString(h);
+		atoken = parseQueryString(h);
 
-		if (!atoken.state) return;
+		if (atoken.state) {
+			state = getState(atoken.state);
+		} else {
+			if (!providerID) {throw "Could not get [state] and no default providerid is provided.";}
+			state = {providerID: providerID};
+		}
 
-		state = getState(atoken.state);
+		
 		if (!state) throw "Could not retrieve state";
 		if (!state.providerID) throw "Could not get providerid from state";
 		if (!config[state.providerID]) throw "Could not retrieve config for this provider.";
 		co = config[state.providerID];
+
+		/**
+		 * If state was not provided, and default provider contains a scope parameter
+		 * we assume this is the one requested...
+		 */
+		if (!atoken.state && co.scope) {
+			state.scopes = co.scope;
+			console.log("Setting state: ", state);
+		}
+		// console.log("Checking atoken ", atoken, " and co ", co);
 
 		/*
 		 * Decide when this token should expire.
@@ -252,6 +269,7 @@
 		} else if (state["scopes"]) {
 			atoken["scopes"] = state["scopes"];
 		}
+
 
 
 		saveToken(state.providerID, atoken);
@@ -336,11 +354,26 @@
 		return true;
 	}
 
+	exp.jso_findDefaultEntry = function(c) {
+		var 
+			k,
+			i = 0;
+
+		if (!c) return;
+		// console.log("c", c);
+		for(k in c) {
+			i++;
+			if (c[k].isDefault && c[k].isDefault === true) {
+				return k;
+			}
+		}
+		if (i === 1) return k;
+	};
 
 	exp.jso_configure = function(c) {
 		config = c;
 		try {
-			jso_checkfortoken();	
+			jso_checkfortoken(jso_findDefaultEntry(c));	
 		} catch(e) {
 			console.log("Error when retrieving token from hash: " + e);
 			window.location.hash = "";
