@@ -14,6 +14,13 @@ Current status is that the library is not well tested, due to lack of known prov
 Be aware of the cross-domain policy limitiations of browser. Check out CORS, JSONP, or consider proxying the requests from the browser through your own webserver.
 
 
+## Licence
+
+UNINETT holds the copyright of the JSO library. The software can be used free of charge for both non-commercial and commercial projects. The software is licenced with *The GNU Lesser General Public License, version 2.1 (LGPL-2.1)*.
+
+* <http://www.opensource.org/licenses/lgpl-2.1>
+
+
 ## Features
 
 * Implements OAuth 2.0 Implicit Flow. All you need is a single javascript file.
