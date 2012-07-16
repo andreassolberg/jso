@@ -26,8 +26,9 @@
 	var encodeURL = function(url, params) {
 		var res = url;
 		var k, i = 0;
+		var firstSeparator = (url.indexOf("?") === -1) ? '?' : '&';
 		for(k in params) {
-			res += (i++ === 0 ? '?' : '&') + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+			res += (i++ === 0 ? firstSeparator : '&') + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
 		}
 		return res;
 	}
