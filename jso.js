@@ -2,7 +2,140 @@
 
 	var 
 		config = {},
-		default_lifetime = 3600;
+		default_lifetime = 3600,
+
+		api_redirect,
+		Api_default_storage,
+		api_storage;
+
+
+	/* 
+	 * Redirects the user to a specific URL
+	 */
+	api_redirect = function(url) {
+		window.location = url;
+	};
+
+	Api_default_storage = function() {
+		console.log("Constructor");
+	};
+
+	/**
+		saveState stores an object with an Identifier.
+		TODO: Ensure that both localstorage and JSON encoding has fallbacks for ancient browsers.
+		In the state object, we put the request object, plus these parameters:
+		  * restoreHash
+		  * providerID
+		  * scopes
+
+	 */
+	Api_default_storage.prototype.saveState =  function (state, obj) {
+		localStorage.setItem("state-" + state, JSON.stringify(obj));
+	}
+
+
+	/**
+	 * getStage()  returns the state object, but also removes it.
+	 * @type {Object}
+	 */
+	Api_default_storage.prototype.getState = function(state) {
+		// console.log("getState (" + state+ ")");
+		var obj = JSON.parse(localStorage.getItem("state-" + state));
+		localStorage.removeItem("state-" + state)
+		return obj;
+	};
+
+
+	/*
+	 * Checks if a token, has includes a specific scope.
+	 * If token has no scope at all, false is returned.
+	 */
+	Api_default_storage.prototype.hasScope = function(token, scope) {
+		var i;
+		if (!token.scopes) return false;
+		for(i = 0; i < token.scopes.length; i++) {
+			if (token.scopes[i] === scope) return true;
+		}
+		return false;
+	};
+
+	/*
+	 * Takes an array of tokens, and removes the ones that
+	 * are expired, and the ones that do not meet a scopes requirement.
+	 */
+	Api_default_storage.prototype.filterTokens = function(tokens, scopes) {
+		var i, j, 
+			result = [],
+			now = epoch(),
+			usethis;
+
+		if (!scopes) scopes = [];
+
+		for(i = 0; i < tokens.length; i++) {
+			usethis = true;
+
+			// Filter out expired tokens. Tokens that is expired in 1 second from now.
+			if (tokens[i].expires && tokens[i].expires < (now+1)) usethis = false;
+
+			// Filter out this token if not all scope requirements are met
+			for(j = 0; j < scopes.length; j++) {
+				if (!api_storage.hasScope(tokens[i], scopes[j])) usethis = false;
+			}
+
+			if (usethis) result.push(tokens[i]);
+		}
+		return result;
+	};
+
+
+	/*
+	 * saveTokens() stores a list of tokens for a provider.
+
+		Usually the tokens stored are a plain Access token plus:
+		  * expires : time that the token expires
+		  * providerID: the provider of the access token?
+		  * scopes: an array with the scopes (not string)
+	 */
+	Api_default_storage.prototype.saveTokens = function(provider, tokens) {
+		// console.log("Save Tokens (" + provider+ ")");
+		localStorage.setItem("tokens-" + provider, JSON.stringify(tokens));
+	};
+
+	Api_default_storage.prototype.getTokens = function(provider) {
+		// console.log("Get Tokens (" + provider+ ")");
+		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider));
+		if (!tokens) tokens = [];
+
+		// console.log(tokens)
+		return tokens;
+	};
+	Api_default_storage.prototype.wipeTokens = function(provider) {
+		localStorage.removeItem("tokens-" + provider);
+	};
+	/*
+	 * Save a single token for a provider.
+	 * This also cleans up expired tokens for the same provider.
+	 */
+	Api_default_storage.prototype.saveToken = function(provider, token) {
+		var tokens = this.getTokens(provider);
+		tokens = api_storage.filterTokens(tokens);
+		tokens.push(token);
+		this.saveTokens(provider, tokens);
+	};
+
+	/*
+	 * Get a token if exists for a provider with a set of scopes.
+	 * The scopes parameter is OPTIONAL.
+	 */
+	Api_default_storage.prototype.getToken = function(provider, scopes) {
+		var tokens = this.getTokens(provider);
+		tokens = api_storage.filterTokens(tokens, scopes);
+		if (tokens.length < 1) return null;
+		return tokens[0];
+	};
+
+	api_storage = new Api_default_storage();
+
 
 
 	/*
@@ -40,13 +173,7 @@
 		return Math.round(new Date().getTime()/1000.0);
 	}
 
-	/* 
-	 * Redirects the user to a specific URL
-	 */
-	var redirect = function(url) {
-		window.location = url;
-		// $("body").append('<p><a href="' + url + '">Go here...</a></p>');
-	}
+
 
 	var parseQueryString = function (qs) {
 		var e,
@@ -68,128 +195,6 @@
 
 
 
-	/*
-	 * ------ SECTION: Storage for Tokens and state
-	 */
-
-	/*
-		saveState stores an object with an Identifier.
-	TODO: Ensure that both localstorage and JSON encoding has fallbacks for ancient browsers.
-	In the state object, we put the request object, plus these parameters:
-		  * restoreHash
-		  * providerID
-		  * scopes
-
-	 */
-	var saveState = function(state, obj) {
-		// console.log("SaveState (" + state+ ")");
-		localStorage.setItem("state-" + state, JSON.stringify(obj));
-	};
-
-	/*
-	 * getState returns the state object, but also removes it.
-	 */
-	var getState = function(state) {
-		// console.log("getState (" + state+ ")");
-		var obj = JSON.parse(localStorage.getItem("state-" + state));
-		localStorage.removeItem("state-" + state)
-		return obj;
-	};
-
-
-
-	/*
-	 * Checks if a token, has includes a specific scope.
-	 * If token has no scope at all, false is returned.
-	 */
-	var hasScope = function(token, scope) {
-		var i;
-		if (!token.scopes) return false;
-		for(i = 0; i < token.scopes.length; i++) {
-			if (token.scopes[i] === scope) return true;
-		}
-		return false;
-	};
-
-	/*
-	 * Takes an array of tokens, and removes the ones that
-	 * are expired, and the ones that do not meet a scopes requirement.
-	 */
-	var filterTokens = function(tokens, scopes) {
-		var i, j, 
-			result = [],
-			now = epoch(),
-			usethis;
-
-		if (!scopes) scopes = [];
-
-		for(i = 0; i < tokens.length; i++) {
-			usethis = true;
-
-			// Filter out expired tokens. Tokens that is expired in 1 second from now.
-			if (tokens[i].expires && tokens[i].expires < (now+1)) usethis = false;
-
-			// Filter out this token if not all scope requirements are met
-			for(j = 0; j < scopes.length; j++) {
-				if (!hasScope(tokens[i], scopes[j])) usethis = false;
-			}
-
-			if (usethis) result.push(tokens[i]);
-		}
-		return result;
-	};
-
-	/*
-	 * saveTokens() stores a list of tokens for a provider.
-
-		Usually the tokens stored are a plain Access token plus:
-		  * expires : time that the token expires
-		  * providerID: the provider of the access token?
-		  * scopes: an array with the scopes (not string)
-	 */
-	var saveTokens = function(provider, tokens) {
-		// console.log("Save Tokens (" + provider+ ")");
-		localStorage.setItem("tokens-" + provider, JSON.stringify(tokens));
-	};
-
-	var getTokens = function(provider) {
-		// console.log("Get Tokens (" + provider+ ")");
-		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider));
-		if (!tokens) tokens = [];
-
-		// console.log(tokens)
-		return tokens;
-	};
-	var wipeTokens = function(provider) {
-		localStorage.removeItem("tokens-" + provider);
-	};
-	/*
-	 * Save a single token for a provider.
-	 * This also cleans up expired tokens for the same provider.
-	 */
-	var saveToken = function(provider, token) {
-		var tokens = getTokens(provider);
-		tokens = filterTokens(tokens);
-		tokens.push(token);
-		saveTokens(provider, tokens);
-	};
-
-	/*
-	 * Get a token if exists for a provider with a set of scopes.
-	 * The scopes parameter is OPTIONAL.
-	 */
-	var getToken = function(provider, scopes) {
-		var tokens = getTokens(provider);
-		tokens = filterTokens(tokens, scopes);
-		if (tokens.length < 1) return null;
-		return tokens[0];
-	};
-	/*
-	 * ------ /SECTION: Storage for Tokens and state
-	 */
-
-
-
 
 
 
@@ -197,8 +202,12 @@
 	 * Check if the hash contains an access token. 
 	 * And if it do, extract the state, compare with
 	 * config, and store the access token for later use.
+	 *
+	 * The url parameter is optional. Used with phonegap and
+	 * childbrowser when the jso context is not receiving the response,
+	 * instead the response is received on a child browser.
 	 */
-	var jso_checkfortoken = function(providerID) {
+	exp.jso_checkfortoken = function(providerID, url) {
 		var 
 			atoken,
 			h = window.location.hash,
@@ -207,6 +216,13 @@
 			co;
 
 		console.log("jso_checkfortoken(" + providerID + ")");
+
+		// If a url is provided 
+		if (url) {
+			if(url.indexOf('#') === -1) return;
+			h = url.substring(url.indexOf('#'));
+			// console.log('Hah, I got the hash and it s', h);
+		}
 
 		/*
 		 * Start with checking if there is a token in the hash
@@ -217,7 +233,7 @@
 		atoken = parseQueryString(h);
 
 		if (atoken.state) {
-			state = getState(atoken.state);
+			state = api_storage.getState(atoken.state);
 		} else {
 			if (!providerID) {throw "Could not get [state] and no default providerid is provided.";}
 			state = {providerID: providerID};
@@ -254,7 +270,7 @@
 		} else if (co["default_lifetime"]) {
 			atoken["expires"] = now + co["default_lifetime"];
 		} else if (co["permanent_scope"]) {
-			if (!hasScope(atoken, co["permanent_scope"])) {
+			if (!api_storage.hasScope(atoken, co["permanent_scope"])) {
 				atoken["expires"] = now + default_lifetime;
 			}
 		} else {
@@ -272,7 +288,7 @@
 
 
 
-		saveToken(state.providerID, atoken);
+		api_storage.saveToken(state.providerID, atoken);
 
 		if (state.restoreHash) {
 			window.location.hash = state.restoreHash;
@@ -332,8 +348,8 @@
 
 		// console.log("Saving state [" + state+ "]");
 		// console.log(JSON.parse(JSON.stringify(request)));
-		saveState(state, request);
-		redirect(authurl);
+		api_storage.saveState(state, request);
+		api_redirect(authurl);
 
 	};
 
@@ -342,7 +358,7 @@
 		for(providerid in ensure) {
 			scopes = undefined;
 			if (ensure[providerid]) scopes = ensure[providerid];
-			token = getToken(providerid, scopes);
+			token = api_storage.getToken(providerid, scopes);
 
 			// console.log("Ensure token for provider [" + providerid + "] ");
 			// console.log(token);
@@ -373,7 +389,7 @@
 	exp.jso_configure = function(c) {
 		config = c;
 		try {
-			jso_checkfortoken(jso_findDefaultEntry(c));	
+			exp.jso_checkfortoken(jso_findDefaultEntry(c));	
 		} catch(e) {
 			console.log("Error when retrieving token from hash: " + e);
 			window.location.hash = "";
@@ -388,23 +404,31 @@
 			console.log("=] Config");
 			console.log(config[key]);
 			console.log("=] Tokens")
-			console.log(getTokens(key));
+			console.log(api_storage.getTokens(key));
 		}
 	}
 
 	exp.jso_wipe = function() {
 		var key;
 		for(key in config) {
-			wipeTokens(key);
+			api_storage.wipeTokens(key);
 		}
 	}
 
 	exp.jso_getToken = function(providerid, scopes) {
-		var token = getToken(providerid, scopes);
+		var token = api_storage.getToken(providerid, scopes);
 		if (!token) return null;
 		if (!token["access_token"]) return null;
 		return token["access_token"];
 	}
+
+	exp.jso_registerRedirectHandler = function(callback) {
+		api_redirect = callback;
+	};
+
+	exp.jso_registerStorageHandler = function(object) {
+		api_storage = object;
+	};
 
 	$.oajax = function(settings) {
 		var 
@@ -417,13 +441,11 @@
 		providerid = settings.jso_provider;
 		allowia = settings.jso_allowia || false;
 		scopes = settings.jso_scopes;
-		token = getToken(providerid, scopes);
+		token = api_storage.getToken(providerid, scopes);
 		co = config[providerid];
 
 		// var successOverridden = settings.success;
-
 		// settings.success = function(response) {
-
 		// }
 
 		var errorOverridden = settings.error || null;
@@ -437,7 +459,7 @@
 			if (jqXHR.status === 401) {
 				console.log("Token expired. About to delete this token");
 				console.log(token);
-				wipeTokens(providerid);
+				api_storage.wipeTokens(providerid);
 			}
 			if (errorOverridden && typeof errorOverridden === 'function') {
 				errorOverridden(jqXHR, textStatus, errorThrown);
