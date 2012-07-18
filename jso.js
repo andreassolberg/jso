@@ -407,6 +407,12 @@
 		return token["access_token"];
 	}
 
+	if (typeof $ === 'undefined') return;
+	/*
+	 * From now on, we only perform tasks that require jQuery.
+	 * Like adding the $.oajax function.
+	 */
+
 	$.oajax = function(settings) {
 		var 
 			allowia,
@@ -468,4 +474,4 @@
 	};
 
 
-})(window, jQuery);
+})(window, window.jQuery);

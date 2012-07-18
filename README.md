@@ -120,6 +120,21 @@ Here is an example of retrieving the Facebook newsstream using OAuth:
 	});
 ```
 
+## jQuery or not jQuery
+
+If you load jQuery before the JSO library, it will discover and add the `$.oajax` function. However, loading jQuery is optional, and if you do not load jQuery JSO will not complain, but neigther will if offer the easy to use `$.oajax` function.
+
+If you do not use jQuery, you probably want to use the `jso_getToken(providerid, scopes)` function.
+
+```javascript
+	var accesstoken = jso_getToken("facebook", "read_stream");
+
+	var authzheader = "Authorization: Authorization " + accesstoken;
+	// Perform the Cross site AJAX request using this custom header with your
+	// preferred AJAX library.
+```
+
+
 
 ## Some convenient debugging functions
 
