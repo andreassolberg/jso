@@ -2,7 +2,10 @@
 
 	var 
 		config = {},
-		default_lifetime = 3600;
+		default_lifetime = 3600,
+		options = {
+			"debug": false
+		};
 
 
 	/*
@@ -14,10 +17,42 @@
 	 */
 	var uuid = function() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    		var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-		    return v.toString(16);
+			var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+			return v.toString(16);
 		});
 	}
+
+	/**
+	 * A log wrapper, that only logs if logging is turned on in the config
+	 * @param  {string} msg Log message
+	 */
+	var log = function(msg) {
+		if (!options.debug) return;
+		if (!console) return;
+		if (!console.log) return;
+
+		// console.log("LOG(), Arguments", arguments, msg)
+		if (arguments.length > 1) {
+			console.log(arguments);	
+		} else {
+			console.log(msg);
+		}
+		
+	}
+
+	/**
+	 * Set the global options.
+	 */
+	var setOptions = function(opts) {
+		if (!opts) return;
+		for(var k in opts) {
+			if (opts.hasOwnProperty(k)) {
+				options[k] = opts[k];
+			}
+		}
+		log("Options is set to ", options);
+	}
+
 
 	/* 
 	 * Takes an URL as input and a params object.
@@ -83,7 +118,7 @@
 
 	 */
 	var saveState = function(state, obj) {
-		// console.log("SaveState (" + state+ ")");
+		log("SaveState (" + state+ ")");
 		localStorage.setItem("state-" + state, JSON.stringify(obj));
 	};
 
@@ -91,7 +126,7 @@
 	 * getState returns the state object, but also removes it.
 	 */
 	var getState = function(state) {
-		// console.log("getState (" + state+ ")");
+		log("getState (" + state+ ")");
 		var obj = JSON.parse(localStorage.getItem("state-" + state));
 		localStorage.removeItem("state-" + state)
 		return obj;
@@ -149,16 +184,16 @@
 		  * scopes: an array with the scopes (not string)
 	 */
 	var saveTokens = function(provider, tokens) {
-		// console.log("Save Tokens (" + provider+ ")");
+		log("Save Tokens (" + provider+ ")");
 		localStorage.setItem("tokens-" + provider, JSON.stringify(tokens));
 	};
 
 	var getTokens = function(provider) {
-		// console.log("Get Tokens (" + provider+ ")");
+		log("Get Tokens (" + provider+ ")");
 		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider));
 		if (!tokens) tokens = [];
 
-		// console.log(tokens)
+		log("Token received", tokens)
 		return tokens;
 	};
 	var wipeTokens = function(provider) {
@@ -207,7 +242,7 @@
 			state,
 			co;
 
-		console.log("jso_checkfortoken(" + providerID + ")");
+		log("jso_checkfortoken(" + providerID + ")");
 
 		/*
 		 * Start with checking if there is a token in the hash
@@ -236,9 +271,9 @@
 		 */
 		if (!atoken.state && co.scope) {
 			state.scopes = co.scope;
-			console.log("Setting state: ", state);
+			log("Setting state: ", state);
 		}
-		// console.log("Checking atoken ", atoken, " and co ", co);
+		log("Checking atoken ", atoken, " and co ", co);
 
 		/*
 		 * Decide when this token should expire.
@@ -281,7 +316,7 @@
 			window.location.hash = '';
 		}
 
-		// console.log(atoken);
+		log(atoken);
 	}
 
 	/*
@@ -298,8 +333,8 @@
 		if (!config[providerid]) throw "Could not find configuration for provider " + providerid;
 		co = config[providerid];
 
-		// console.log("About to send an authorization request to [" + providerid + "]. Config:")
-		// console.log(co);
+		log("About to send an authorization request to [" + providerid + "]. Config:")
+		log(co);
 
 		state = uuid();
 		request = {
@@ -331,8 +366,8 @@
 			request["scopes"] = scopes;
 		}
 
-		// console.log("Saving state [" + state+ "]");
-		// console.log(JSON.parse(JSON.stringify(request)));
+		log("Saving state [" + state+ "]");
+		log(JSON.parse(JSON.stringify(request)));
 		saveState(state, request);
 		redirect(authurl);
 
@@ -345,8 +380,8 @@
 			if (ensure[providerid]) scopes = ensure[providerid];
 			token = getToken(providerid, scopes);
 
-			// console.log("Ensure token for provider [" + providerid + "] ");
-			// console.log(token);
+			log("Ensure token for provider [" + providerid + "] ");
+			log(token);
 
 			if (token === null) {
 				jso_authrequest(providerid, scopes);
@@ -361,7 +396,7 @@
 			i = 0;
 
 		if (!c) return;
-		// console.log("c", c);
+		log("c", c);
 		for(k in c) {
 			i++;
 			if (c[k].isDefault && c[k].isDefault === true) {
@@ -371,12 +406,15 @@
 		if (i === 1) return k;
 	};
 
-	exp.jso_configure = function(c) {
+	exp.jso_configure = function(c, opts) {
 		config = c;
+		setOptions(opts);
 		try {
-			jso_checkfortoken(jso_findDefaultEntry(c));	
+			var def = jso_findDefaultEntry(c);
+			log("jso_configure() about to check for token for this entry", def);
+			jso_checkfortoken(def);	
 		} catch(e) {
-			console.log("Error when retrieving token from hash: " + e);
+			log("Error when retrieving token from hash: " + e);
 			window.location.hash = "";
 		}
 		
@@ -385,11 +423,11 @@
 	exp.jso_dump = function() {
 		var key;
 		for(key in config) {
-			console.log("=====> Processing provider [" + key + "]");
-			console.log("=] Config");
-			console.log(config[key]);
-			console.log("=] Tokens")
-			console.log(getTokens(key));
+			log("=====> Processing provider [" + key + "]");
+			log("=] Config");
+			log(config[key]);
+			log("=] Tokens")
+			log(getTokens(key));
 		}
 	}
 
@@ -436,14 +474,14 @@
 		var errorOverridden = settings.error || null;
 
 		settings.error = function(jqXHR, textStatus, errorThrown) {
-			console.log('error(jqXHR, textStatus, errorThrown)');
-			console.log(jqXHR);
-			console.log(textStatus);
-			console.log(errorThrown);
+			log('error(jqXHR, textStatus, errorThrown)');
+			log(jqXHR);
+			log(textStatus);
+			log(errorThrown);
 
 			if (jqXHR.status === 401) {
-				console.log("Token expired. About to delete this token");
-				console.log(token);
+				log("Token expired. About to delete this token");
+				log(token);
 				wipeTokens(providerid);
 			}
 			if (errorOverridden && typeof errorOverridden === 'function') {

@@ -71,6 +71,12 @@ In this example, we set the provider identifier to be `facebook`.
 * `isDefault`: Some OAuth providers does not support the `state` parameter. When this parameter is missing, the consumer does not which provider that is sending the access_token. If you only provide one provider config, or set isDefault to `true` for one of them, the consumer will assume this is the provider that sent the token.
 * `scope`: For providers that does not support `state`: If state was not provided, and default provider contains a scope parameter we assume this is the one requested... Set this as the same list of scopes that you provide to `ensure_tokens`.
 
+
+The second optional parameter, options, of `jso_configure(providerconfig, options)` allows you to configure these global settings:
+
+* `debug`: Default value is `false`. If you enable debugging, JSO will log a bunch of things to the console, using `console.log` - if not, JSO will not log anything.
+
+
 ## Authorization
 
 This OPTIONAL step involves an early ensurance that all neccessary access tokens have been retreived. The reason why you would like to do this early, is that the authorization involves redirecting the user, and that might be tricky to do within your business logic.
