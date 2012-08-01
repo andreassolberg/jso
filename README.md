@@ -142,6 +142,37 @@ If you do not use jQuery, you probably want to use the `jso_getToken(providerid,
 
 
 
+## Using JSO With Phonegap
+
+Normal use of JSO involves JSO redirecting to the OAuth authorization endpoint for authentication and authorization, then the user is redirected back to the callback url where JSO autoamtically inspects the hash for an access token, and caches it.
+
+When using JSO with phonegap (or similar libraries), you would not perform a normal redirect, but instead open a *childbrowser*. And when the user returns you would need to tell JSO what URL the childbrowser ended up on.
+
+
+**Register a custom URL redirect handler**
+
+```javascript
+	jso_registerRedirectHandler(function(url) {
+		console.log("About to redirect the user to ", url);
+		console.log("Instead we can do whatever we want, such as opening a child browser");
+
+		// Open a child browser or similar.
+	});
+```
+*Please help! I have not used phonegap my self, and if someone could provide exact code examples for use with phonegap I would appreciate that.*
+
+
+**Tell JSO about the return URL**
+
+Use the following function providing the url of the callback page, including the parameters in the hash: `jso_checkfortoken(providerid, url)`
+
+The provided parameters might be like this: 
+
+* `jso_checkfortoken('facebook', 'https://yourservice.org/callback#accesstoken=lsdkfjldkfj')`
+
+
+
+
 ## Some convenient debugging functions
 
 For debugging, open the javascript console. And you might type:
@@ -158,6 +189,13 @@ to list all cached tokens, and
 ```
 
 to remove all tokens.
+
+
+
+## Upgrade
+
+This section will contain useful information if you have been using JSO already, and would like to update to the latest version. API and configuration changes will be listed here.
+
 
 
 
