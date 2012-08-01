@@ -499,7 +499,7 @@
 			log("=] Config");
 			log(config[key]);
 			log("=] Tokens")
-			log(getTokens(key));
+			log(api_storage.getTokens(key));
 
 		}
 	}
