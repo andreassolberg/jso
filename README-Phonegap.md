@@ -106,6 +106,8 @@ Now, setup your application index page. Here is a working example:
 
 	var deviceready = function() {
 
+		var debug = true;
+
 		/*
 		 * Setup and install the ChildBrowser plugin to Phongap/Cordova.
 		 */
@@ -139,10 +141,12 @@ Now, setup your application index page. Here is a working example:
 				authorization: "https://www.facebook.com/dialog/oauth",
 				presenttoken: "qs"
 			}
-		});
+		}, {"debug": debug});
 
 		// For debugging purposes you can wipe existing cached tokens...
 		// jso_wipe();
+		
+		// jso_dump displays a list of cached tokens using console.log if debugging is enabled.
 		jso_dump();
 
 		// Perform the protected OAuth calls.

@@ -13,6 +13,10 @@ Current status is that the library is not well tested, due to lack of known prov
 
 Be aware of the cross-domain policy limitiations of browser. Check out CORS, JSONP, or consider proxying the requests from the browser through your own webserver.
 
+If you want to use JSO together with Phonegap to support OAuth 2.0 in a hybrid web application, you may want to read the
+
+* [JSO Phonegap Guide](README-Phonegap.md)
+
 
 ## Licence
 
