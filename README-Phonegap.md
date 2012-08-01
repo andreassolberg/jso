@@ -79,7 +79,91 @@ Download the latest version of JSO:
 The documentation on JSO is available there as well.
 
 
+The callback URL needs to point somewhere, and one approach would be to put a callback HTML page somewhere, it does not really matter where, although a host you trust. And put a pretty blank page there:
 
+
+```html
+<!doctype html>
+<html>
+	<head>
+		<title>OAuth Callback endpoint</title>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		Processing OAuth response...
+	</body>
+</html>
+```
+
+Now, setup your application index page. Here is a working example:
+
+```html
+<script type="text/javascript" charset="utf-8" src="cordova-2.0.0.js"></script>
+<script type="text/javascript" charset="utf-8" src="ChildBrowser.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="jso/jso.js"></script>
+<script type="text/javascript">
+
+	var deviceready = function() {
+
+		/*
+		 * Setup and install the ChildBrowser plugin to Phongap/Cordova.
+		 */
+		if(window.plugins.childBrowser == null) {
+			ChildBrowser.install();
+		}
+
+		// Use ChildBrowser instead of redirecting the main page.
+		jso_registerRedirectHandler(window.plugins.childBrowser.showWebPage);
+
+		/*
+		 * Register a handler on the childbrowser that detects redirects and
+		 * lets JSO to detect incomming OAuth responses and deal with the content.
+		 */
+		window.plugins.childBrowser.onLocationChange = function(url){
+			url = decodeURIComponent(url);
+			console.log("Checking location: " + url);
+			jso_checkfortoken('facebook', url, function() {
+				console.log("Closing child browser, because a valid response was detected.");
+				window.plugins.childBrowser.close();
+			});
+		};
+
+		/*
+		 * Configure the OAuth providers to use.
+		 */
+		jso_configure({
+			"facebook": {
+				client_id: "myclientid",
+				redirect_uri: "https://myhost.org/callback.html",
+				authorization: "https://www.facebook.com/dialog/oauth",
+				presenttoken: "qs"
+			}
+		});
+
+		// For debugging purposes you can wipe existing cached tokens...
+		// jso_wipe();
+		jso_dump();
+
+		// Perform the protected OAuth calls.
+		$.oajax({
+			url: "https://graph.facebook.com/me/home",
+			jso_provider: "facebook",
+			jso_scopes: ["read_stream"],
+			jso_allowia: true,
+			dataType: 'json',
+			success: function(data) {
+				console.log("Response (facebook):");
+				console.log(data);
+			}
+		});
+
+	};
+
+	document.addEventListener('deviceready', this.deviceready, false);
+
+</script>
+```
 
 
 

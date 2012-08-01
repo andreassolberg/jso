@@ -6,7 +6,9 @@
 
 		api_redirect,
 		Api_default_storage,
-		api_storage;
+		api_storage,
+
+		internalStates = [];
 
 
 	/* 
@@ -197,7 +199,6 @@
 
 
 
-
 	/**
 	 * Check if the hash contains an access token. 
 	 * And if it do, extract the state, compare with
@@ -207,7 +208,7 @@
 	 * childbrowser when the jso context is not receiving the response,
 	 * instead the response is received on a child browser.
 	 */
-	exp.jso_checkfortoken = function(providerID, url) {
+	exp.jso_checkfortoken = function(providerID, url, callback) {
 		var 
 			atoken,
 			h = window.location.hash,
@@ -219,9 +220,10 @@
 
 		// If a url is provided 
 		if (url) {
+			// console.log('Hah, I got the url and it ' + url);
 			if(url.indexOf('#') === -1) return;
 			h = url.substring(url.indexOf('#'));
-			// console.log('Hah, I got the hash and it s', h);
+			// console.log('Hah, I got the hash and it is ' +  h);
 		}
 
 		/*
@@ -296,13 +298,24 @@
 			window.location.hash = '';
 		}
 
+		if (internalStates[atoken.state] && typeof internalStates[atoken.state] === 'function') {
+			// console.log("InternalState is set, calling it now!");
+			internalStates[atoken.state]();
+			delete internalStates[atoken.state];
+		}
+
+
+		if (typeof callback === 'function') {
+			callback();
+		}
+
 		// console.log(atoken);
 	}
 
 	/*
 	 * A config object contains:
 	 */
-	var jso_authrequest = function(providerid, scopes) {
+	var jso_authrequest = function(providerid, scopes, callback) {
 
 		var 
 			state,
@@ -321,6 +334,10 @@
 			"response_type": "token"
 		};
 		request.state = state;
+
+		if (callback && typeof callback === 'function') {
+			internalStates[state] = callback;
+		}
 
 
 		if (co["redirect_uri"]) {
@@ -351,6 +368,8 @@
 		api_storage.saveState(state, request);
 		api_redirect(authurl);
 
+
+
 	};
 
 	exp.jso_ensureTokens = function (ensure) {
@@ -367,6 +386,8 @@
 				jso_authrequest(providerid, scopes);
 			}
 		}
+
+
 		return true;
 	}
 
@@ -410,7 +431,9 @@
 
 	exp.jso_wipe = function() {
 		var key;
+		console.log("jso_wipe()");
 		for(key in config) {
+			console.log("Wipping tokens for " + key);
 			api_storage.wipeTokens(key);
 		}
 	}
@@ -450,6 +473,22 @@
 
 		var errorOverridden = settings.error || null;
 
+		var performAjax = function() {
+			// console.log("Perform ajax!");
+
+			if (!token) throw "Could not perform AJAX call because no valid tokens was found.";	
+
+			if (co["presenttoken"] && co["presenttoken"] === "qs") {
+				// settings.url += ((h.indexOf("?") === -1) ? '?' : '&') + "access_token=" + encodeURIComponent(token["access_token"]);
+				if (!settings.data) settings.data = {};
+				settings.data["access_token"] = token["access_token"];
+			} else {
+				if (!settings.headers) settings.headers = {};
+				settings.headers["Authorization"] = "Bearer " + token["access_token"];
+			}
+			$.ajax(settings);
+		};
+
 		settings.error = function(jqXHR, textStatus, errorThrown) {
 			console.log('error(jqXHR, textStatus, errorThrown)');
 			console.log(jqXHR);
@@ -466,26 +505,22 @@
 			}
 		}
 
+
 		if (!token) {
 			if (allowia) {
-				jso_authrequest(providerid, scopes);
+				console.log("Perform authrequest");
+				jso_authrequest(providerid, scopes, function() {
+					token = api_storage.getToken(providerid, scopes);
+					performAjax();
+				});
 				return;
 			} else {
 				throw "Could not perform AJAX call because no valid tokens was found.";	
 			}
 		}
 
-		if (co["presenttoken"] && co["presenttoken"] === "qs") {
-			// settings.url += ((h.indexOf("?") === -1) ? '?' : '&') + "access_token=" + encodeURIComponent(token["access_token"]);
-			if (!settings.data) settings.data = {};
-			settings.data["access_token"] = token["access_token"];
-		} else {
-			if (!settings.headers) settings.headers = {};
-			settings.headers["Authorization"] = "Bearer " + token["access_token"];
-		}
 
-		$.ajax(settings);
-
+		performAjax();
 	};
 
 
