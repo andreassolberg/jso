@@ -83,9 +83,17 @@ The second optional parameter, options, of `jso_configure(providerconfig, option
 
 ## Authorization
 
-This OPTIONAL step involves an early ensurance that all neccessary access tokens have been retreived. The reason why you would like to do this early, is that the authorization involves redirecting the user, and that might be tricky to do within your business logic.
+This OPTIONAL step involves an early ensurance that all neccessary access tokens have been retreived. 
 
-So, by doing a call like this early in your code:
+
+`jso_ensureTokens` can be used to force user authentication before you really need it; and the reason why you would typically do that is to make it easier to recover the state when you return. Typically if you need an OAuth token in the middle of a complex transaction it would be really difficult if the user is redirected away during that transaction, instead you can use `jso_ensureTokens` before starting with the transaction.
+
+Using `jso_ensureTokens` is completely optional, and when you do not want to make sure that you have sufficient tokens before you really need it, then you can call `$.oajax` right away and it will redirect you for authenticationo - if needed.
+
+
+
+
+By doing a call like this early in your code:
 
 ```javascript
 	// Make sure that you have 
