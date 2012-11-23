@@ -347,7 +347,7 @@
 		 * Handle scopes for this token
 		 */
 		if (atoken["scope"]) {
-			atoken["scopes"] = atoken["scope"].split(" ");
+			atoken["scopes"] = atoken["scope"].split(",");
 		} else if (state["scopes"]) {
 			atoken["scopes"] = state["scopes"];
 		}
@@ -415,7 +415,7 @@
 			request["client_id"] = co["client_id"];
 		}
 		if (scopes) {
-			request["scope"] = scopes.join(" ");
+			request["scope"] = scopes.join(",");
 		}
 
 		authurl = encodeURL(co.authorization, request);
