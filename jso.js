@@ -295,7 +295,7 @@
 		 */
 		if (h.length < 2) return;
 		if (h.indexOf("access_token") === -1) return;
-		h = h.substring(1);
+		h = h.substring(h.indexOf("access_token"));
 		atoken = parseQueryString(h);
 
 		if (atoken.state) {
