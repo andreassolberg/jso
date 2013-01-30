@@ -398,15 +398,18 @@
 		log(co);
 
 		state = uuid();
-		request = {
-			"response_type": "token"
-		};
-		request.state = state;
+    request = {};
+    request.state = state;
 
-		if (callback && typeof callback === 'function') {
-			internalStates[state] = callback;
-		}
+    if (callback && typeof callback === 'function') {
+        internalStates[state] = callback;
+    }
 
+    if (co["response_type"]) {
+        request["response_type"] = co["response_type"]
+    } else {
+        request["response_type"] = "token";
+    }
 
 		if (co["redirect_uri"]) {
 			request["redirect_uri"] = co["redirect_uri"];
