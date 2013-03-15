@@ -480,7 +480,7 @@
 		setOptions(opts);
 		try {
 
-			var def = jso_findDefaultEntry(c);
+			var def = exp.jso_findDefaultEntry(c);
 			log("jso_configure() about to check for token for this entry", def);
 			exp.jso_checkfortoken(def);	
 
