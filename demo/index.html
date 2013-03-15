@@ -38,36 +38,21 @@
 					authorization: "https://www.linkedin.com/oauth"
 				},
 				"google": {
-					client_id: "-----.googleusercontent.com",
-					redirect_uri: "http://localhost/~andreas/jso/demo/",
-					authorization: "https://accounts.google.com/o/oauth2/auth"
+					client_id: "541950296471-l3c03llam468opj7gljtjav8v13pi0mf.apps.googleusercontent.com",
+					redirect_uri: "http://bridge.uninett.no/jso/jso/demo/index.html",
+					authorization: "https://accounts.google.com/o/oauth2/auth",
+					isDefault: true
 				},
 				"ibm": {
 					client_id: "-----.googleusercontent.com",
 					redirect_uri: "http://localhost/~andreas/jso/demo/",
 					authorization: "https://accounts.google.com/o/oauth2/auth"
 				},
-				"solberg": {
-					client_id: "andreas2",
-					redirect_uri: "file://localhost/Users/andreas/Sites/jso/demo/index.html",
-					authorization: "http://bridge.uninett.no/solberg-oauth/www/server/server.php/authorization"
-				},
-				"solberg2": {
-					client_id: "andreas",
-					redirect_uri: "http://localhost/~andreas/jso/demo/",
-					authorization: "http://bridge.uninett.no/solberg-oauth/www/server/server.php/authorization"
-				},
-				"solberg3": {
-					client_id: "jsodemo",
-					redirect_uri: "http://localhost/~andreas/jso/demo/",
-					authorization: "http://proxydemo.app.bridge.uninett.no/_/oauth/auth.php/authorization"
-				},
 				"instagram": {
 					client_id: "xxx",
 					redirect_uri: "http://localhost/~andreas/jso/demo/",
 					authorization: "https://instagram.com/oauth/authorize/",
-					scope: ["basic", "likes"],
-					isDefault: true
+					scope: ["basic", "likes"]
 				}
 			});
 
@@ -76,40 +61,40 @@
 			// Make sure that you have 
 			jso_ensureTokens({
 				// "facebook": ["read_stream"],
-				// "google": ["https://www.googleapis.com/auth/userinfo.profile"],
-				"instagram": ["basic", "likes"]
+				"google": ["https://www.googleapis.com/auth/userinfo.profile"],
+				// "instagram": ["basic", "likes"]
 			});
 
 			// This dumps all cached tokens to console, for easyer debugging.
 			jso_dump();
 
 			// Perform a data request
-			$.oajax({
-				url: "https://api.instagram.com/v1/subscriptions",
-				jso_provider: "instagram", // Will match the config identifier
-				jso_scopes: false, // List of scopes (OPTIONAL)
-				dataType: 'json',
-				success: function(data) {
-					console.log("Response (bridge):");
-					console.log(data);
-				},
-				error: function() {
-					console.log("ERROR Custom callback()");
-				}
-			});
-
-			// Perform a data request
 			// $.oajax({
-			// 	url: "https://www.googleapis.com/oauth2/v1/userinfo",
-			// 	jso_provider: "google",
-			// 	jso_allowia: true,
-			// 	jso_scopes: ["https://www.googleapis.com/auth/userinfo.profile"],
+			// 	url: "https://api.instagram.com/v1/subscriptions",
+			// 	jso_provider: "instagram", // Will match the config identifier
+			// 	jso_scopes: false, // List of scopes (OPTIONAL)
 			// 	dataType: 'json',
 			// 	success: function(data) {
-			// 		console.log("Response (google):");
+			// 		console.log("Response (bridge):");
 			// 		console.log(data);
+			// 	},
+			// 	error: function() {
+			// 		console.log("ERROR Custom callback()");
 			// 	}
 			// });
+
+			// Perform a data request
+			$.oajax({
+				url: "https://www.googleapis.com/oauth2/v1/userinfo",
+				jso_provider: "google",
+				jso_allowia: true,
+				jso_scopes: ["https://www.googleapis.com/auth/userinfo.profile"],
+				dataType: 'json',
+				success: function(data) {
+					console.log("Response (google):");
+					console.log(data);
+				}
+			});
 
 			// jso_wipe();
 
