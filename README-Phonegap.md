@@ -1,5 +1,10 @@
 # Using JSO with Phonegap and ChildBrowser
 
+
+**WARNING: JSO2 beta is not ready for integration with Phonegap and Childbrowser just yet. Stay tuned for updates on this. This document is old and documents integration with phonegap using JSO verson 1**
+
+
+
 Using JSO to perform OAuth 2.0 authorization in WebApps running on mobile devices in hybrid environment is an important deployment scenario for JSO.
 
 Here is a detailed instruction on setting up JSO with Phonegap for iOS and configure OAuth 2.0 with Google. You may use it with Facebook or other OAuth providers as well.
