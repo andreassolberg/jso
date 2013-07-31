@@ -549,7 +549,7 @@
 				if (!settings.headers) settings.headers = {};
 				settings.headers["Authorization"] = "Bearer " + token["access_token"];
 			}
-			$.ajax(settings);
+			return $.ajax(settings);
 		};
 
 		settings.error = function(jqXHR, textStatus, errorThrown) {
@@ -585,7 +585,7 @@
 		}
 
 
-		performAjax();
+		return performAjax();
 	};
 
 
