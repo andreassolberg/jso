@@ -274,7 +274,7 @@
 		 */
 		if (h.length < 2) return;
 		if (h.indexOf("access_token") === -1) return;
-		h = h.substring(1);
+		h = h.substring(h.indexOf("access_token"));
 		atoken = parseQueryString(h);
 
 		if (atoken.state) {
@@ -326,7 +326,7 @@
 		 * Handle scopes for this token
 		 */
 		if (atoken["scope"]) {
-			atoken["scopes"] = atoken["scope"].split(" ");
+			atoken["scopes"] = atoken["scope"].split(",");
 		} else if (state["scopes"]) {
 			atoken["scopes"] = state["scopes"];
 		}
@@ -394,7 +394,7 @@
 			request["client_id"] = co["client_id"];
 		}
 		if (scopes) {
-			request["scope"] = scopes.join(" ");
+			request["scope"] = scopes.join(",");
 		}
 
 		authurl = encodeURL(co.authorization, request);
