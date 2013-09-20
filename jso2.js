@@ -220,7 +220,7 @@ define(function(require, exports, module) {
 		var token = store.getToken(this.providerID, scopesRequire);
 
 		if (token) {
-			callback(token);
+			return callback(token);
 		} else {
 			this._authorize(callback, opts);
 		}
@@ -329,7 +329,7 @@ define(function(require, exports, module) {
 		}
 
 
-		this.getToken(function(token) {
+		return this.getToken(function(token) {
 			utils.log("Ready. Got an token, and ready to perform an AJAX call", token);
 
 			if (that.config["presenttoken"] && that.config["presenttoken"] === "qs") {
@@ -341,10 +341,10 @@ define(function(require, exports, module) {
 				settings.headers["Authorization"] = "Bearer " + token["access_token"];
 			}
 			utils.log('$.ajax settings', settings);
-			OAuth.$.ajax(settings);
+			return OAuth.$.ajax(settings);
 
 		}, oauthOptions);
-
+		
 	}
 
 
