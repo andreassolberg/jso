@@ -2,9 +2,9 @@
  * JSO - Javascript OAuth Library
  * 		Version 2.0
  *   	UNINETT AS - http://uninett.no
- *   	
+ *
  * Documentation available at: https://github.com/andreassolberg/jso
- * 
+ *
 
 Licence: Simplified BSD Licence
 
@@ -12,13 +12,13 @@ Copyright (c) 2013, Andreas Åkre Solberg, UNINETT AS
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -31,14 +31,14 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
- * 
+ *
  */
 
 define(function(require, exports, module) {
 
 
 
-	var 
+	var
 		default_lifetime = 3600,
 		options = {
 			"debug": true
@@ -68,7 +68,7 @@ define(function(require, exports, module) {
 
 
 	/**
-	 * Check if the hash contains an access token. 
+	 * Check if the hash contains an access token.
 	 * And if it do, extract the state, compare with
 	 * config, and store the access token for later use.
 	 *
@@ -77,7 +77,7 @@ define(function(require, exports, module) {
 	 * instead the response is received on a child browser.
 	 */
 	OAuth.prototype.callback = function(url, callback, providerID) {
-		var 
+		var
 			atoken,
 			h = window.location.hash,
 			now = utils.epoch(),
@@ -86,7 +86,7 @@ define(function(require, exports, module) {
 
 		utils.log("OAuth.prototype.callback()");
 
-		// If a url is provided 
+		// If a url is provided
 		if (url) {
 			// utils.log('Hah, I got the url and it ' + url);
 			if(url.indexOf('#') === -1) return;
@@ -109,11 +109,11 @@ define(function(require, exports, module) {
 			state = {providerID: providerID};
 		}
 
-		
+
 		if (!state) throw "Could not retrieve state";
 		if (!state.providerID) throw "Could not get providerid from state";
 		if (!OAuth.instances[state.providerID]) throw "Could not retrieve OAuth.instances for this provider.";
-		
+
 		instance = OAuth.instances[state.providerID];
 
 		/**
@@ -228,7 +228,7 @@ define(function(require, exports, module) {
 	}
 
 	OAuth.prototype._authorize = function(callback, opts) {
-		var 
+		var
 			request,
 			authurl,
 			scopes;
@@ -261,7 +261,7 @@ define(function(require, exports, module) {
 
 		authurl = utils.encodeURL(this.config.authorization, request);
 
-		// We'd like to cache the hash for not loosing Application state. 
+		// We'd like to cache the hash for not loosing Application state.
 		// With the implciit grant flow, the hash will be replaced with the access
 		// token when we return after authorization.
 		if (window.location.hash) {
@@ -285,7 +285,7 @@ define(function(require, exports, module) {
 
 		setTimeout(function() {
 			window.location = url;
-		}, 2000);		
+		}, 2000);
 
 	}
 
@@ -296,7 +296,7 @@ define(function(require, exports, module) {
 
 	OAuth.prototype.ajax = function(settings) {
 
-		var 
+		var
 			allowia,
 			scopes,
 			token,
@@ -306,7 +306,7 @@ define(function(require, exports, module) {
 		var that = this;
 
 		if (!OAuth.$) throw {"message": "JQuery support not enabled."};
-		
+
 		oauthOptions = settings.oauth || {};
 
 		var errorOverridden = settings.error || null;
@@ -344,182 +344,8 @@ define(function(require, exports, module) {
 			return OAuth.$.ajax(settings);
 
 		}, oauthOptions);
-		
+
 	}
-
-
-
-
-
-	/* 
-	 * Redirects the user to a specific URL
-	 */
-	// api_redirect = function(url) {
-	// 	setTimeout(function() {
-	// 		window.location = url;
-	// 	}, 2000);
-	// };
-
-
-
-
-
-
-
-
-
-
-	// exp.jso_ensureTokens = function (ensure) {
-	// 	var providerid, scopes, token;
-	// 	for(providerid in ensure) {
-	// 		scopes = undefined;
-	// 		if (ensure[providerid]) scopes = ensure[providerid];
-	// 		token = store.getToken(providerid, scopes);
-
-	// 		utils.log("Ensure token for provider [" + providerid + "] ");
-	// 		utils.log(token);
-
-	// 		if (token === null) {
-	// 			jso_authrequest(providerid, scopes);
-	// 		}
-	// 	}
-
-
-	// 	return true;
-	// }
-
-
-	// exp.jso_configure = function(c, opts) {
-	// 	config = c;
-	// 	setOptions(opts);
-	// 	try {
-
-	// 		var def = exp.jso_findDefaultEntry(c);
-	// 		utils.log("jso_configure() about to check for token for this entry", def);
-	// 		exp.jso_checkfortoken(def);	
-
-	// 	} catch(e) {
-	// 		utils.log("Error when retrieving token from hash: " + e, c, opts);
-	// 		window.location.hash = "";
-	// 	}
-		
-	// }
-
-	// exp.jso_dump = function() {
-	// 	var key;
-	// 	for(key in config) {
-
-	// 		utils.log("=====> Processing provider [" + key + "]");
-	// 		utils.log("=] Config");
-	// 		utils.log(config[key]);
-	// 		utils.log("=] Tokens")
-	// 		utils.log(store.getTokens(key));
-
-	// 	}
-	// }
-
-	// exp.jso_wipe = function() {
-	// 	var key;
-	// 	utils.log("jso_wipe()");
-	// 	for(key in config) {
-	// 		utils.log("Wipping tokens for " + key);
-	// 		store.wipeTokens(key);
-	// 	}
-	// }
-
-	// exp.jso_getToken = function(providerid, scopes) {
-	// 	var token = store.getToken(providerid, scopes);
-	// 	if (!token) return null;
-	// 	if (!token["access_token"]) return null;
-	// 	return token["access_token"];
-	// }
-
-
-
-
-
-
-
-
-
-
-	// /*
-	//  * From now on, we only perform tasks that require jQuery.
-	//  * Like adding the $.oajax function.
-	//  */
-	// if (typeof $ === 'undefined') return;
-
-	// $.oajax = function(settings) {
-	// 	var 
-	// 		allowia,
-	// 		scopes,
-	// 		token,
-	// 		providerid,
-	// 		co;
-		
-	// 	providerid = settings.jso_provider;
-	// 	allowia = settings.jso_allowia || false;
-	// 	scopes = settings.jso_scopes;
-	// 	token = api_storage.getToken(providerid, scopes);
-	// 	co = config[providerid];
-
-	// 	// var successOverridden = settings.success;
-	// 	// settings.success = function(response) {
-	// 	// }
-
-	// 	var errorOverridden = settings.error || null;
-
-	// 	var performAjax = function() {
-	// 		// utils.log("Perform ajax!");
-
-	// 		if (!token) throw "Could not perform AJAX call because no valid tokens was found.";	
-
-	// 		if (co["presenttoken"] && co["presenttoken"] === "qs") {
-	// 			// settings.url += ((h.indexOf("?") === -1) ? '?' : '&') + "access_token=" + encodeURIComponent(token["access_token"]);
-	// 			if (!settings.data) settings.data = {};
-	// 			settings.data["access_token"] = token["access_token"];
-	// 		} else {
-	// 			if (!settings.headers) settings.headers = {};
-	// 			settings.headers["Authorization"] = "Bearer " + token["access_token"];
-	// 		}
-	// 		$.ajax(settings);
-	// 	};
-
-	// 	settings.error = function(jqXHR, textStatus, errorThrown) {
-	// 		utils.log('error(jqXHR, textStatus, errorThrown)');
-	// 		utils.log(jqXHR);
-	// 		utils.log(textStatus);
-	// 		utils.log(errorThrown);
-
-	// 		if (jqXHR.status === 401) {
-
-	// 			utils.log("Token expired. About to delete this token");
-	// 			utils.log(token);
-	// 			api_storage.wipeTokens(providerid);
-
-	// 		}
-	// 		if (errorOverridden && typeof errorOverridden === 'function') {
-	// 			errorOverridden(jqXHR, textStatus, errorThrown);
-	// 		}
-	// 	}
-
-
-	// 	if (!token) {
-	// 		if (allowia) {
-	// 			utils.log("Perform authrequest");
-	// 			jso_authrequest(providerid, scopes, function() {
-	// 				token = api_storage.getToken(providerid, scopes);
-	// 				performAjax();
-	// 			});
-	// 			return;
-	// 		} else {
-	// 			throw "Could not perform AJAX call because no valid tokens was found.";	
-	// 		}
-	// 	}
-
-
-	// 	performAjax();
-	// };
 
 	return OAuth;
 
