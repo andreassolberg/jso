@@ -1,7 +1,10 @@
 define(function(require, exports, module) {
 
-	var utils = require('./utils');
-	var store = {};
+	var utils = require('./utils'),
+		store = {},
+		options = {
+			"debug": true
+		};
 
 
 	/**
@@ -33,17 +36,17 @@ define(function(require, exports, module) {
 	 * @param  {string} msg Log message
 	 */
 	var log = function(msg) {
-		// if (!options.debug) return;
+		if (!options.debug) return;
 		if (!console) return;
 		if (!console.log) return;
 
 		// console.log("LOG(), Arguments", arguments, msg)
 		if (arguments.length > 1) {
-			console.log(arguments);	
+			console.log(arguments);
 		} else {
 			console.log(msg);
 		}
-		
+
 	}
 
 
@@ -65,7 +68,7 @@ define(function(require, exports, module) {
 	 * are expired, and the ones that do not meet a scopes requirement.
 	 */
 	store.filterTokens = function(tokens, scopes) {
-		var i, j, 
+		var i, j,
 			result = [],
 			now = utils.epoch(),
 			usethis;

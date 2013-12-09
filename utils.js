@@ -1,7 +1,10 @@
 define(function(require, exports, module) {
 
 
-	var utils = {};
+	var utils = {},
+		options = {
+			"debug": true
+		};
 
 
 	/*
@@ -47,7 +50,7 @@ define(function(require, exports, module) {
 	 * Utility: scopeList(scopes )
 	 * Takes a list of scopes that might be overlapping, and removed duplicates,
 	 * then concatenates the list by spaces and returns a string.
-	 * 
+	 *
 	 * @param  {[type]} scopes [description]
 	 * @return {[type]}        [description]
 	 */
@@ -89,17 +92,17 @@ define(function(require, exports, module) {
 	 * @param  {string} msg Log message
 	 */
 	utils.log = function(msg) {
-		// if (!options.debug) return;
+		if (!options.debug) return;
 		if (!console) return;
 		if (!console.log) return;
 
 		// console.log("LOG(), Arguments", arguments, msg)
 		if (arguments.length > 1) {
-			console.log(arguments);	
+			console.log(arguments);
 		} else {
 			console.log(msg);
 		}
-		
+
 	}
 
 	/**
@@ -116,7 +119,7 @@ define(function(require, exports, module) {
 	// }
 
 
-	/* 
+	/*
 	 * Takes an URL as input and a params object.
 	 * Each property in the params is added to the url as query string parameters
 	 */

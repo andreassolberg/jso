@@ -28,7 +28,8 @@ UNINETT holds the copyright of the JSO library. The software can be used free of
 
 ## Features
 
-* Implements OAuth 2.0 Implicit Flow. 
+* Implements OAuth 2.0 Implicit Flow.
+* Implements OAuth 2.0 Client Credentials.
 * AMD Loading
 * Supports the `Bearer` access token type.
 * No server component needed.
@@ -36,7 +37,7 @@ UNINETT holds the copyright of the JSO library. The software can be used free of
 * Can handle multilple providers at once.
 * Uses *HTML 5.0 localStorage* to cache Access Tokens. You do not need to implement a storage.
 * Can prefetch all needed tokens with sufficient scopes, to start with, then tokens can be used for reqiests later. This way, you can be sure that you would not need to redirect anywhere in your business logic, because you would need to refresh an expired token.
-* Excellent scope support. 
+* Excellent scope support.
 * Caches and restores the hash, your application will not loose state when sending the user to the authorization endpoint.
 
 ## Dependencies
@@ -57,7 +58,7 @@ JSO uses JSON serialization functions (stringify and parse). These are supported
 First, load JSO with requirejs:
 
 ```javascript
-	var 
+	var
 		OAuth = require('../jso/jso2'),
 		jQuery = require('jquery');
 	OAuth.enablejQuery($);
@@ -79,15 +80,18 @@ Next is configuring an OAuth object with the configuration of an OAuth Provider.
 Here is some of the parameters:
 
 
-* `client_id`: The client idenfier of your client that as trusted by the provider. As JSO uses the implicit grant flow, there is now use for a 
+* `client_id`: The client idenfier of your client that as trusted by the provider.
+* `client_secret`: The client secret of your client that as trusted by the provider.
 * `redirect_uri`: OPTIONAL (may be needed by the provider). The URI that the user will be redirected back to when completed. This shuold be the same URL that the page is presented on.
+* `authorization`: The URI for then endpoint that authorize a user request and issue an authorization code
+* `token`: The URI for then endpoint that access tokens and exchanges a user authorization code for a access token.
 * `presenttoken`: OPTIONAL How to present the token with the protected calls. Values can be `qs` (in query string) or `header` (default; in authorization header).
 * `default_lifetime` : OPTIONAL Seconds with default lifetime of an access token. If set to `false`, it means permanent.
 * `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not yet tested.)
 * `isDefault`: Some OAuth providers does not support the `state` parameter. When this parameter is missing, the consumer does not which provider that is sending the access_token. If you only provide one provider config, or set isDefault to `true` for one of them, the consumer will assume this is the provider that sent the token.
 * `scope`: For providers that does not support `state`: If state was not provided, and default provider contains a scope parameter we assume this is the one requested... Set this as the same list of scopes that you provide to `ensure_tokens`.
 * `scopes.request`: Control what scopes are requested in the authorization request.
-
+* `grant_type` : Which OAuth2 Grant Type to use. Options: implicit, client_credentials (default; implicit)
 
 
 ## Callback
@@ -106,7 +110,7 @@ The redirect_uri may very well be the same page that initates the authorization 
 ## OAuth protected data requests
 
 
-You may use the `o.ajax()` function to perform OAuth protected API calls. 
+You may use the `o.ajax()` function to perform OAuth protected API calls.
 
 ```javascript
 	o.ajax({

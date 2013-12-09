@@ -15,10 +15,10 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
+	 list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
+	 this list of conditions and the following disclaimer in the documentation
+	 and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -42,7 +42,11 @@ define(function(require, exports, module) {
 		default_lifetime = 3600,
 		options = {
 			"debug": true
-		};
+		},
+		grant_types = [
+			'implicit',
+			'client_credentials'
+		];
 
 
 	var store = require('./store');
@@ -52,6 +56,10 @@ define(function(require, exports, module) {
 	var OAuth = function(providerID, config) {
 		this.providerID = providerID;
 		this.config = config;
+
+		if (config.grant_type && grant_types.indexOf(config.grant_type) === -1) {
+			throw "Unsupported grant type: "+ config.grant_type;
+		}
 
 		if (this.providerID) {
 			OAuth.instances[this.providerID] = this;
@@ -120,7 +128,7 @@ define(function(require, exports, module) {
 		 * If state was not provided, and default provider contains a scope parameter
 		 * we assume this is the one requested...
 		 */
-		if (!atoken.state && co.scope) {
+		if (!atoken.state && instance.scope) {
 			state.scopes = instance._getRequestScopes();
 			utils.log("Setting state: ", state);
 		}
@@ -186,29 +194,31 @@ define(function(require, exports, module) {
 	}
 
 	OAuth.prototype._getRequestScopes = function(opts) {
-		var scopes = [];
+		var scopes = [],
+			i;
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
 		 */
 		if (this.config.scopes && this.config.scopes.request) {
-			for(var i = 0; i < this.config.scopes.request.length; i++) scopes.push(this.config.scopes.request[i]);
+			for(i = 0; i < this.config.scopes.request.length; i++) scopes.push(this.config.scopes.request[i]);
 		}
 		if (opts && opts.scopes && opts.scopes.request) {
-			for(var i = 0; i < opts.scopes.request.length; i++) scopes.push(opts.scopes.request[i]);
+			for(i = 0; i < opts.scopes.request.length; i++) scopes.push(opts.scopes.request[i]);
 		}
 		return utils.uniqueList(scopes);
 	}
 
 	OAuth.prototype._getRequiredScopes = function(opts) {
-		var scopes = [];
+		var scopes = [],
+			i;
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
 		 */
 		if (this.config.scopes && this.config.scopes.require) {
-			for(var i = 0; i < this.config.scopes.require.length; i++) scopes.push(this.config.scopes.require[i]);
+			for(i = 0; i < this.config.scopes.require.length; i++) scopes.push(this.config.scopes.require[i]);
 		}
 		if (opts && opts.scopes && opts.scopes.require) {
-			for(var i = 0; i < opts.scopes.require.length; i++) scopes.push(opts.scopes.require[i]);
+			for(i = 0; i < opts.scopes.require.length; i++) scopes.push(opts.scopes.require[i]);
 		}
 		return utils.uniqueList(scopes);
 	}
@@ -222,12 +232,16 @@ define(function(require, exports, module) {
 		if (token) {
 			return callback(token);
 		} else {
-			this._authorize(callback, opts);
+			// Call _oauthorize function based on grant type
+			var grant_type = this.config.grant_type || 'implicit',
+				fn = '_authorize_' + grant_type;
+
+			this[fn].call(this, callback, opts);
 		}
 
 	}
 
-	OAuth.prototype._authorize = function(callback, opts) {
+	OAuth.prototype._authorize_implicit = function(callback, opts) {
 		var
 			request,
 			authurl,
@@ -281,6 +295,92 @@ define(function(require, exports, module) {
 	}
 
 
+	OAuth.prototype._authorize_client_credentials = function(callback, opts) {
+		var
+			that = this,
+			request,
+			authurl,
+			scopes;
+
+		utils.log("About to send an token request to this entry:", this.config);
+		if (!this.config.token) throw "Missing OAuth config parameter: token";
+
+		request = {
+			"grant_type": "client_credentials"
+		};
+
+		if (!this.config["client_id"]) throw new {"message": "client_id not registered with application."};
+		request["client_id"] = this.config["client_id"];
+		request["client_secret"] = this.config["client_secret"] ? this.config["client_secret"] : '';
+
+		/*
+		 * Calculate which scopes to request, based upon provider config and request config.
+		 */
+		scopes = this._getRequestScopes(opts);
+		if (scopes.length > 0) {
+			request["scope"] = utils.scopeList(scopes);
+		}
+
+		authurl = utils.encodeURL(this.config.token, request);
+
+		OAuth.$.ajax({
+			type : 'POST',
+			url : this.config.token,
+			data : request,
+			success : function (data) {
+				var now = utils.epoch();
+
+				utils.log("Checking atoken ", data, " and instance ", that);
+
+				/*
+				 * Decide when this token should expire.
+				 * Priority fallback:
+				 * 1. Access token expires_in
+				 * 2. Life time in config (may be false = permanent...)
+				 * 3. Specific permanent scope.
+				 * 4. Default library lifetime:
+				 */
+				if (data["expires_in"]) {
+					data["expires"] = now + parseInt(data["expires_in"], 10);
+				} else if (that.config["default_lifetime"] === false) {
+					// Token is permanent.
+				} else if (that.config["default_lifetime"]) {
+					data["expires"] = now + that.config["default_lifetime"];
+				} else if (that.config["permanent_scope"]) {
+					if (!store.hasScope(data, that.config["permanent_scope"])) {
+						data["expires"] = now + default_lifetime;
+					}
+				} else {
+					data["expires"] = now + default_lifetime;
+				}
+
+				/*
+				 * Handle scopes for this token
+				 */
+				if (data["scope"]) {
+					data["scopes"] = data["scope"].split(" ");
+				} else if (scopes) {
+					data["scopes"] = scopes;
+				}
+
+				store.saveToken(that.providerID, data);
+				callback(data);
+			},
+			error : function (jqXHR, textStatus, errorThrown) {
+				utils.log('error(jqXHR, textStatus, errorThrown)');
+				utils.log(jqXHR);
+				utils.log(textStatus);
+				utils.log(errorThrown);
+
+				if (jqXHR.status === 401) {
+
+					utils.log("Invalid authorization code");
+				}
+			}
+		});
+	}
+
+
 	OAuth.prototype.gotoAuthorizeURL = function(url, callback) {
 
 		setTimeout(function() {
@@ -297,19 +397,16 @@ define(function(require, exports, module) {
 	OAuth.prototype.ajax = function(settings) {
 
 		var
-			allowia,
-			scopes,
+			that = this,
 			token,
-			providerid,
-			co;
-
-		var that = this;
+			errorOverridden,
+			oauthOptions;
 
 		if (!OAuth.$) throw {"message": "JQuery support not enabled."};
 
 		oauthOptions = settings.oauth || {};
 
-		var errorOverridden = settings.error || null;
+		errorOverridden = settings.error || null;
 		settings.error = function(jqXHR, textStatus, errorThrown) {
 			utils.log('error(jqXHR, textStatus, errorThrown)');
 			utils.log(jqXHR);
