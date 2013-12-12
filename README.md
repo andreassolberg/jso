@@ -18,12 +18,16 @@ If you want to use JSO together with Phonegap to support OAuth 2.0 in a hybrid w
 
 * [JSO Phonegap Guide](README-Phonegap.md)
 
+## Contributors
+
+* [Robbie MacKay](https://github.com/rjmackay)
+
 
 ## Licence
 
-UNINETT holds the copyright of the JSO library. The software can be used free of charge for both non-commercial and commercial projects. The software is licenced with *The GNU Lesser General Public License, version 2.1 (LGPL-2.1)*.
+UNINETT holds the copyright of the JSO library. The software can be used free of charge for both non-commercial and commercial projects. The software is licenced with *Simplified BSD License*.
 
-* <http://www.opensource.org/licenses/lgpl-2.1>
+* <http://opensource.org/licenses/BSD-2-Clause>
 
 
 ## Features
