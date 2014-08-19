@@ -15,7 +15,7 @@ define(function(require, exports, module) {
 
 
 	var 
-		OAuth = require('../../jso2'),
+		OAuth = require('../../jso'),
 		jQuery = require('jquery');
 
 	OAuth.enablejQuery($);
@@ -24,7 +24,7 @@ define(function(require, exports, module) {
 
 		var o = new OAuth('google', {
 			client_id: "541950296471.apps.googleusercontent.com",
-			redirect_uri: "http://bridge.uninett.no/jso/index.html",
+			redirect_uri: "http://jso.andreas.uninettlabs.no/index.html",
 			authorization: "https://accounts.google.com/o/oauth2/auth"
 		});
 
@@ -45,9 +45,6 @@ define(function(require, exports, module) {
 				$(".loader-hideOnLoad").hide();
 			}
 		});
-
-
-
 
 
 	});
