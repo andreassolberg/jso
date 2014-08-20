@@ -3,9 +3,10 @@
 	var 
 		config = {},
 		default_lifetime = 3600,
-		options = {
-			"debug": false
-		},
+        options = {
+            "debug": false,
+            "stateless": false //pass state uuid to the server?
+        },
 
 		api_redirect,
 		Api_default_storage,
@@ -380,7 +381,10 @@
 		request = {
 			"response_type": "token"
 		};
-		request.state = state;
+
+        if (!options.stateless) {
+            request.state = state;
+        }
 
 		if (callback && typeof callback === 'function') {
 			internalStates[state] = callback;
