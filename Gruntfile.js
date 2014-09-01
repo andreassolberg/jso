@@ -15,11 +15,21 @@ module.exports = function(grunt) {
 		requirejs: {
 			compile: {
 				options: {
-					baseUrl: ".",
-					// mainConfigFile: "path/to/config.js",
-					include: "src/jso.js",
-					name: "bower_components/almond/almond.js", // assumes a production build using almond
-					out: "build/jso.min.js",
+					almond: true,
+					dir: 'build',
+					appDir: 'src',
+					baseUrl: '.',
+					modules: [{name: 'jso'}],
+					optimize: "none",
+					paths: {
+						underscore: '../vendor/underscore',
+						jquery    : '../vendor/jquery',
+						backbone  : '../vendor/backbone'
+					},
+					wrap: {
+						startFile: 'tools/wrap.start',
+						endFile: 'tools/wrap.end'
+					},
 					preserveLicenseComments: false
 				}
 			}
@@ -28,7 +38,7 @@ module.exports = function(grunt) {
 
 
 	// grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-contrib-requirejs');
+	grunt.loadNpmTasks('grunt-requirejs');
 
 	// Default task(s).
 	grunt.registerTask('default', ['requirejs']);

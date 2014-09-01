@@ -1,5 +1,5 @@
 /**
- * JSO - Javascript OAuth Library
+ * JSO - Javascript JSO Library
  * 		Version 2.0
  *   	UNINETT AS - http://uninett.no
  *   	
@@ -8,32 +8,56 @@
 
 define(function(require, exports, module) {
 
-
-
 	var 
-		default_lifetime = 3600,
-		options = {
-			"debug": true
+		default_config = {
+			"lifetime": 3600,
+			"debug": true,
+			"foo": {
+				"bar": "lsdkjf"
+			}
 		};
 
 	var store = require('./store');
 	var utils = require('./utils');
+	var Config = require('./Config');
 
-	var OAuth = function(providerID, config) {
-		this.providerID = providerID;
-		this.config = config;
+	var JSO = function(config) {
 
-		if (this.providerID) {
-			OAuth.instances[this.providerID] = this;
-		}
+		this.config = new Config(default_config, config);
+		this.providerID = this.getProviderID();
+
+		JSO.instances[this.providerID] = this;
+
+		// console.log("Testing configuration object");
+		// console.log("foo.bar.baz (2,false)", this.config.get('foo.bar.baz', 2 ) );
+		// console.log("foo.bar.baz (2,true )", this.config.get('foo.bar.baz', 2, true ) );
 	};
 
-	OAuth.internalStates = [];
-	OAuth.instances = {};
-	OAuth.store = store;
 
-	OAuth.enablejQuery = function($) {
-		OAuth.$ = $;
+	/**
+	 * We need to get an identifier to represent this OAuth provider.
+	 * The JSO construction option providerID is preferred, if not provided
+	 * we construct a concatentaion of authorization url and client_id.
+	 * @return {[type]} [description]
+	 */
+	JSO.prototype.getProviderID = function() {
+
+		var c = this.config.get('providerID', null);
+		if (c !== null) return c;
+
+		var client_id = this.config.get('client_id', null, true);
+		var authorization = this.config.get('authorization', null, true);
+
+		return authorization + '|' + client_id;
+	};
+
+
+	JSO.internalStates = [];
+	JSO.instances = {};
+	JSO.store = store;
+
+	JSO.enablejQuery = function($) {
+		JSO.$ = $;
 	};
 
 
@@ -46,7 +70,7 @@ define(function(require, exports, module) {
 	 * childbrowser when the jso context is not receiving the response,
 	 * instead the response is received on a child browser.
 	 */
-	OAuth.prototype.callback = function(url, callback, providerID) {
+	JSO.prototype.callback = function(url, callback, providerID) {
 		var 
 			atoken,
 			h = window.location.hash,
@@ -54,7 +78,7 @@ define(function(require, exports, module) {
 			state,
 			instance;
 
-		utils.log("OAuth.prototype.callback()");
+		utils.log("JSO.prototype.callback()");
 
 		// If a url is provided 
 		if (url) {
@@ -82,9 +106,9 @@ define(function(require, exports, module) {
 		
 		if (!state) throw "Could not retrieve state";
 		if (!state.providerID) throw "Could not get providerid from state";
-		if (!OAuth.instances[state.providerID]) throw "Could not retrieve OAuth.instances for this provider.";
+		if (!JSO.instances[state.providerID]) throw "Could not retrieve JSO.instances for this provider.";
 		
-		instance = OAuth.instances[state.providerID];
+		instance = JSO.instances[state.providerID];
 
 		/**
 		 * If state was not provided, and default provider contains a scope parameter
@@ -104,27 +128,27 @@ define(function(require, exports, module) {
 		 * 3. Specific permanent scope.
 		 * 4. Default library lifetime:
 		 */
-		if (atoken["expires_in"]) {
-			atoken["expires"] = now + parseInt(atoken["expires_in"], 10);
-		} else if (instance.config["default_lifetime"] === false) {
+		if (atoken.expires_in) {
+			atoken.expires = now + parseInt(atoken.expires_in, 10);
+		} else if (instance.config.get('default_lifetime', null) === false) {
 			// Token is permanent.
-		} else if (instance.config["default_lifetime"]) {
-			atoken["expires"] = now + instance.config["default_lifetime"];
-		} else if (instance.config["permanent_scope"]) {
-			if (!store.hasScope(atoken, instance.config["permanent_scope"])) {
-				atoken["expires"] = now + default_lifetime;
+		} else if (instance.config.has('permanent_scope')) {
+			if (!store.hasScope(atoken, instance.config.get('permanent_scope'))) {
+				atoken.expires = now + 3600*24*365*5;
 			}
+		} else if (instance.config.has('default_lifetime')) {
+			atoken.expires = now + instance.config.get('default_lifetime');
 		} else {
-			atoken["expires"] = now + default_lifetime;
+			atoken.expires = now + 3600;
 		}
 
 		/*
 		 * Handle scopes for this token
 		 */
-		if (atoken["scope"]) {
-			atoken["scopes"] = atoken["scope"].split(" ");
-		} else if (state["scopes"]) {
-			atoken["scopes"] = state["scopes"];
+		if (atoken.scope) {
+			atoken.scopes = atoken.scope.split(" ");
+		} else if (state.scopes) {
+			atoken.scopes = state.scopes;
 		}
 
 
@@ -140,10 +164,10 @@ define(function(require, exports, module) {
 
 		utils.log(atoken);
 
-		if (OAuth.internalStates[atoken.state] && typeof OAuth.internalStates[atoken.state] === 'function') {
+		if (JSO.internalStates[atoken.state] && typeof JSO.internalStates[atoken.state] === 'function') {
 			// log("InternalState is set, calling it now!");
-			OAuth.internalStates[atoken.state]();
-			delete OAuth.internalStates[atoken.state];
+			JSO.internalStates[atoken.state]();
+			delete JSO.internalStates[atoken.state];
 		}
 
 
@@ -155,7 +179,7 @@ define(function(require, exports, module) {
 
 	};
 
-	OAuth.prototype._getRequestScopes = function(opts) {
+	JSO.prototype._getRequestScopes = function(opts) {
 		var scopes = [], i;
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
@@ -169,7 +193,7 @@ define(function(require, exports, module) {
 		return utils.uniqueList(scopes);
 	};
 
-	OAuth.prototype._getRequiredScopes = function(opts) {
+	JSO.prototype._getRequiredScopes = function(opts) {
 		var scopes = [], i;
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
@@ -183,10 +207,10 @@ define(function(require, exports, module) {
 		return utils.uniqueList(scopes);
 	};
 
-	OAuth.prototype.getToken = function(callback, opts) {
+	JSO.prototype.getToken = function(callback, opts) {
 		// var scopesRequest  = this._getRequestScopes(opts);
+		
 		var scopesRequire = this._getRequiredScopes(opts);
-
 		var token = store.getToken(this.providerID, scopesRequire);
 
 		if (token) {
@@ -197,14 +221,18 @@ define(function(require, exports, module) {
 
 	};
 
-	OAuth.prototype._authorize = function(callback, opts) {
+	JSO.prototype._authorize = function(callback, opts) {
 		var 
 			request,
 			authurl,
 			scopes;
 
-		utils.log("About to send an authorization request to this entry:", this.config);
-		if (!this.config.authorization) throw "Missing OAuth config parameter: authorization";
+		var authorization = this.config.get('authorization', null, true);
+		var client_id = this.config.get('client_id', null, true);
+
+		utils.log("About to send an authorization request to this entry:", authorization);
+		console.log("Options", opts);
+
 
 		request = {
 			"response_type": "token",
@@ -212,34 +240,38 @@ define(function(require, exports, module) {
 		};
 
 		if (callback && typeof callback === 'function') {
-			OAuth.internalStates[request.state] = callback;
+			JSO.internalStates[request.state] = callback;
 		}
 
-		if (this.config["redirect_uri"]) {
-			request["redirect_uri"] = this.config["redirect_uri"];
+		if (this.config.has('redirect_uri')) {
+			request.redirect_uri = this.config.get('redirect_uri', '');
 		}
-		if (!this.config["client_id"]) throw new {"message": "client_id not registered with application."};
-		request["client_id"] = this.config["client_id"];
+
+		request.client_id = client_id;
+
+
 
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
 		 */
 		scopes = this._getRequestScopes(opts);
 		if (scopes.length > 0) {
-			request["scope"] = utils.scopeList(scopes);
+			request.scope = utils.scopeList(scopes);
 		}
 
-		authurl = utils.encodeURL(this.config.authorization, request);
+		console.log("DEBUG REQUEST"); console.log(request);
+
+		authurl = utils.encodeURL(authorization, request);
 
 		// We'd like to cache the hash for not loosing Application state. 
 		// With the implciit grant flow, the hash will be replaced with the access
 		// token when we return after authorization.
 		if (window.location.hash) {
-			request["restoreHash"] = window.location.hash;
+			request.restoreHash = window.location.hash;
 		}
-		request["providerID"] = this.providerID;
+		request.providerID = this.providerID;
 		if (scopes) {
-			request["scopes"] = scopes;
+			request.scopes = scopes;
 		}
 
 
@@ -251,20 +283,22 @@ define(function(require, exports, module) {
 	};
 
 
-	OAuth.prototype.gotoAuthorizeURL = function(url, callback) {
+	JSO.prototype.gotoAuthorizeURL = function(url, callback) {
 
+		prompt('Authorization url', url);
+	
 		setTimeout(function() {
 			window.location = url;
 		}, 2000);		
 
 	};
 
-	OAuth.prototype.wipeTokens = function() {
+	JSO.prototype.wipeTokens = function() {
 		store.wipeTokens(this.providerID);
 	};
 
 
-	OAuth.prototype.ajax = function(settings) {
+	JSO.prototype.ajax = function(settings) {
 
 		var 
 			allowia,
@@ -275,7 +309,7 @@ define(function(require, exports, module) {
 
 		var that = this;
 
-		if (!OAuth.$) throw {"message": "JQuery support not enabled."};
+		if (!JSO.hasOwnProperty('$')) throw new Error("JQuery support not enabled.");
 		
 		oauthOptions = settings.oauth || {};
 
@@ -302,16 +336,16 @@ define(function(require, exports, module) {
 		return this.getToken(function(token) {
 			utils.log("Ready. Got an token, and ready to perform an AJAX call", token);
 
-			if (that.config["presenttoken"] && that.config["presenttoken"] === "qs") {
+			if (that.config.get('presenttoken', null) === 'qs') {
 				// settings.url += ((h.indexOf("?") === -1) ? '?' : '&') + "access_token=" + encodeURIComponent(token["access_token"]);
 				if (!settings.data) settings.data = {};
-				settings.data["access_token"] = token["access_token"];
+				settings.data.access_token = token.access_token;
 			} else {
 				if (!settings.headers) settings.headers = {};
-				settings.headers["Authorization"] = "Bearer " + token["access_token"];
+				settings.headers.Authorization = "Bearer " + token.access_token;
 			}
 			utils.log('$.ajax settings', settings);
-			return OAuth.$.ajax(settings);
+			return JSO.$.ajax(settings);
 
 		}, oauthOptions);
 		
@@ -491,7 +525,7 @@ define(function(require, exports, module) {
 	// 	performAjax();
 	// };
 
-	return OAuth;
+	return JSO;
 
 
 });

@@ -62,7 +62,7 @@ First, load JSO with requirejs:
 
 ```javascript
 	var 
-		OAuth = require('../jso/jso2'),
+		JSO = require('bower_components/jso/build/jso'),
 		jQuery = require('jquery');
 	OAuth.enablejQuery($);
 ```
@@ -72,7 +72,8 @@ Loading jQuery is optional. If you load jQuery and want the `ajax()` function, y
 Next is configuring an OAuth object with the configuration of an OAuth Provider.
 
 ```javascript
-	var o = new OAuth('google', {
+	var jso = new JSO({
+		providerID: "google",
 		client_id: "541950296471.apps.googleusercontent.com",
 		redirect_uri: "http://bridge.uninett.no/jso/index.html",
 		authorization: "https://accounts.google.com/o/oauth2/auth",
@@ -99,7 +100,7 @@ Here is some of the parameters:
 At the endpoint where the OAuth provider is redirecting back the user with the access token response, you need to run the callback(). This allows JSO to collect and parse the response.
 
 ```javascript
-	o.callback();
+	jso.callback();
 ```
 
 Be aware to run the `callback()` function before your *router*, and before `o.getToken()` or `o.ajax()`.
@@ -113,7 +114,7 @@ The redirect_uri may very well be the same page that initates the authorization 
 You may use the `o.ajax()` function to perform OAuth protected API calls. 
 
 ```javascript
-	o.ajax({
+	jso.ajax({
 		url: "https://www.googleapis.com/oauth2/v1/userinfo",
 		oauth: {
 			scopes: {

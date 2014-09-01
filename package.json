@@ -22,7 +22,8 @@
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-nodeunit": "~0.4.1"
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-requirejs": "*"
   },
   "author": "Andreas Åkre Solberg",
   "license": "Simplified BSD Licence http://opensource.org/licenses/BSD-2-Clause",
