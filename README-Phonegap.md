@@ -1,7 +1,7 @@
 # Using JSO with Phonegap and ChildBrowser
 
 
-**WARNING: JSO2 beta is not ready for integration with Phonegap and Childbrowser just yet. Stay tuned for updates on this. This document is old and documents integration with phonegap using JSO verson 1**
+**WARNING: This version is outdated. Will be updated soon....**
 
 
 
