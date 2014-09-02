@@ -1,9 +1,14 @@
 # JSO - a Javascript OAuth Library
 
+<<<<<<< HEAD
 **UPDATE March 20th 2013: I just commited [JSO version 2.0, a redesigned library](https://github.com/andreassolberg/jso/tree/version2). It is only in beta state yet, but feel free to test it.**
 
 
 This library was written by Andreas Åkre Solberg (UNINETT AS) in March 2012.
+=======
+The initial version 1 of this library was written by Andreas Åkre Solberg (UNINETT AS) in March 2012. **This is the beta release of JSO2, and redesigned and not well-tested version of the same library.**  [Return to the stable version 1 of JSO](https://github.com/andreassolberg/jso)
+
+>>>>>>> version2
 
 * [Read the blog of Andreas Åkre Solberg](http://rnd.feide.no)
 * [Follow Andreas Åkre Solberg on twitter](https://twitter.com/erlang)
@@ -20,21 +25,32 @@ If you want to use JSO together with Phonegap to support OAuth 2.0 in a hybrid w
 
 * [JSO Phonegap Guide](README-Phonegap.md)
 
+## Contributors
+
+* [Robbie MacKay](https://github.com/rjmackay)
+
 
 ## Licence
 
+<<<<<<< HEAD
 UNINETT holds the copyright of the JSO library. The software can be used free of charge for both non-commercial and commercial projects. 
 
 The software is dual-licenced with *The GNU Lesser General Public License, version 2.1 (LGPL-2.1)* and *version 3.0*; meaning that you can select which of these two versions depending on your needs.
 
 * <http://opensource.org/licenses/lgpl-2.1>
 * <http://opensource.org/licenses/LGPL-3.0>
+=======
+UNINETT holds the copyright of the JSO library. The software can be used free of charge for both non-commercial and commercial projects. The software is licenced with *Simplified BSD License*.
+
+* <http://opensource.org/licenses/BSD-2-Clause>
+>>>>>>> version2
 
 
 ## Features
 
-* Implements OAuth 2.0 Implicit Flow. All you need is a single javascript file.
-* Supports the `bearer` access token type.
+* Implements OAuth 2.0 Implicit Flow. 
+* AMD Loading
+* Supports the `Bearer` access token type.
 * No server component needed.
 * Adds a jQuery plugin extending the `$.ajax()` function with OAuth capabilities.
 * Can handle multilple providers at once.
@@ -45,7 +61,8 @@ The software is dual-licenced with *The GNU Lesser General Public License, versi
 
 ## Dependencies
 
-JSO makes use of jQuery, mostly to plugin and make use of the `$.ajax()` function. If there is an interest for making JSO independent from jQuery, I can do that.
+JSO may make use of jQuery, mostly to plugin and make use of the `ajax()` function.
+
 
 ## Browser support
 
@@ -56,22 +73,32 @@ JSO uses JSON serialization functions (stringify and parse). These are supported
 
 ## Configure
 
-First, you must configure your OAuth providers. You do that by calling `jso_configure` with a configuration object as a parameter.
 
-The object is a key, value set of providers, where the providerID is an internal identifier of the provider that is used later, when doing protected calls.
-
-In this example, we set the provider identifier to be `facebook`.
+First, load JSO with requirejs:
 
 ```javascript
-	jso_configure({
-		"facebook": {
-			client_id: "xxxxxxxxxx",
-			redirect_uri: "http://localhost/~andreas/jso/",
-			authorization: "https://www.facebook.com/dialog/oauth",
-			presenttoken: "qs"
-		}
+	var 
+		JSO = require('bower_components/jso/build/jso'),
+		jQuery = require('jquery');
+	OAuth.enablejQuery($);
+```
+
+Loading jQuery is optional. If you load jQuery and want the `ajax()` function, you should run the enablejQuery function.
+
+Next is configuring an OAuth object with the configuration of an OAuth Provider.
+
+```javascript
+	var jso = new JSO({
+		providerID: "google",
+		client_id: "541950296471.apps.googleusercontent.com",
+		redirect_uri: "http://bridge.uninett.no/jso/index.html",
+		authorization: "https://accounts.google.com/o/oauth2/auth",
+		scopes: { request: ["https://www.googleapis.com/auth/userinfo.profile"]}
 	});
 ```
+
+Here is some of the parameters:
+
 
 * `client_id`: The client idenfier of your client that as trusted by the provider. As JSO uses the implicit grant flow, there is now use for a 
 * `redirect_uri`: OPTIONAL (may be needed by the provider). The URI that the user will be redirected back to when completed. This shuold be the same URL that the page is presented on.
@@ -80,143 +107,49 @@ In this example, we set the provider identifier to be `facebook`.
 * `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not yet tested.)
 * `isDefault`: Some OAuth providers does not support the `state` parameter. When this parameter is missing, the consumer does not which provider that is sending the access_token. If you only provide one provider config, or set isDefault to `true` for one of them, the consumer will assume this is the provider that sent the token.
 * `scope`: For providers that does not support `state`: If state was not provided, and default provider contains a scope parameter we assume this is the one requested... Set this as the same list of scopes that you provide to `ensure_tokens`.
-
-
-The second optional parameter, options, of `jso_configure(providerconfig, options)` allows you to configure these global settings:
-
-* `debug`: Default value is `false`. If you enable debugging, JSO will log a bunch of things to the console, using `console.log` - if not, JSO will not log anything.
-
-
-## Authorization
-
-This OPTIONAL step involves an early ensurance that all neccessary access tokens have been retreived. 
-
-
-`jso_ensureTokens` can be used to force user authentication before you really need it; and the reason why you would typically do that is to make it easier to recover the state when you return. Typically if you need an OAuth token in the middle of a complex transaction it would be really difficult if the user is redirected away during that transaction, instead you can use `jso_ensureTokens` before starting with the transaction.
-
-Using `jso_ensureTokens` is completely optional, and when you do not want to make sure that you have sufficient tokens before you really need it, then you can call `$.oajax` right away and it will redirect you for authenticationo - if needed.
+* `scopes.request`: Control what scopes are requested in the authorization request.
 
 
 
+## Callback
 
-By doing a call like this early in your code:
+At the endpoint where the OAuth provider is redirecting back the user with the access token response, you need to run the callback(). This allows JSO to collect and parse the response.
 
 ```javascript
-	// Make sure that you have 
-	jso_ensureTokens({
-		"facebook": ["read_stream"],
-		"google": ["https://www.googleapis.com/auth/userinfo.profile"]
-	});
+	jso.callback();
 ```
 
-the library will check its cached tokens, and if it does not have the specified tokens/scopes, it will start a new authorization process.
+Be aware to run the `callback()` function before your *router*, and before `o.getToken()` or `o.ajax()`.
 
-When this code is completed, you know that you have valid tokens for your use cases.
-
-The `jso_ensureTokens` function takes an object as input, with the providerids as keys, and the values are eigther `false` or an array of required scopes. A value of `false` mean that we do not care about scopes, but we want a valid token.
+The redirect_uri may very well be the same page that initates the authorization request.
 
 
 ## OAuth protected data requests
 
-To get data, you eigther use the `jso_getToken("facebook")` function, that returns a valid access token (or `null`), or you may use the `$.oajax()` function.
 
-The `$.oajax()` function works very similar to `$.ajax()` ([see documentation](http://api.jquery.com/jQuery.ajax/)), actually the settings parameters are bypassed to the real `$.ajax()` function.
-
-In addition to the settings properties allowed by `$.ajax()`, these properties are allowed:
-
-* jso_provider: The providerid of the OAuth provider to use.
-* jso_allowia: Allow userinteraction? If you have prepared the tokens, using `jso_ensureTokens()` you might set this value to `false` (default) and it will trow an exception instead of starting a new authorization process.
-* jso_scopes: If this specific call requires one or more scopes, provide it here. It will be used to find a suitable token, if multiple exists.
-
-Here is an example of retrieving the Facebook newsstream using OAuth:
+You may use the `o.ajax()` function to perform OAuth protected API calls. 
 
 ```javascript
-	$.oajax({
-		url: "https://graph.facebook.com/me/home",
-		jso_provider: "facebook",
-		jso_scopes: ["read_stream"],
-		jso_allowia: true,
+	jso.ajax({
+		url: "https://www.googleapis.com/oauth2/v1/userinfo",
+		oauth: {
+			scopes: {
+				request: ["https://www.googleapis.com/auth/userinfo.email"],
+				require: ["https://www.googleapis.com/auth/userinfo.email"]
+			}
+		},
 		dataType: 'json',
 		success: function(data) {
-			console.log("Response (facebook):");
+			console.log("Response (google):");
 			console.log(data);
+			$(".loader-hideOnLoad").hide();
 		}
 	});
 ```
 
-## jQuery or not jQuery
+`o.ajax()` wraps the `$.ajax()` function with one single additional optional option property `oauth`.
 
-If you load jQuery before the JSO library, it will discover and add the `$.oajax` function. However, loading jQuery is optional, and if you do not load jQuery JSO will not complain, but neigther will if offer the easy to use `$.oajax` function.
-
-If you do not use jQuery, you probably want to use the `jso_getToken(providerid, scopes)` function.
-
-```javascript
-	var accesstoken = jso_getToken("facebook", "read_stream");
-
-	var authzheader = "Authorization: Authorization " + accesstoken;
-	// Perform the Cross site AJAX request using this custom header with your
-	// preferred AJAX library.
-```
-
-
-
-## Using JSO With Phonegap
-
-Normal use of JSO involves JSO redirecting to the OAuth authorization endpoint for authentication and authorization, then the user is redirected back to the callback url where JSO autoamtically inspects the hash for an access token, and caches it.
-
-When using JSO with phonegap (or similar libraries), you would not perform a normal redirect, but instead open a *childbrowser*. And when the user returns you would need to tell JSO what URL the childbrowser ended up on.
-
-
-**Register a custom URL redirect handler**
-
-```javascript
-	jso_registerRedirectHandler(function(url) {
-		console.log("About to redirect the user to ", url);
-		console.log("Instead we can do whatever we want, such as opening a child browser");
-
-		// Open a child browser or similar.
-	});
-```
-*Please help! I have not used phonegap my self, and if someone could provide exact code examples for use with phonegap I would appreciate that.*
-
-
-**Tell JSO about the return URL**
-
-Use the following function providing the url of the callback page, including the parameters in the hash: `jso_checkfortoken(providerid, url)`
-
-The provided parameters might be like this: 
-
-* `jso_checkfortoken('facebook', 'https://yourservice.org/callback#accesstoken=lsdkfjldkfj')`
-
-
-
-
-## Some convenient debugging functions
-
-For debugging, open the javascript console. And you might type:
-
-
-```javascript
-	jso_dump();
-```
-
-to list all cached tokens, and 
-
-```javascript
-	jso_wipe();
-```
-
-to remove all tokens.
-
-
-
-## Upgrade
-
-This section will contain useful information if you have been using JSO already, and would like to update to the latest version. API and configuration changes will be listed here.
-
-
-
-
+Currently, only the `scopes` property is included. It adds to the scopes property in the initial provider configuration.
 
 
 

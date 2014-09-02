@@ -1,0 +1,34 @@
+{
+  "name": "jso",
+  "version": "2.0.0",
+  "description": "OAuth 2.0 implementation in Javascript",
+  "main": "src/jso.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreassolberg/jso.git"
+  },
+  "keywords": [
+    "oauth",
+    "authentication",
+    "authorization",
+    "rest",
+    "api",
+    "ajax",
+    "jquery"
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-requirejs": "*"
+  },
+  "author": "Andreas Åkre Solberg",
+  "license": "Simplified BSD Licence http://opensource.org/licenses/BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/andreassolberg/jso/issues"
+  },
+  "homepage": "https://github.com/andreassolberg/jso"
+}

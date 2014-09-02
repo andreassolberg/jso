@@ -1,110 +1,60 @@
-<!doctype html>
-<head>
-	<meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>New UWAP Application</title>
 
-	<title>JSO Demo</title>
+		<meta name="viewport" content="user-scalable=no,width=device-width" />
+		<meta name="description" content="A new UWAP Web Application." />
 
-	<!-- All JavaScript at the bottom, except this Modernizr build.
-			 Modernizr enables HTML5 elements & feature detects for optimal performance.
-			 Create your own custom Modernizr build: www.modernizr.com/download/ -->
+		<link rel='stylesheet' href="css/style.css" rel="stylesheet" />
 
-	<script src="js/libs/json2.js"></script>
-	<!-- https://github.com/wojodesign/local-storage-js -->
-	<script src="js/libs/localstorage.js"></script>
-	<script src="js/libs/modernizr-2.5.3.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<style type="text/css">
+			body {
+				padding-top: 60px;
+				padding-bottom: 40px;
+			}
+		</style>
 
-	<script src="../jso.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
+		<!-- script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script -->
+		<script type="text/javascript" data-main="js/main" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.4/require.min.js"></script>
+	</head>
 
-
-			// Add configuration for one or more providers.
-			jso_configure({
-				"uwap": {
-					client_id: "-----",
-					redirect_uri: "http://localhost/~andreas/jso/demo/",
-					authorization: "http://proxydemo.app.bridge.uninett.no/_/oauth/auth.php/authorization"
-				}
-				,"facebook": {
-					client_id: "-----",
-					redirect_uri: "http://localhost/~andreas/jso/demo/",
-					authorization: "https://www.facebook.com/dialog/oauth",
-					presenttoken: "qs"
-				},
-				"linkedin": {
-					client_id: "-----",
-					redirect_uri: "http://localhost/~andreas/jso/demo/",
-					authorization: "https://www.linkedin.com/oauth"
-				},
-				"google": {
-					client_id: "541950296471-l3c03llam468opj7gljtjav8v13pi0mf.apps.googleusercontent.com",
-					redirect_uri: "http://bridge.uninett.no/jso/jso/demo/index.html",
-					authorization: "https://accounts.google.com/o/oauth2/auth",
-					isDefault: true
-				},
-				"ibm": {
-					client_id: "-----.googleusercontent.com",
-					redirect_uri: "http://localhost/~andreas/jso/demo/",
-					authorization: "https://accounts.google.com/o/oauth2/auth"
-				},
-				"instagram": {
-					client_id: "xxx",
-					redirect_uri: "http://localhost/~andreas/jso/demo/",
-					authorization: "https://instagram.com/oauth/authorize/",
-					scope: ["basic", "likes"]
-				}
-			});
-
-			// if (!confirm('Continue')) return;
-
-			// Make sure that you have 
-			jso_ensureTokens({
-				// "facebook": ["read_stream"],
-				"google": ["https://www.googleapis.com/auth/userinfo.profile"],
-				// "instagram": ["basic", "likes"]
-			});
-
-			// This dumps all cached tokens to console, for easyer debugging.
-			jso_dump();
-
-			// Perform a data request
-			// $.oajax({
-			// 	url: "https://api.instagram.com/v1/subscriptions",
-			// 	jso_provider: "instagram", // Will match the config identifier
-			// 	jso_scopes: false, // List of scopes (OPTIONAL)
-			// 	dataType: 'json',
-			// 	success: function(data) {
-			// 		console.log("Response (bridge):");
-			// 		console.log(data);
-			// 	},
-			// 	error: function() {
-			// 		console.log("ERROR Custom callback()");
-			// 	}
-			// });
-
-			// Perform a data request
-			$.oajax({
-				url: "https://www.googleapis.com/oauth2/v1/userinfo",
-				jso_provider: "google",
-				jso_allowia: true,
-				jso_scopes: ["https://www.googleapis.com/auth/userinfo.profile"],
-				dataType: 'json',
-				success: function(data) {
-					console.log("Response (google):");
-					console.log(data);
-				}
-			});
-
-			// jso_wipe();
-
-		});
-	</script>
-
-</head>
-<body>
+	<body>
+		<div class="loader-hideOnLoad" stlye="margin: 20%">
+			<!-- <p><img src="/img/ajax-loader.gif" /> Loading application...</p> -->
+		</div>
 
 
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="brand" href="#">New UWAP Application</a>
+					<div class="nav-collapse collapse">
+						<ul class="nav">
+							<li class="active"><a href="#">Home</a></li>
+							<li><a href="#about">About</a></li>
+							<li><a href="#contact">Contact</a></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
 
-</body>
+		<div class="container">
+
+			<h1>JSO Demo</h1>
+			<p>OAuth 2.0 library.</p>
+
+
+			<div id="main"></div>
+		</div> <!-- /container -->
+		
+
+	</body>
 </html>
