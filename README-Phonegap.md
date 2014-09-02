@@ -21,6 +21,11 @@ To create a new App
 	cordova platform add ios
 
 
+Install the inappbrowser using the cordova CLI:
+
+	cordova plugin add org.apache.cordova.inappbrowser
+
+
 ## Two options
 
 There is two options of how to make the hybrid app work with a web-based OAuth 2.0 provider.
@@ -32,10 +37,6 @@ There is two options of how to make the hybrid app work with a web-based OAuth 2
 
 ## Using JSO with inappbrowser
 
-
-Install the inappbrowser using the cordova CLI:
-
-	cordova plugin add org.apache.cordova.inappbrowser
 
 
 Load JSO as normal, and jQuery if needed.
