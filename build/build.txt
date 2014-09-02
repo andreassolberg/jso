@@ -1,7 +1,7 @@
 
 jso.js
 ----------------
-/var/www/jso/node_modules/grunt-requirejs/node_modules/almond/almond.js
+/Users/andreas/wc/jso/node_modules/grunt-requirejs/node_modules/almond/almond.js
 utils.js
 store.js
 Config.js

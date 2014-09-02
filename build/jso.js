@@ -799,11 +799,13 @@ define('Config',[],function() {
 	return Config;
 });
 /**
- * JSO - Javascript JSO Library
- * 		Version 2.0
- *   	UNINETT AS - http://uninett.no
+ * JSO - Javascript OAuth Library
+ * 	Version 2.0
+ *  UNINETT AS - http://uninett.no
+ *  Author: Andreas Åkre Solberg <andreas.solberg@uninett.no>
+ *  Licence: 
  *   	
- * Documentation available at: https://github.com/andreassolberg/jso
+ *  Documentation available at: https://github.com/andreassolberg/jso
  */
 
 define('jso',['require','exports','module','./store','./utils','./Config'],function(require, exports, module) {
@@ -821,6 +823,10 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 	var utils = require('./utils');
 	var Config = require('./Config');
 
+
+
+
+
 	var JSO = function(config) {
 
 		this.config = new Config(default_config, config);
@@ -828,9 +834,86 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 
 		JSO.instances[this.providerID] = this;
 
+		this.callbacks = {};
+
+		this.callbacks.redirect = JSO.redirect;
+
 		// console.log("Testing configuration object");
 		// console.log("foo.bar.baz (2,false)", this.config.get('foo.bar.baz', 2 ) );
 		// console.log("foo.bar.baz (2,true )", this.config.get('foo.bar.baz', 2, true ) );
+	};
+
+	JSO.internalStates = [];
+	JSO.instances = {};
+	JSO.store = store;
+
+	console.log("RESET internalStates array");
+
+
+	JSO.enablejQuery = function($) {
+		JSO.$ = $;
+	};
+
+
+	JSO.redirect = function(url, callback) {
+		window.location = url;
+	};
+
+	JSO.prototype.inappbrowser = function(params) {
+		var that = this;
+		return function(url, callback) {
+
+
+	        var onNewURLinspector = function(ref) {
+	        	return function(inAppBrowserEvent) {
+
+		            //  we'll check the URL for oauth fragments...
+		            var url = inAppBrowserEvent.url;
+		            utils.log("loadstop event triggered, and the url is now " + url);
+
+		            if (that.URLcontainsToken(url)) {
+		                // ref.removeEventListener('loadstop', onNewURLinspector);
+		                setTimeout(function() {
+		                	ref.close();
+		                }, 500);
+		                
+
+			            that.callback(url, function() {
+			                // When we've found OAuth credentials, we close the inappbrowser...
+			                utils.log("Closing window ", ref);
+			                if (typeof callback === 'function') callback();
+			            });	            	
+		            }
+		            
+		        };
+		    };
+
+			var target = '_blank';
+			if (params.hasOwnProperty('target')) {
+				target = params.target;
+			}
+			var options = {};
+
+			utils.log("About to open url " + url);
+
+			var ref = window.open(url, target, options);
+			utils.log("URL Loaded... ");
+	        ref.addEventListener('loadstart', onNewURLinspector(ref));
+	        utils.log("Event listeren ardded... ", ref);
+	        
+
+	        // Everytime the Phonegap InAppBrowsers moves to a new URL,
+	        
+
+
+		};
+	};
+
+	JSO.prototype.on = function(eventid, callback) {
+		if (typeof eventid !== 'string') throw new Error('Registering triggers on JSO must be identified with an event id');
+		if (typeof callback !== 'function') throw new Error('Registering a callback on JSO must be a function.');
+
+		this.callbacks[eventid] = callback;
 	};
 
 
@@ -852,14 +935,29 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 	};
 
 
-	JSO.internalStates = [];
-	JSO.instances = {};
-	JSO.store = store;
 
-	JSO.enablejQuery = function($) {
-		JSO.$ = $;
+
+	/**
+	 * Do some sanity checking whether an URL contains a access_token in an hash fragment.
+	 * Used in URL change event trackers, to detect responses from the provider.
+	 * @param {[type]} url [description]
+	 */
+	JSO.prototype.URLcontainsToken = function(url) {
+		// If a url is provided 
+		if (url) {
+			// utils.log('Hah, I got the url and it ' + url);
+			if(url.indexOf('#') === -1) return false;
+			h = url.substring(url.indexOf('#'));
+			// utils.log('Hah, I got the hash and it is ' +  h);
+		}
+
+		/*
+		 * Start with checking if there is a token in the hash
+		 */
+		if (h.length < 2) return false;
+		if (h.indexOf("access_token") === -1) return false;
+		return true;
 	};
-
 
 	/**
 	 * Check if the hash contains an access token. 
@@ -878,7 +976,7 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 			state,
 			instance;
 
-		utils.log("JSO.prototype.callback()");
+		utils.log("JSO.prototype.callback() " + url + " callback=" + typeof callback);
 
 		// If a url is provided 
 		if (url) {
@@ -964,19 +1062,32 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 
 		utils.log(atoken);
 
+		utils.log("Looking up internalStates storage for a stored callback... ", "state=" + atoken.state, JSO.internalStates);
+
 		if (JSO.internalStates[atoken.state] && typeof JSO.internalStates[atoken.state] === 'function') {
-			// log("InternalState is set, calling it now!");
-			JSO.internalStates[atoken.state]();
+			utils.log("InternalState is set, calling it now!");
+			JSO.internalStates[atoken.state](atoken);
 			delete JSO.internalStates[atoken.state];
 		}
 
 
+		utils.log("Successfully obtain a token, now call the callback, and may be the window closes", callback);
+
 		if (typeof callback === 'function') {
-			callback();
+			callback(atoken);
 		}
 
 		// utils.log(atoken);
 
+	};
+
+	JSO.prototype.dump = function() {
+
+		var txt = '';
+		var tokens = store.getTokens(this.providerID);
+		txt += 'Tokens: ' + "\n" + JSON.stringify(tokens, undefined, 4) + '\n\n';
+		txt += 'Config: ' + "\n" + JSON.stringify(this.config, undefined, 4) + "\n\n";
+		return txt;
 	};
 
 	JSO.prototype._getRequestScopes = function(opts) {
@@ -1021,6 +1132,27 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 
 	};
 
+
+	// exp.jso_ensureTokens = function (ensure) {
+	// 	var providerid, scopes, token;
+	// 	for(providerid in ensure) {
+	// 		scopes = undefined;
+	// 		if (ensure[providerid]) scopes = ensure[providerid];
+	// 		token = store.getToken(providerid, scopes);
+
+	// 		utils.log("Ensure token for provider [" + providerid + "] ");
+	// 		utils.log(token);
+
+	// 		if (token === null) {
+	// 			jso_authrequest(providerid, scopes);
+	// 		}
+	// 	}
+
+
+	// 	return true;
+	// }
+
+
 	JSO.prototype._authorize = function(callback, opts) {
 		var 
 			request,
@@ -1031,7 +1163,7 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 		var client_id = this.config.get('client_id', null, true);
 
 		utils.log("About to send an authorization request to this entry:", authorization);
-		console.log("Options", opts);
+		utils.log("Options", opts, "callback", callback);
 
 
 		request = {
@@ -1039,7 +1171,10 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 			"state": utils.uuid()
 		};
 
+
+
 		if (callback && typeof callback === 'function') {
+			utils.log("About to store a callback for later with state=" + request.state, callback);
 			JSO.internalStates[request.state] = callback;
 		}
 
@@ -1059,7 +1194,7 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 			request.scope = utils.scopeList(scopes);
 		}
 
-		console.log("DEBUG REQUEST"); console.log(request);
+		utils.log("DEBUG REQUEST"); utils.log(request);
 
 		authurl = utils.encodeURL(authorization, request);
 
@@ -1079,17 +1214,17 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 		utils.log(JSON.parse(JSON.stringify(request)));
 
 		store.saveState(request.state, request);
-		this.gotoAuthorizeURL(authurl);
+		this.gotoAuthorizeURL(authurl, callback);
 	};
 
 
 	JSO.prototype.gotoAuthorizeURL = function(url, callback) {
 
-		prompt('Authorization url', url);
-	
-		setTimeout(function() {
-			window.location = url;
-		}, 2000);		
+
+		if (!this.callbacks.redirect || typeof this.callbacks.redirect !== 'function') 
+			throw new Error('Cannot redirect to authorization endpoint because of missing redirect handler');
+
+		this.callbacks.redirect(url, callback);
 
 	};
 
@@ -1329,6 +1464,7 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 
 
 });
+
     //The modules for your project will be inlined above
     //this snippet. Ask almond to synchronously require the
     //module value for 'main' here and return it as the
