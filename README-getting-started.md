@@ -52,8 +52,6 @@ If you would like to fork the library, modify or contribute to development, you 
 To start using JSO, you need to initialize a new JSO object with configuration for an OAuth 2.0 Provider:
 
 ```javascript
-	var JSO = require("bower/jso/src/jso");
-
 	var jso = new JSO({
 		providerID: "google",
 		client_id: "541950296471.apps.googleusercontent.com",

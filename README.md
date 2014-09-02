@@ -1,7 +1,7 @@
 # JSO – OAuth 2.0 Client with Javascript
 
 
-[Documentation: Getting Started](README-getting-started.md)
+* [Documentation: Getting Started](README-getting-started.md)
 
 
 OAuth 2.0 from your javascript client web applicaiton or mobile application in a secure way. JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company working for educational and research institutions in Norway.
