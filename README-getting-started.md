@@ -72,6 +72,7 @@ Here are more options to JSO:
 * `isDefault`: Some OAuth providers does not support the `state` parameter. When this parameter is missing, the consumer does not which provider that is sending the access_token. If you only provide one provider config, or set isDefault to `true` for one of them, the consumer will assume this is the provider that sent the token.
 * `scope`: For providers that does not support `state`: If state was not provided, and default provider contains a scope parameter we assume this is the one requested... Set this as the same list of scopes that you provide to `ensure_tokens`.
 * `scopes.request`: Control what scopes are requested in the authorization request.
+* `debug`: If debug is set to true, verbose logging will make it easier to debug problems with JSO.
 
 
 ## Cathing the response when the user is returning

@@ -1,19 +1,10 @@
 # Using JSO with Phonegap and ChildBrowser
 
 
-**WARNING: This version is outdated. Will be updated soon....**
-
-
-
-Using JSO to perform OAuth 2.0 authorization in WebApps running on mobile devices in hybrid environment is an important deployment scenario for JSO.
-
 Here is a detailed instruction on setting up JSO with Phonegap for iOS and configure OAuth 2.0 with Google. You may use it with Facebook or other OAuth providers as well.
 
 
-# Preparations
-
-# * Install XCode from App Store, and iOS development kit
-# * Install [Phonegap 2.0, Cordova 2.0](http://phonegap.com/download)
+## Preparations
 
 
 Install Cordova CLI:
@@ -21,10 +12,7 @@ Install Cordova CLI:
 	sudo npm install -g cordova
 
 
-
-
-
-# Setup App
+## Setup an App
 
 To create a new App
 
@@ -33,162 +21,139 @@ To create a new App
 	cordova platform add ios
 
 
+## Two options
+
+There is two options of how to make the hybrid app work with a web-based OAuth 2.0 provider.
+
+* Using inappbrowser to load the login and authorization window as a web view within your app.
+* Opening the login and authorization endpoint in the system browser, and catching the response by letting the OAuth provider redirecting to a custom URL scheme, such as `jsodemo://`.
 
 
-# Install ChildBrowser
 
-The original ChildBrowser plugin is available here.
-
-* <https://github.com/purplecabbage/phonegap-plugins/tree/master/iPhone/ChildBrowser>
-
-However, it is *not* compatible with Cordova 2.0. Instead, you may use this fork of ChildBrowser which should be working with Cordova 2.0:
-
-* <https://github.com/Shereef/ChildBrowserOnCordova200>
-
-What you need to do is to copy these files:
-
-* <https://github.com/Shereef/ChildBrowserOnCordova200/tree/master/ChildBrowserOnCordova200/Plugins>
-
-in to your WebApp project area, by using drag and drop into the Plugins folder in XCode.
-
-Now you need to edit the file found in ``Resources/Cordova.plist`` found in your WebApp project area.
-
-In this file you need to add one array entry with '*' into ExternalHosts, and two entries into Plugins:
-
-* ChildBrowser -> ChildBrowser.js
-* ChildBrowserCommand -> ChildBrowserCommand
-
-as seen on the screenshot.
+## Using JSO with inappbrowser
 
 
-![](http://clippings.erlang.no/ZZ6D3C032F.jpg)
+Install the inappbrowser using the cordova CLI:
+
+	cordova plugin add org.apache.cordova.inappbrowser
 
 
-# Setting up your WebApp with ChildBrowser
+Load JSO as normal, and jQuery if needed.
 
+	// Hand over jQuery to JSO, to allow usage of the ajax()-wrapper.
+	JSO.enablejQuery($);
 
-I'd suggest to test and verify that you get ChildBrowser working before moving on to the OAuth stuff.
+	var jso = new JSO({
+		providerId: "feideconnect",
+		client_id: "42934c73-6fae-4507-92a4-c67f87923aa9",
+		redirect_uri: "https://static.uwap.uninettlabs.no/oauth-oob.html",
+		authorization: "https://auth.uwap.uninettlabs.no/oauth/authorization"
+	});
 
-In your ``index.html`` file try this, and verify using the Simulator.
+The `redirect_uri` endpoint is the URL that the user will be redirected back to with the access token after successfully login, and authorization. In the case with *inappbrowser*, this page typically can be an local or online page that is nearly empty. 
 
-```html
-<script type="text/javascript" charset="utf-8" src="cordova-2.0.0.js"></script>
-<script type="text/javascript" charset="utf-8" src="ChildBrowser.js"></script>
-<script type="text/javascript">
+JSO will be configured to automatically monitor the URLs that changes within the inappbrowser, and automatically consume an access token and close the window, when appropriate.
 
-	var deviceready = function() {
-		if(window.plugins.childBrowser == null) {
-			ChildBrowser.install();
-		}
-		window.plugins.childBrowser.showWebPage("http://google.com");
-	};
+The rest of the code will be after the onDeviceReady event:
 
-	document.addEventListener('deviceready', this.deviceready, false);
+```javascript
+	var onReady = function() {
 
-</script>
-```
+		// When JSO want to redirect, we'll make use of phonegap inappbrowser plugin.
+		jso.on('redirect', jso.inappbrowser({"target": "_blank"}) );
 
-# Setting up JSO
-
-Download the latest version of JSO:
-
-* <https://github.com/andreassolberg/jso>
-
-The documentation on JSO is available there as well.
-
-
-The callback URL needs to point somewhere, and one approach would be to put a callback HTML page somewhere, it does not really matter where, although a host you trust. And put a pretty blank page there:
-
-
-```html
-<!doctype html>
-<html>
-	<head>
-		<title>OAuth Callback endpoint</title>
-		<meta charset="utf-8" />
-	</head>
-	<body>
-		Processing OAuth response...
-	</body>
-</html>
-```
-
-Now, setup your application index page. Here is a working example:
-
-```html
-<script type="text/javascript" charset="utf-8" src="cordova-2.0.0.js"></script>
-<script type="text/javascript" charset="utf-8" src="ChildBrowser.js"></script>
-<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
-<script type="text/javascript" charset="utf-8" src="jso/jso.js"></script>
-<script type="text/javascript">
-
-	var deviceready = function() {
-
-		var debug = true;
-
-		/*
-		 * Setup and install the ChildBrowser plugin to Phongap/Cordova.
-		 */
-		if(window.plugins.childBrowser == null) {
-			ChildBrowser.install();
-		}
-
-		// Use ChildBrowser instead of redirecting the main page.
-		jso_registerRedirectHandler(window.plugins.childBrowser.showWebPage);
-
-		/*
-		 * Register a handler on the childbrowser that detects redirects and
-		 * lets JSO to detect incomming OAuth responses and deal with the content.
-		 */
-		window.plugins.childBrowser.onLocationChange = function(url){
-			url = decodeURIComponent(url);
-			console.log("Checking location: " + url);
-			jso_checkfortoken('facebook', url, function() {
-				console.log("Closing child browser, because a valid response was detected.");
-				window.plugins.childBrowser.close();
-			});
-		};
-
-		/*
-		 * Configure the OAuth providers to use.
-		 */
-		jso_configure({
-			"facebook": {
-				client_id: "myclientid",
-				redirect_uri: "https://myhost.org/callback.html",
-				authorization: "https://www.facebook.com/dialog/oauth",
-				presenttoken: "qs"
-			}
-		}, {"debug": debug});
-
-		// For debugging purposes you can wipe existing cached tokens...
-		// jso_wipe();
-		
-		// jso_dump displays a list of cached tokens using console.log if debugging is enabled.
-		jso_dump();
-
-		// Perform the protected OAuth calls.
-		$.oajax({
-			url: "https://graph.facebook.com/me/home",
-			jso_provider: "facebook",
-			jso_scopes: ["read_stream"],
-			jso_allowia: true,
+		jso.ajax({
+			url: "https://api.uwap.uninettlabs.no/userinfo",
+			oauth: {
+				scopes: {
+					request: ["userinfo", "longterm"],
+					require: ["userinfo"]
+				}
+			},
 			dataType: 'json',
 			success: function(data) {
-				console.log("Response (facebook):");
-				console.log(data);
+				console.log("Response (data):", data);
+				$("#out").empty().append( JSON.stringify(data, undefined, 3) );
 			}
 		});
 
 	};
-
-	document.addEventListener('deviceready', this.deviceready, false);
-
-</script>
+	document.addEventListener('deviceready', onReady, false);
 ```
 
+The `jso.on('redirect')` allows us to set the redirect handler to open inappbrowser instead of redirecting the app it self, when JSO wants to send the user to the authorization endpoint.
 
 
+
+
+## Using JSO with custom URL scheme
+
+
+Cordova SHOULD be able to support custom url schems out of the box. However I did not make that to work.
+
+Instead, I used the third party *LaunchMyApp* plugin, which works as expected. I registered the `jsodemo` scheme with the following command:
+
+	cordova plugin add https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin.git --variable URL_SCHEME=jsodemo
+
+
+
+We load the library as usual, and configure JSO:
+
+	JSO.enablejQuery($);
+
+	var jso = new JSO({
+		providerId: "feideconnect",
+		client_id: "42934c73-6fae-4507-92a4-c67f87923aa9",
+		redirect_uri: "jsodemo://",
+		authorization: "https://auth.uwap.uninettlabs.no/oauth/authorization"
+	});
+
+Notice the `redirect_uri` to be configured as `jsodemo://`, matching the custom URL scheme.
+
+First we need to define an `handleOpenURL` handler very early and with a global function name. I did it like this:
+
+```html
+	<script type="text/javascript">
+	function handleOpenURL(url) {
+	    window._handleOpenURL = url;
+	}
+	</script>
+```
+
+I stored the URL in a global property, because we cannot do anything with it before all the libraries are loaded properly.
+
+Now, after the library is loaded, after the onDeviceReady, we use the inappbrowser plugin to handle redirects to system browser as well, altough there are probably other options of how to do that.
+
+Notice in particular that we add a eventlistener with `resume` that is called after the user is sent to the app using the custom url scheme. In this event handler we checks the opened URL for access tokens using the `jso.callback()` function.
+
+```javascript
+	var onReady = function() {
+
+		// When JSO want to redirect, we'll make use of phonegap inappbrowser plugin.
+		jso.on('redirect', jso.inappbrowser({"target": "_system"}) );
+
+		window.document.addEventListener("resume", function(e) {
+			jso.callback(window._handleOpenURL);
+		}, false);
+
+		jso.ajax({
+			url: "https://api.uwap.uninettlabs.no/userinfo",
+			oauth: {
+				scopes: {
+					request: ["userinfo", "longterm"],
+					require: ["userinfo"]
+				}
+			},
+			dataType: 'json',
+			success: function(data) {
+				console.log("Response (data):", data);
+				$("#out").empty().append( JSON.stringify(data, undefined, 3) );
+			}
+		});
+
+	};
+	document.addEventListener('deviceready', onReady, false);
+```
 
 
 
