@@ -1,5 +1,6 @@
 # JSO – OAuth 2.0 Client with Javascript
 
+[![Build Status](https://travis-ci.org/andreassolberg/jso.svg?branch=master)](https://travis-ci.org/andreassolberg/jso)
 
 * [Documentation: Getting Started](README-getting-started.md)
 
