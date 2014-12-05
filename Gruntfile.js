@@ -33,14 +33,29 @@ module.exports = function(grunt) {
 					preserveLicenseComments: false
 				}
 			}
+		},
+		jshint: {
+			// define the files to lint
+			files: ['gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
+			// configure JSHint (documented at http://www.jshint.com/docs/)
+			options: {
+				// more options here if you want to override JSHint defaults
+				globals: {
+					jQuery: true,
+					console: true,
+					module: true
+				}
+			}
 		}
 	});
 
 
 	// grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-requirejs');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 
-	// Default task(s).
-	grunt.registerTask('default', ['requirejs']);
+	grunt.registerTask('travis', ['requirejs', 'jshint']);
+	grunt.registerTask('default', ['requirejs', 'jshint']);
+
 
 };
