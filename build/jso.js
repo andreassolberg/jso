@@ -471,9 +471,11 @@ define('utils',['require','exports','module'],function(require, exports, module)
 			q = qs,
 			urlParams = {};
 
+		/* jshint ignore:start */
 		while (e = r.exec(q)) {
 		   urlParams[d(e[1])] = d(e[2]);
-		}
+		};
+		/* jshint ignore:end */
 
 		return urlParams;
 	};
