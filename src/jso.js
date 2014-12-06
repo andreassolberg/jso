@@ -295,8 +295,8 @@ define(function(require, exports, module) {
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
 		 */
-		if (this.config.scopes && this.config.scopes.request) {
-			for(i = 0; i < this.config.scopes.request.length; i++) scopes.push(this.config.scopes.request[i]);
+		if (this.config.get('scopes') && this.config.get('scopes').request) {
+			for(i = 0; i < this.config.get('scopes').request.length; i++) scopes.push(this.config.get('scopes').request[i]);
 		}
 		if (opts && opts.scopes && opts.scopes.request) {
 			for(i = 0; i < opts.scopes.request.length; i++) scopes.push(opts.scopes.request[i]);
@@ -309,8 +309,8 @@ define(function(require, exports, module) {
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
 		 */
-		if (this.config.scopes && this.config.scopes.require) {
-			for(i = 0; i < this.config.scopes.require.length; i++) scopes.push(this.config.scopes.require[i]);
+		if (this.config.get('scopes') && this.config.get('scopes').require) {
+			for(i = 0; i < this.config.get('scopes').require.length; i++) scopes.push(this.config.get('scopes').require[i]);
 		}
 		if (opts && opts.scopes && opts.scopes.require) {
 			for(i = 0; i < opts.scopes.require.length; i++) scopes.push(opts.scopes.require[i]);
