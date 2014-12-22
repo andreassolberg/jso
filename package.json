@@ -25,7 +25,8 @@
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-nodeunit": "~0.4.1",
     "grunt-requirejs": "*",
-    "grunt-contrib-qunit": "*"
+    "grunt-contrib-qunit": "*",
+    "bower": "*"
   },
   "author": "Andreas Åkre Solberg",
   "license": "Simplified BSD Licence http://opensource.org/licenses/BSD-2-Clause",
