@@ -46,15 +46,19 @@ module.exports = function(grunt) {
 					module: true
 				}
 			}
-		}
+		},
+        qunit: {
+            files: ['test/index.html']
+        }
 	});
 
 
 	// grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-requirejs');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-qunit');
 
-	grunt.registerTask('test', ['requirejs', 'jshint']);
+	grunt.registerTask('test', ['requirejs', 'jshint', 'qunit']);
 	grunt.registerTask('default', ['requirejs', 'jshint']);
 
 

@@ -26,9 +26,8 @@
     "tests"
   ],
   "devDependencies": {
-    "almond": "~0.2.9"
-    },
-  "dependencies": {
-
-  }
+    "almond": "~0.2.9",
+    "qunit": "~1.16.0"
+  },
+  "dependencies": {}
 }
