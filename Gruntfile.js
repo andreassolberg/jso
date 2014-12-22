@@ -54,7 +54,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-requirejs');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
-	grunt.registerTask('travis', ['requirejs', 'jshint']);
+	grunt.registerTask('test', ['requirejs', 'jshint']);
 	grunt.registerTask('default', ['requirejs', 'jshint']);
 
 

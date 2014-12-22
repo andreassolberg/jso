@@ -4,7 +4,7 @@
   "description": "OAuth 2.0 implementation in Javascript",
   "main": "src/jso.js",
   "scripts": {
-    "test": "node_modules/grunt-cli/bin/grunt travis --verbose"
+    "test": "node_modules/grunt-cli/bin/grunt test --verbose"
   },
   "repository": {
     "type": "git",
