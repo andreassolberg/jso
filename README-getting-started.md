@@ -75,7 +75,7 @@ Here are more options to JSO:
 * `debug`: If debug is set to true, verbose logging will make it easier to debug problems with JSO.
 
 
-## Cathing the response when the user is returning
+## Catching the response when the user is returning
 
 
 On the page (usually the same) that the user is sent back to after authorization, typically the `redirect_uri` endpoint, you would need to call the `callback`-function on JSO to tell it to check for response parameters:
