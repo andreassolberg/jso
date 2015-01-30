@@ -1,6 +1,6 @@
 {
   "name": "jso",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "OAuth 2.0 implementation in Javascript",
   "main": "src/jso.js",
   "scripts": {
