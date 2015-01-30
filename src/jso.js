@@ -332,6 +332,13 @@ define(function(require, exports, module) {
 
 	};
 
+	JSO.prototype.checkToken = function(opts) {
+		// var scopesRequest  = this._getRequestScopes(opts);
+		
+		var scopesRequire = this._getRequiredScopes(opts);
+		return store.getToken(this.providerID, scopesRequire);
+	};
+
 
 	// exp.jso_ensureTokens = function (ensure) {
 	// 	var providerid, scopes, token;
