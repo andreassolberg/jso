@@ -5,7 +5,7 @@
 * [Documentation: Getting Started](README-getting-started.md)
 
 
-OAuth 2.0 from your javascript client web applicaiton or mobile application in a secure way. JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company working for educational and research institutions in Norway.
+OAuth 2.0 from your javascript client web application or mobile application in a secure way. JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company working for educational and research institutions in Norway.
 
 See also our javascript API mock-up tool <http://httpjs.net>.
 
@@ -38,9 +38,9 @@ The software is dual-licenced with *The GNU Lesser General Public License, versi
 * Supports the `Bearer` access token type.
 * No server component needed.
 * Adds an wrapper for to use `$.ajax()` as you're used to.
-* Can handle multilple providers at once.
+* Can handle multiple providers at once.
 * Uses *HTML 5.0 localStorage* to cache Access Tokens. You do not need to implement a storage.
-* Can prefetch all needed tokens with sufficient scopes, to start with, then tokens can be used for reqiests later. This way, you can be sure that you would not need to redirect anywhere in your business logic, because you would need to refresh an expired token.
+* Can prefetch all needed tokens with sufficient scopes, to start with, then tokens can be used for requests later. This way, you can be sure that you would not need to redirect anywhere in your business logic, because you would need to refresh an expired token.
 * Excellent scope support. 
 * Caches and restores the hash, your application will not loose state when sending the user to the authorization endpoint.
 
