@@ -46,6 +46,7 @@ define(function(require, exports, module) {
 	JSO.internalStates = [];
 	JSO.instances = {};
 	JSO.store = store;
+	JSO.utils = utils;
 
 	console.log("RESET internalStates array");
 
