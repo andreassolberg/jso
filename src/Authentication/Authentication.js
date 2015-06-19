@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 				"onLoad": "passiveIFrame"
 			};
 
-			this.authenticated = null;
+			this._authenticated = null;
 			this.user = null;
 
 			this.config = $.extend({}, defaults, config);
@@ -72,18 +72,31 @@ define(function(require, exports, module) {
 					// console.error("LOADED LOADED LOADED LOADED LOADED LOADED LOADED ");
 
 					if (!that.isAuthenticated()) {
-						that.emit("stateChange", that.authenticated, that.user);
+						that.emit("stateChange", that._authenticated, that.user);
 					}
 
 				});
 
 
-
-
 		},
-
+		"getConfig": function() {
+			return this.config;
+		},
 		"isAuthenticated": function() {
-			return this.authenticated;
+			return this._authenticated;
+		},
+		"onAuthenticated": function() {
+			var that = this;
+			return Promise.resolve().then(function() {
+				if (that.isAuthenticated()) {
+					return true;
+				}
+				return new Promise(function(resolve, reject) {
+					that.on("stateChange", function(auth, user) {
+						if (auth) {resolve();}
+					});
+				});
+			});
 		},
 
 		"checkAuthenticationCached": function() {
@@ -92,7 +105,7 @@ define(function(require, exports, module) {
 
 
 				// Check if this object is already authenticated..
-				if (that.authenticated) {
+				if (that.isAuthenticated()) {
 					return true;
 				}
 
@@ -135,8 +148,8 @@ define(function(require, exports, module) {
 					throw new Error('Wrong audience for this token.');
 				}
 				that.user = res.user;
-				that.authenticated = true;
-				that.emit("stateChange", that.authenticated, that.user);
+				that._authenticated = true;
+				that.emit("stateChange", that._authenticated, that.user);
 
 				that.authenticationInProgress = false;
 				return res;
@@ -189,8 +202,8 @@ define(function(require, exports, module) {
 
 			this.jso.wipeTokens();
 			this.user = null;
-			this.authenticated = false;
-			this.emit("stateChange", this.authenticated, this.user);
+			this._authenticated = false;
+			this.emit("stateChange", this._authenticated, this.user);
 
 		}
 
