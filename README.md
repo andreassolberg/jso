@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/andreassolberg/jso.svg?branch=master)](https://travis-ci.org/andreassolberg/jso)
 
-* [Documentation: Getting Started](README-getting-started.md)
+* [JSO Documentation](http://oauth.no/jso/)
 
 
 OAuth 2.0 from your javascript client web application or mobile application in a secure way. JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company working for educational and research institutions in Norway.
