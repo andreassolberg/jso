@@ -23,58 +23,70 @@ define(function(require, exports, module) {
 		
 		"init": function(url) {
 			var that = this;
-
-			this.timeout = 5000;
-			this.callback = null;
-			this.isCompleted = false;
-
-			this.iframe = $('<iframe class="jso_messenger_iframe" style="display: none;" src="' + url + '"></iframe>')
-				.on('load', function() {
-					try {
-						var url = this.contentWindow.window.location.href;
-						that._completed(url);
-						
-					} catch(err) {
-						// console.error("Security exception", err);
-					}
-
-				});
+			// this.callback = null;
+			// this.isCompleted = false;
 
 			this._super(url);
 
 		},
 
-		"_cleanup": function() {
-			this.iframe.remove();
-		},
-
-		"_completed": function(url) {
-			var that = this;
-			if (!that.isCompleted) {
-				if (that.callback && typeof that.callback === 'function') {
-					that.callback(url);
-				}
-				this.isCompleted = true;
-				this._cleanup();
-			}
-		},
-
 		"execute": function() {
 			var that = this;
+
+			console.error("Popup loaded...");
+
+
+			/*
+			* In the popup's scripts, running on <http://example.org>:
+			*/
+
+			
+
+
 			var p = new Promise(function(resolve, reject) {
-				that.callback = resolve;
-				$("body").prepend(that.iframe);
-				setTimeout(function() {
-					if (!that.isCompleted) {
-						that.isCompleted = true;
-						that._cleanup();
-						reject(new Error("Loading iframe timed out"));	
-					}
-				}, that.timeout);
+
+				window.addEventListener("message", function(event) {
+					console.log("Sent a message to event.origin " + event.origin + " and got the following in response:");
+					console.log("<em>" + event.data + "</em>");
+
+			    	var url = newwindow.location.href;
+			    	console.error("Popup location is ", url, newwindow.location);
+			        resolve(url);
+
+				});
+
+
+				
+				window.popupCompleted = function() {
+			    	var url = newwindow.location.href;
+			    	console.error("Popup location is ", url, newwindow.location);
+			        resolve(url);
+				};
+
+				var newwindow = window.open(that.url, 'uwap-auth', 'height=600,width=800');
+				if (window.focus) {
+					newwindow.focus();
+				}
+
+				// newwindow.onunload = function() {
+			 //    	var url = newwindow.location.href;
+			 //    	console.error("Popup location is ", url, newwindow.location);
+			 //        resolve(url);
+				// }
+					
+				// newwindow.onbeforeunload = function(){ 
+
+			 //    	// var url = newwindow.location.href;
+			 //    	// console.error("Popup location is ", url, newwindow.location);
+			 //     //    resolve(url);
+
+				// }
+
+
 			});
 			return p;
 		}
-		
+
 	});
 
 

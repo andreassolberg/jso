@@ -19,6 +19,7 @@ define(function(require, exports, module) {
 				"client_id"		: "c148bc3f-6b15-47d7-ad23-3c36677eb8b5",
 				"redirect_uri"	: "https://min.dev.feideconnect.no/index.dev.html",
 				"redirect_uri_passive"	: "https://min.dev.feideconnect.no/passiveCallback.html",
+				"redirect_uri_popup"	: "https://min.dev.feideconnect.no/popupCallback.html",
 
 				"authorization"	: "https://auth.dev.feideconnect.no/oauth/authorization",
 				"token"			: "https://auth.dev.feideconnect.no/oauth/token",
@@ -48,8 +49,6 @@ define(function(require, exports, module) {
 				});
 
 
-
-
 			this.checkAuthenticationCached()
 				.then(function(auth) {
 					if (!auth && that.config.onLoad && that.config.onLoad !== "none") {
@@ -70,6 +69,12 @@ define(function(require, exports, module) {
 				})
 				.then(function() {
 					that.emit("loaded");
+					// console.error("LOADED LOADED LOADED LOADED LOADED LOADED LOADED ");
+
+					if (!that.isAuthenticated()) {
+						that.emit("stateChange", that.authenticated, that.user);
+					}
+
 				});
 
 
@@ -122,7 +127,7 @@ define(function(require, exports, module) {
 
 			this.authenticationInProgress = true;
 
-			console.error("Check userinfo with this config", options);
+			// console.error("Check userinfo with this config", options);
 
 			return this.jso.request(options).then(function(res) {
 
@@ -170,9 +175,10 @@ define(function(require, exports, module) {
 		"authenticatePopup": function() {
 			return this.checkUserInfo({
 				"oauth": {
-					"allowia": false,
-					"allowredir": false,
-					"loader": JSO.Popup
+					"allowia": true,
+					"allowredir": true,
+					"loader": JSO.Popup,
+					"redirect_uri": this.config.redirect_uri_popup
 				}
 			});
 		},
