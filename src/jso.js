@@ -85,8 +85,6 @@ define(function(require, exports, module) {
 			var that = this;
 			return new Promise(function(resolve, reject) {
 
-				console.error(" ==> processTokenResponse()");
-
 				var state;
 				var now = utils.epoch();
 
@@ -138,8 +136,6 @@ define(function(require, exports, module) {
 					atoken.scopes = [];
 				}
 
-				// console.error("About to store token", state.providerID, atoken);
-
 				store.saveToken(state.providerID, atoken);
 
 				if (state.restoreHash) {
@@ -147,9 +143,6 @@ define(function(require, exports, module) {
 				} else {
 					window.location.hash = '';
 				}
-				console.error(" ==> processTokenResponse() 2", atoken);
-
-
 				resolve(atoken);
 
 			});
@@ -199,9 +192,6 @@ define(function(require, exports, module) {
 
 			var that = this;
 			return Promise.resolve().then(function() {
-
-
-				console.error(" ==> callback()");
 
 
 				var response;
@@ -286,23 +276,17 @@ define(function(require, exports, module) {
 		 * @return {[type]}      [description]
 		 */
 		"getToken": function(opts) {
-			// var scopesRequest  = this._getRequestScopes(opts);
+
 			var that = this;
 
-			// console.error("Get token with these otoins", opts);
-			
-			console.error(" ==> getToken()");
+
 
 			return Promise.resolve().then(function() {
 
 				var scopesRequire = that._getRequiredScopes(opts);
 				var token = store.getToken(that.providerID, scopesRequire);
 
-				console.error(" ==> getToken() 2");
-
 				return Promise.resolve().then(function() {
-
-					console.error(" ==> getToken() 3");
 
 					if (token) {
 						return token;
@@ -310,13 +294,9 @@ define(function(require, exports, module) {
 					} else {
 
 						if (opts.hasOwnProperty("allowredir") && !opts.allowredir) {
-
 							throw new Error("Cannot obtain a token, when not allowed to redirect...");
 
 						} else {
-							// console.error("Getting token", opts );
-							
-							console.error(" ==> getToken() 4");
 							return that._authorize(opts);						
 						} 
 
@@ -350,15 +330,7 @@ define(function(require, exports, module) {
 				scopes;
 			var that = this;
 
-			console.error(" ==> _authorize()");
-
-
 			return Promise.resolve().then(function() {
-
-
-
-				console.error(" ==> _authorize() 2");
-
 
 				var authorization = that.config.get('authorization', null, true);
 				var client_id = that.config.get('client_id', null, true);
@@ -385,7 +357,6 @@ define(function(require, exports, module) {
 				if (opts.redirect_uri) {
 					request.redirect_uri = opts.redirect_uri;
 				}
-				console.error("REDIRECT URI Is set to " + request.redirect_uri);
 
 				request.client_id = client_id;
 
@@ -424,15 +395,10 @@ define(function(require, exports, module) {
 
 				console.log("Looking for loader", opts, loader);
 
-				console.error(" ==> _authorize() 3");
-
-
 				store.saveState(request.state, request);
 				return that.gotoAuthorizeURL(authurl, loader)
 					.then(function(url) {
-						console.error(" ==> _authorize() Completed");
 
-						// console.error("The Loader detected a redirect to this page: " + url);
 						return that.callback(url);
 					});
 
@@ -476,8 +442,6 @@ define(function(require, exports, module) {
 			};
 			var ajaxConfig = $.extend(true, {}, defaultAjaxConfig, opts);
 
-			// console.error("AJAX config is", ajaxConfig);
-
 			return this.ajax(ajaxConfig)
 				.catch(function(error) {
 
@@ -519,9 +483,6 @@ define(function(require, exports, module) {
 
 			return this.getToken(oauthOptions)
 				.then(function(token) {
-
-
-					console.error(" ==> ajax() got token", token);
 
 					if (!token) {
 						console.log("No token no fun");
