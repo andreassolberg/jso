@@ -1,6 +1,6 @@
 /**
  * JSO - Javascript OAuth Library
- * 	Version 2.0
+ * 	Version 3.0
  *  UNINETT AS - http://uninett.no
  *  Author: Andreas Åkre Solberg <andreas.solberg@uninett.no>
  *  Licence: 
@@ -25,7 +25,6 @@ define(function(require, exports, module) {
 	var HTTPRedirect = require('./Loaders/HTTPRedirect');
 	var IFramePassive = require('./Loaders/IFramePassive');
 	var Popup = require('./Loaders/Popup');
-
 
 	var JSO = Class.extend({
 		"init": function(config) {
