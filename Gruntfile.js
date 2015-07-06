@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 				files: ['package.json', 'bower.json', 'etc/buildinfo.js'],
 				updateConfigs: ['pkg', 'bower'],
 
-				commit: true,
+				commit: false,
 				commitMessage: 'Release v%VERSION%',
 				commitFiles: ['package.json', 'bower.json', 'etc/buildinfo.js', 'dist/jso.js', 'dist/jso.min.js'],
 
@@ -17,13 +17,12 @@ module.exports = function(grunt) {
 				tagName: 'v%VERSION%',
 				tagMessage: 'Version %VERSION%',
 
-				prerelaseName: 'rc',
+				prereleaseName: 'rc',
 
 				push: false,
 				pushTo: 'origin',
 				gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d',
 				globalReplace: false,
-				prereleaseName: false,
 				regExp: false
 			}
 		},
