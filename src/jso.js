@@ -489,7 +489,7 @@ define(function(require, exports, module) {
 					}
 
 					if (token === null) {
-						throw new Error("Cannot perform AJAX call without a token.")
+						throw new Error("Cannot perform AJAX call without a token.");
 					}
 					utils.log("Ready. Got an token, and ready to perform an AJAX call", token);
 
