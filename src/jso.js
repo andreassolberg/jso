@@ -26,6 +26,10 @@ define(function(require, exports, module) {
 	var IFramePassive = require('./Loaders/IFramePassive');
 	var Popup = require('./Loaders/Popup');
 
+
+	var bi = require('text!../etc/buildinfo.js');
+	var buildinfo = JSON.parse(bi);
+
 	var JSO = Class.extend({
 		"init": function(config) {
 			this.config = new Config(default_config, config);
@@ -684,7 +688,9 @@ define(function(require, exports, module) {
 		return true;
 	};
 
-
+	JSO.info = function() {
+		return buildinfo;
+	};
 
 	JSO.Popup = Popup;
 	JSO.IFramePassive = IFramePassive;

@@ -30,6 +30,7 @@
     "qunit": "~1.16.0"
   },
   "dependencies": {
-    "jquery": "~1.11.3"
+    "jquery": "~1.11.3",
+    "requirejs-text": "*"
   }
 }

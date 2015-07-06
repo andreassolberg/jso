@@ -1,7 +1,8 @@
 ({
 	baseUrl: "../src",
 	paths: {
-		"jquery"	: "../bower_components/jquery/dist/jquery.min"
+		"jquery"	: "../bower_components/jquery/dist/jquery.min",
+		"text" : "../bower_components/requirejs-text/text"
 	},
 	shim: {
 	},

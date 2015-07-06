@@ -35,6 +35,14 @@ var rcatcher = function(callback) {
 
 };
 
+QUnit.test( "JSO Get version", function( assert ) {
+	console.log("JSO", JSO);
+	var info = JSO.info();
+	assert.ok(typeof info.version === 'string', "JSO version available. " + info.version);
+	// assert.ok( 1 == "1", "Passed!" );
+
+});
+
 
 QUnit.test( "JSO Loaded", function( assert ) {
 	console.log("JSO", JSO);
