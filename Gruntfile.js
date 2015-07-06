@@ -3,20 +3,23 @@ module.exports = function(grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+		bower: grunt.file.readJSON('bower.json'),
 		bump: {
 			options: {
 				files: ['package.json', 'bower.json'],
 				updateConfigs: ['pkg', 'bower'],
 
-				commit: false,
+				commit: true,
 				commitMessage: 'Release v%VERSION%',
-				commitFiles: ['package.json', 'bower.json'],
+				commitFiles: ['package.json', 'bower.json', 'build/jso.js'],
 
-				createTag: false,
+				createTag: true,
 				tagName: 'v%VERSION%',
 				tagMessage: 'Version %VERSION%',
 
-				push: false,
+				prerelaseName: 'rc',
+
+				push: true,
 				pushTo: 'origin',
 				gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d',
 				globalReplace: false,
@@ -72,9 +75,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-qunit');
 
-	grunt.registerTask('test', ['requirejs', 'jshint', 'qunit']);
-	grunt.registerTask('publish', ['requirejs', 'jshint', 'qunit']);
-	grunt.registerTask('default', ['requirejs', 'jshint']);
+	grunt.registerTask('test', ['jshint', 'qunit', 'requirejs']);
+	grunt.registerTask('build', ['jshint', 'qunit', 'requirejs']);
+	grunt.registerTask('default', ['jshint', 'qunit', 'requirejs']);
 
+	grunt.registerTask('publish-patch', ['jshint', 'qunit', 'requirejs', 'bump:patch']);
 
 };
