@@ -10,30 +10,30 @@ var config = {
 };
 
 
-var RedirectCatcher = function() {
-	var that = this;
-	this.callback = null;
-	this.url = null;
-	setTimeout(function() {
-		if (that.url === null) {
-			if (typeof that.callback === 'function') {
-				that.callback(null);	
-			}
+
+var rcatcher = function(callback) {
+
+	var RedirectCatcher = JSO.BasicLoader.extend({
+
+		"execute": function() {
+			var that = this;
+			return new Promise(function(resolve, reject) {
+
+				console.log("RedirectCatcherreceived redirect to ", that.url);
+				if (typeof callback === 'function') {
+					callback(that.url);
+				} else {
+					console.error("Callback was not defined");	
+				}
+
+				resolve();
+			});
 		}
-	}, 2000);
-};
-RedirectCatcher.prototype.onRedirect = function(callback) {
-	this.callback = callback;
-};
-RedirectCatcher.prototype.redirect = function(url) {
-	console.log("RedirectCatcherreceived redirect to ", url);
-	this.url = url;
-	if (typeof this.callback === 'function') {
-		this.callback(this.url);
-	} else {
-		console.error("Callback was not defined");	
-	}
-};
+	});
+
+	return RedirectCatcher;
+
+}
 
 
 QUnit.test( "JSO Loaded", function( assert ) {
@@ -44,17 +44,14 @@ QUnit.test( "JSO Loaded", function( assert ) {
 });
 QUnit.test( "JSO Authorization redirect", function( assert ) {
 	var done = assert.async();
-	var r = new RedirectCatcher();
-	r.onRedirect(function(url) {
+	var r = rcatcher(function(url) {
 		assert.ok(url !== null, 'Redirect was performed');
 		console.log("Redirect to ", url);
 		done();
 	});
 
 	var jso = new JSO(config);
-	jso.on('redirect', function(url) {
-		r.redirect(url);
-	});
+	jso.setLoader(r);
 
 	jso.getToken(function(token) {
 
