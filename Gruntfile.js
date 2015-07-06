@@ -49,9 +49,6 @@ module.exports = function(grunt) {
 	        rjs_min: {
 				command: 'node_modules/requirejs/bin/r.js -o etc/build-min.js'
 	        },
-	        rjs_jquery: {
-				command: 'node_modules/requirejs/bin/r.js -o etc/build-withjquery.js'
-	        },
 	        bower: {
 	        	command: "node_modules/bower/bin/bower --allow-root install"
 	        }
@@ -68,7 +65,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-shell');
 
 	grunt.registerTask('test', ['jshint', 'qunit', 'requirejs']);
-	grunt.registerTask('build', ['shell:bower', 'jshint', 'qunit', 'shell:rjs', 'shell:rjs_min', 'shell:rjs_jquery']);
+	grunt.registerTask('build', ['shell:bower', 'jshint', /*'qunit',*/ 'shell:rjs', 'shell:rjs_min']);
 
 	grunt.registerTask('default', ['shell:bower', 'jshint', 'qunit']);
 

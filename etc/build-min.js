@@ -11,7 +11,7 @@
 	},
 	name: "../bower_components/almond/almond",
 	include: "jso",
-	exclude: ["jquery"],
+	exclude: [],
 	optimize: "none",
 	out: "../dist/jso.js"
 })
