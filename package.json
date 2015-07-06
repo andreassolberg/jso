@@ -1,6 +1,6 @@
 {
   "name": "jso",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "description": "OAuth 2.0 implementation in Javascript",
   "main": "src/jso.js",
   "scripts": {
@@ -26,10 +26,11 @@
     "grunt-contrib-nodeunit": "~0.4.1",
     "grunt-requirejs": "*",
     "grunt-contrib-qunit": "*",
-    "bower": "*"
+    "grunt-bump": "^0.3.1",
+    "bower": "~1.4.1"
   },
   "author": "Andreas Åkre Solberg",
-  "license": "Simplified BSD Licence http://opensource.org/licenses/BSD-2-Clause",
+  "license": "LGPL-2.1",
   "bugs": {
     "url": "https://github.com/andreassolberg/jso/issues"
   },

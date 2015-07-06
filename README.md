@@ -19,6 +19,22 @@ JSO may be used to make your web application (or mobile hybrid application) act 
 
 
 
+## NOTICE: Version 3 coming up
+
+
+I'm currently working on a third generation of JSO.
+
+Main features are:
+
+* Build with heavily use of ES6 Promises
+* Support for various loaders (hidden iframes, popup, passive, active)
+* Adding support for doing authentication (OpenID Connect, and others)
+
+
+[It is already available for testing](http://oauth.no/jso)
+
+
+
 ## Licence
 
 
