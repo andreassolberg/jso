@@ -3,15 +3,27 @@ module.exports = function(grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		// uglify: {
-		// 	options: {
-		// 		banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-		// 	},
-		// 	build: {
-		// 		src: 'src/<%= pkg.name %>.js',
-		// 		dest: 'build/<%= pkg.name %>.min.js'
-		// 	}
-		// },
+		bump: {
+			options: {
+				files: ['package.json', 'bower.json'],
+				updateConfigs: ['pkg', 'bower'],
+
+				commit: false,
+				commitMessage: 'Release v%VERSION%',
+				commitFiles: ['package.json', 'bower.json'],
+
+				createTag: false,
+				tagName: 'v%VERSION%',
+				tagMessage: 'Version %VERSION%',
+
+				push: false,
+				pushTo: 'origin',
+				gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d',
+				globalReplace: false,
+				prereleaseName: false,
+				regExp: false
+			}
+		},
 		requirejs: {
 			compile: {
 				options: {
@@ -53,12 +65,15 @@ module.exports = function(grunt) {
 	});
 
 
-	// grunt.loadNpmTasks('grunt-contrib-uglify');
+
+
+	grunt.loadNpmTasks('grunt-bump');
 	grunt.loadNpmTasks('grunt-requirejs');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-qunit');
 
 	grunt.registerTask('test', ['requirejs', 'jshint', 'qunit']);
+	grunt.registerTask('publish', ['requirejs', 'jshint', 'qunit']);
 	grunt.registerTask('default', ['requirejs', 'jshint']);
 
 
