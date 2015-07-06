@@ -33,7 +33,7 @@ var rcatcher = function(callback) {
 
 	return RedirectCatcher;
 
-}
+};
 
 
 QUnit.test( "JSO Loaded", function( assert ) {
@@ -42,6 +42,7 @@ QUnit.test( "JSO Loaded", function( assert ) {
 	assert.ok( 1 == "1", "Passed!" );
 
 });
+
 QUnit.test( "JSO Authorization redirect", function( assert ) {
 	var done = assert.async();
 	var r = rcatcher(function(url) {
