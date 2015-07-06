@@ -690,7 +690,7 @@ define(function(require, exports, module) {
 	JSO.IFramePassive = IFramePassive;
 	JSO.HTTPRedirect = HTTPRedirect;
 
-
+	JSO.BasicLoader = BasicLoader;
 
 	return JSO;
 
