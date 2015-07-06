@@ -6,47 +6,25 @@ module.exports = function(grunt) {
 		bower: grunt.file.readJSON('bower.json'),
 		bump: {
 			options: {
-				files: ['package.json', 'bower.json'],
+				files: ['package.json', 'bower.json', 'etc/buildinfo.js'],
 				updateConfigs: ['pkg', 'bower'],
 
 				commit: true,
 				commitMessage: 'Release v%VERSION%',
-				commitFiles: ['package.json', 'bower.json', 'build/jso.js'],
+				commitFiles: ['package.json', 'bower.json', 'etc/buildinfo.js', 'dist/jso.js', 'dist/jso.min.js'],
 
-				createTag: true,
+				createTag: false,
 				tagName: 'v%VERSION%',
 				tagMessage: 'Version %VERSION%',
 
 				prerelaseName: 'rc',
 
-				push: true,
+				push: false,
 				pushTo: 'origin',
 				gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d',
 				globalReplace: false,
 				prereleaseName: false,
 				regExp: false
-			}
-		},
-		requirejs: {
-			compile: {
-				options: {
-					almond: true,
-					dir: 'build',
-					appDir: 'src',
-					baseUrl: '.',
-					modules: [{name: 'jso'}],
-					optimize: "none",
-					paths: {
-						underscore: '../vendor/underscore',
-						jquery    : '../vendor/jquery',
-						backbone  : '../vendor/backbone'
-					},
-					wrap: {
-						startFile: 'tools/wrap.start',
-						endFile: 'tools/wrap.end'
-					},
-					preserveLicenseComments: false
-				}
 			}
 		},
 		jshint: {
@@ -64,7 +42,21 @@ module.exports = function(grunt) {
 		},
         qunit: {
             files: ['test/index.html']
-        }
+        },
+	    shell: {
+	        rjs: {
+				command: 'node_modules/requirejs/bin/r.js -o etc/build.js'
+	        },
+	        rjs_min: {
+				command: 'node_modules/requirejs/bin/r.js -o etc/build-min.js'
+	        },
+	        rjs_jquery: {
+				command: 'node_modules/requirejs/bin/r.js -o etc/build-withjquery.js'
+	        },
+	        bower: {
+	        	command: "node_modules/bower/bin/bower --allow-root install"
+	        }
+	    }
 	});
 
 
@@ -74,10 +66,12 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-requirejs');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-qunit');
+	grunt.loadNpmTasks('grunt-shell');
 
 	grunt.registerTask('test', ['jshint', 'qunit', 'requirejs']);
-	grunt.registerTask('build', ['jshint', 'qunit', 'requirejs']);
-	grunt.registerTask('default', ['jshint', 'qunit', 'requirejs']);
+	grunt.registerTask('build', ['shell:bower', 'jshint', 'qunit', 'shell:rjs', 'shell:rjs_min', 'shell:rjs_jquery']);
+
+	grunt.registerTask('default', ['shell:bower', 'jshint', 'qunit']);
 
 	grunt.registerTask('publish-patch', ['jshint', 'qunit', 'requirejs', 'bump:patch']);
 

@@ -29,5 +29,7 @@
     "almond": "~0.2.9",
     "qunit": "~1.16.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "jquery": "~1.11.3"
+  }
 }
