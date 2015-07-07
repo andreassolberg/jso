@@ -2,7 +2,7 @@
 
 This is a guide to get started using JSO. 
 
-Pleae report to the [issue tracker]() if you discover errors in the documentation or the software.
+Please report to the [issue tracker]() if you discover errors in the documentation or the software.
 
 
 If you want to use JSO together with Phonegap to support OAuth 2.0 in a hybrid web application, you may want to read the
