@@ -10,11 +10,15 @@
 
 define(function(require, exports, module) {
 
+	"use strict";
+
 	var 
 		default_config = {
 			"lifetime": 3600,
 			"debug": true
 		};
+
+	var $ = require('jquery');
 
 	var store  = require('./store');
 	var utils  = require('./utils');
@@ -392,7 +396,7 @@ define(function(require, exports, module) {
 					loader = opts.loader;
 				}
 
-				console.log("Looking for loader", opts, loader);
+				// console.log("Looking for loader", opts, loader);
 
 				store.saveState(request.state, request);
 				return that.gotoAuthorizeURL(authurl, loader)
@@ -477,9 +481,6 @@ define(function(require, exports, module) {
 			var that = this;
 			var oauthOptions = settings.oauth || {};
 
-
-
-
 			return this.getToken(oauthOptions)
 				.then(function(token) {
 
@@ -533,8 +534,7 @@ define(function(require, exports, module) {
 							settings.headers.Authorization = "Bearer " + token.access_token;
 						}
 						utils.log('$.ajax settings', settings);
-						
-						JSO.$.ajax(settings);			
+						$.ajax(settings);			
 
 					});
 
@@ -618,9 +618,9 @@ define(function(require, exports, module) {
 	JSO.utils = utils;
 
 
-	JSO.enablejQuery = function($) {
-		JSO.$ = $;
-	};
+	// JSO.enablejQuery = function($) {
+	// 	JSO.$ = $;
+	// };
 
 
 	JSO.Error = Class.extend({
