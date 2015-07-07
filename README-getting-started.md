@@ -64,7 +64,7 @@ To start using JSO, you need to initialize a new JSO object with configuration f
 Here are more options to JSO:
 
 * `providerID`: OPTIONAL This is just a name tag that is used to prefix data stored in the browser. It can be anything you'd like :)
-* `client_id`: The client idenfier of your client that as trusted by the provider. As JSO uses the implicit grant flow, there is now use for a 
+* `client_id`: The client idenfier of your client that is trusted by the provider. As JSO uses the implicit grant flow, there is now use for a client secret.
 * `redirect_uri`: OPTIONAL (may be needed by the provider). The URI that the user will be redirected back to when completed. This should be the same URL that the page is presented on.
 * `presenttoken`: OPTIONAL How to present the token with the protected calls. Values can be `qs` (in query string) or `header` (default; in authorization header).
 * `default_lifetime` : OPTIONAL Seconds with default lifetime of an access token. If set to `false`, it means permanent.
