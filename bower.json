@@ -1,7 +1,7 @@
 {
   "name": "jso",
   "main": "jso.js",
-  "version": "2.0.1",
+  "version": "3.0.0-rc.1",
   "homepage": "https://github.com/andreassolberg/jso",
   "description": "OAuth 2.0 implementation in Javascript",
   "keywords": [
@@ -29,5 +29,8 @@
     "almond": "~0.2.9",
     "qunit": "~1.16.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "jquery": "~1.11.3",
+    "requirejs-text": "*"
+  }
 }

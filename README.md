@@ -9,13 +9,28 @@ OAuth 2.0 from your javascript client web application or mobile application in a
 
 See also our javascript API mock-up tool <http://httpjs.net>.
 
-* [Read the blog of Andreas Åkre Solberg](http://rnd.feide.no)
 * [Follow Andreas Åkre Solberg on twitter](https://twitter.com/erlang)
 * [Read more about UNINETT](http://uninett.no)
 * Contact address: <mailto:andreas.solberg@uninett.no>
 
 
 JSO may be used to make your web application (or mobile hybrid application) act as an OAuth 2.0 Consumer/client, and access remote APIs that are protected by OAuth 2.0 and supports CORS (or JSONP). 
+
+* [JSO Documentation](http://oauth.no/jso/)
+
+## NOTICE: This is the preparations for the final version 3.0 of JSO
+
+
+This is the third generation of JSO.
+
+Main new features are:
+
+* Build with heavily use of ES6 Promises
+* Support for various loaders (hidden iframes, popup, passive, active)
+* Adding support for doing authentication (OpenID Connect, and others)
+
+
+[It is already available for testing](http://oauth.no/jso)
 
 
 
@@ -46,10 +61,18 @@ The software is dual-licenced with *The GNU Lesser General Public License, versi
 
 ## Dependencies
 
-No external dependencies. Plays well with jQuery though.
+The builds in the `dist/` folder has all dependencies included.
+
+When you run JSO from source, using AMD, you may re-use dependencies, which includes:
+
+* jQuery
+* ES6-Promise polyfill
+* requirejs/almond
 
 
 ## Browser support
+
+Version 3 of JSO makes use of ES6 Promises, which is not that well supported across browsers. The final release builds will include a polycfill that works with all browsers. More on that later...
 
 JSO uses localStorage for caching tokens. localStorage is supported in Firefox 3.5+, Safari 4+, IE8+, and Chrome. For better compatibility use the localstorage library that is included in the example.
 

@@ -30,6 +30,10 @@ define(function(require, exports, module) {
 	var IFramePassive = require('./Loaders/IFramePassive');
 	var Popup = require('./Loaders/Popup');
 
+
+	var bi = require('text!../etc/buildinfo.js');
+	var buildinfo = JSON.parse(bi);
+
 	var JSO = Class.extend({
 		"init": function(config) {
 			this.config = new Config(default_config, config);
@@ -490,7 +494,7 @@ define(function(require, exports, module) {
 					}
 
 					if (token === null) {
-						throw new Error("Cannot perform AJAX call without a token.")
+						throw new Error("Cannot perform AJAX call without a token.");
 					}
 					utils.log("Ready. Got an token, and ready to perform an AJAX call", token);
 
@@ -684,13 +688,15 @@ define(function(require, exports, module) {
 		return true;
 	};
 
-
+	JSO.info = function() {
+		return buildinfo;
+	};
 
 	JSO.Popup = Popup;
 	JSO.IFramePassive = IFramePassive;
 	JSO.HTTPRedirect = HTTPRedirect;
 
-
+	JSO.BasicLoader = BasicLoader;
 
 	return JSO;
 
