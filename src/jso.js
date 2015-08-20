@@ -173,6 +173,7 @@ define(function(require, exports, module) {
 		var 
 			atoken,
 			h = window.location.hash,
+                        s = window.location.search.substring(1),
 			now = utils.epoch(),
 			state,
 			instance;
@@ -184,6 +185,11 @@ define(function(require, exports, module) {
 			// utils.log('Hah, I got the url and it ' + url);
 			if(url.indexOf('#') === -1) return;
 			h = url.substring(url.indexOf('#'));
+                        if(url.indexOf('?') === -1) {
+                            s = '';
+                        } else {
+                            s = url.split('?')[1].split('#')[0];
+                        }
 			// utils.log('Hah, I got the hash and it is ' +  h);
 		}
 
@@ -193,7 +199,7 @@ define(function(require, exports, module) {
 		if (h.length < 2) return;
 		if (h.indexOf("access_token") === -1) return;
 		h = h.substring(1);
-		atoken = utils.parseQueryString(h);
+		atoken = utils.parseQueryString(s+'&'+h);
 
 		if (atoken.state) {
 			state = store.getState(atoken.state);
