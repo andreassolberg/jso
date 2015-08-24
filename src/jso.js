@@ -202,6 +202,22 @@ define(function(require, exports, module) {
 			state = {providerID: providerID};
 		}
 
+		var storedTokens = store.getTokens(this.providerID);
+		for (var i in storedTokens) {
+			var t = storedTokens[i];
+			console.log(t);
+			if (t.access_token == atoken.access_token) {
+				if (t.restoreHash) {
+					window.location.hash = t.restoreHash;
+				} else {
+					window.location.hash = '';
+				}
+				if (typeof callback === 'function') {
+					callback(t);
+				}
+				return;
+			}
+		}
 		
 		if (!state) throw "Could not retrieve state";
 		if (!state.providerID) throw "Could not get providerid from state";
@@ -250,7 +266,9 @@ define(function(require, exports, module) {
 			atoken.scopes = state.scopes;
 		}
 
-
+		if (state.restoreHash) {
+			atoken.restoreHash = state.restoreHash;
+		}
 
 		store.saveToken(state.providerID, atoken);
 
