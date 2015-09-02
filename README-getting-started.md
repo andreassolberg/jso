@@ -40,7 +40,7 @@ If you use [requirejs](http://require.js), you may load the library like this:
 	});
 ```
 
-If you would like to fork the library, modify or contribute to development, you must use should use AMD loading, and refer to the `src/jso` version, like this:
+If you would like to fork the library, modify or contribute to development, you should use AMD loading, and refer to the `src/jso` version, like this:
 
 ```javascript
 	var JSO = require("bower/jso/src/jso");
