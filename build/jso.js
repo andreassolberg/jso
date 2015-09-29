@@ -1056,10 +1056,8 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 
 		store.saveToken(state.providerID, atoken);
 
-		if (state.restoreHash) {
-			window.location.hash = state.restoreHash;
-		} else {
-			window.location.hash = '';
+		if (!this.config.get('skipRedirect', null)) {
+			window.location.hash = state.restoreHash || '';
 		}
 
 
@@ -1077,7 +1075,7 @@ define('jso',['require','exports','module','./store','./utils','./Config'],funct
 		utils.log("Successfully obtain a token, now call the callback, and may be the window closes", callback);
 
 		if (typeof callback === 'function') {
-			callback(atoken);
+			callback(atoken, state.restoreHash || '');
 		}
 
 		// utils.log(atoken);

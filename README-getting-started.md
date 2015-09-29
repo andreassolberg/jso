@@ -73,6 +73,7 @@ Here are more options to JSO:
 * `scope`: For providers that does not support `state`: If state was not provided, and default provider contains a scope parameter we assume this is the one requested... Set this as the same list of scopes that you provide to `ensure_tokens`.
 * `scopes.request`: Control what scopes are requested in the authorization request.
 * `debug`: If debug is set to true, verbose logging will make it easier to debug problems with JSO.
+* `skipRedirect`: If skipRedirect is set to true, JSO will not change the hash after handling an access token.
 
 
 ## Catching the response when the user is returning
