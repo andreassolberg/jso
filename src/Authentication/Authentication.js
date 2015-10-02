@@ -26,7 +26,7 @@ define(function(require, exports, module) {
 				"userInfo"		: "https://auth.dev.feideconnect.no/userinfo",
 
 				// Legal values: "none", "passiveIFrame", "passive", "active"
-				"onLoad": "passiveIFrame"
+				"onLoad": "none"
 			};
 
 			this._authenticated = null;
