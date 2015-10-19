@@ -3,6 +3,7 @@ define(function(require, exports, module) {
 
 	var utils = {};
 
+	var config = null;
 
 	/*
 	 * Returns epoch, seconds since 1970.
@@ -12,6 +13,9 @@ define(function(require, exports, module) {
 		return Math.round(new Date().getTime()/1000.0);
 	};
 
+	utils.setConfig = function(sc) {
+		config = sc;
+	};
 
 	/*
 	 * Returns a random string used for state
@@ -95,6 +99,10 @@ define(function(require, exports, module) {
 		// if (!options.debug) return;
 		if (!console) return;
 		if (!console.log) return;
+
+		if (!config.get('debug', false)) {
+			return;
+		}
 
 		// console.log("LOG(), Arguments", arguments, msg)
 		if (arguments.length > 1) {

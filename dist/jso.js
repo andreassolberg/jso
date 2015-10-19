@@ -448,6 +448,7 @@ define('utils',['require','exports','module'],function(require, exports, module)
 
 	var utils = {};
 
+	var config = null;
 
 	/*
 	 * Returns epoch, seconds since 1970.
@@ -457,6 +458,9 @@ define('utils',['require','exports','module'],function(require, exports, module)
 		return Math.round(new Date().getTime()/1000.0);
 	};
 
+	utils.setConfig = function(sc) {
+		config = sc;
+	};
 
 	/*
 	 * Returns a random string used for state
@@ -541,6 +545,10 @@ define('utils',['require','exports','module'],function(require, exports, module)
 		if (!console) return;
 		if (!console.log) return;
 
+		if (!config.get('debug', false)) {
+			return;
+		}
+
 		// console.log("LOG(), Arguments", arguments, msg)
 		if (arguments.length > 1) {
 			console.log(arguments);	
@@ -592,6 +600,7 @@ define('utils',['require','exports','module'],function(require, exports, module)
 	return utils;
 
 });
+
 //define(['utils'], function(utils) {
 
 define('store',['require','exports','module','./utils'],function(require, exports, module) {
@@ -629,19 +638,19 @@ define('store',['require','exports','module','./utils'],function(require, export
 	 * A log wrapper, that only logs if logging is turned on in the config
 	 * @param  {string} msg Log message
 	 */
-	var log = function(msg) {
-		// if (!options.debug) return;
-		if (!console) return;
-		if (!console.log) return;
+	// var log = function(msg) {
+	// 	// if (!options.debug) return;
+	// 	if (!console) return;
+	// 	if (!console.log) return;
 
-		// console.log("LOG(), Arguments", arguments, msg)
-		if (arguments.length > 1) {
-			console.log(arguments);	
-		} else {
-			console.log(msg);
-		}
+	// 	// console.log("LOG(), Arguments", arguments, msg)
+	// 	if (arguments.length > 1) {
+	// 		console.log(arguments);	
+	// 	} else {
+	// 		console.log(msg);
+	// 	}
 		
-	};
+	// };
 
 
 	/*
@@ -704,7 +713,7 @@ define('store',['require','exports','module','./utils'],function(require, export
 		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider));
 		if (!tokens) tokens = [];
 
-		log("Token received", tokens);
+		// log("Token received", tokens);
 		return tokens;
 	};
 	store.wipeTokens = function(provider) {
@@ -1522,7 +1531,7 @@ define('text',['module'], function (module) {
 });
 
 
-define('text!../etc/buildinfo.js',[],function () { return '{\n  "version": "3.0.0-rc.1"\n}';});
+define('text!../etc/buildinfo.js',[],function () { return '{\n  "version": "3.0.0-rc.2"\n}';});
 
 /**
  * JSO - Javascript OAuth Library
@@ -1564,6 +1573,8 @@ define('jso',['require','exports','module','jquery','./store','./utils','./Confi
 		"init": function(config) {
 			this.config = new Config(default_config, config);
 			this.providerID = this.getProviderID();
+
+			utils.setConfig(this.config);
 
 			this.Loader = HTTPRedirect;
 

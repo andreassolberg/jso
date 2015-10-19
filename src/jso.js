@@ -39,6 +39,8 @@ define(function(require, exports, module) {
 			this.config = new Config(default_config, config);
 			this.providerID = this.getProviderID();
 
+			utils.setConfig(this.config);
+
 			this.Loader = HTTPRedirect;
 
 			// JSO.instances[this.providerID] = this;

@@ -35,19 +35,19 @@ define(function(require, exports, module) {
 	 * A log wrapper, that only logs if logging is turned on in the config
 	 * @param  {string} msg Log message
 	 */
-	var log = function(msg) {
-		// if (!options.debug) return;
-		if (!console) return;
-		if (!console.log) return;
+	// var log = function(msg) {
+	// 	// if (!options.debug) return;
+	// 	if (!console) return;
+	// 	if (!console.log) return;
 
-		// console.log("LOG(), Arguments", arguments, msg)
-		if (arguments.length > 1) {
-			console.log(arguments);	
-		} else {
-			console.log(msg);
-		}
+	// 	// console.log("LOG(), Arguments", arguments, msg)
+	// 	if (arguments.length > 1) {
+	// 		console.log(arguments);	
+	// 	} else {
+	// 		console.log(msg);
+	// 	}
 		
-	};
+	// };
 
 
 	/*
@@ -110,7 +110,7 @@ define(function(require, exports, module) {
 		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider));
 		if (!tokens) tokens = [];
 
-		log("Token received", tokens);
+		// log("Token received", tokens);
 		return tokens;
 	};
 	store.wipeTokens = function(provider) {
