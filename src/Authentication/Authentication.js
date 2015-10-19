@@ -38,7 +38,7 @@ define(function(require, exports, module) {
 			// this.jso.setLoader(JSO.IFramePassive);
 			this.jso.setLoader(JSO.HTTPRedirect);
 
-			if (this.config.get('debug', false)) {
+			if (this.config.debug) {
 				console.log("JSO Loaded", this.config);
 			}
 			
