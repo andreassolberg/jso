@@ -79,11 +79,14 @@ define(function(require, exports, module) {
 			usethis = true;
 
 			// Filter out expired tokens. Tokens that is expired in 1 second from now.
-			if (tokens[i].expires && tokens[i].expires < (now+1)) usethis = false;
+			if (tokens[i].expires && tokens[i].expires < (now+1)) continue;
 
 			// Filter out this token if not all scope requirements are met
 			for(j = 0; j < scopes.length; j++) {
-				if (!store.hasScope(tokens[i], scopes[j])) usethis = false;
+				if (!store.hasScope(tokens[i], scopes[j])) {
+					usethis = false;
+					break;
+				}
 			}
 
 			if (usethis) result.push(tokens[i]);
