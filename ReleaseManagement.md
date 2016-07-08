@@ -30,3 +30,10 @@ Update prerelease:
 
 
 Currently `master` is the 2.x branch. and `version3` is the 3.0 prerelease.
+
+
+## Development
+
+Run
+
+	watchify --debug -t [ babelify --presets [ es2015 ] ] src/JSO.js -o dist/bundle.js

@@ -1,22 +1,11 @@
-define(function(require, exports, module) {
-	"use strict";
+import BasicLoader from './BasicLoader';
 
-	
-	var Class  = require('../class');
-	// var $ = require('jquery');
-	var BasicLoader = require('./BasicLoader');
-
-
-	var HTTPRedirect = BasicLoader.extend({
-		"execute": function() {
-			var that = this;
-			return new Promise(function(resolve, reject) {
-				window.location = that.url;
-				resolve();
-			});
-		}
-	});
-
-	return HTTPRedirect;
-
-});
+export default class HTTPRedirect extends BasicLoader {
+	execute() {
+		var that = this
+		return new Promise(function(resolve, reject) {
+			window.location = that.url
+			resolve()
+		})
+	}
+}
