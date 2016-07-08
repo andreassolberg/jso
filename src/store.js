@@ -1,7 +1,8 @@
 //define(['utils'], function(utils) {
 
 
-import Utils from './utils';
+var utils = require('./utils').utils;
+
 
 class Store {
 	constructor() {
@@ -20,7 +21,7 @@ class Store {
 	saveState(state, obj) {
 		localStorage.setItem("state-" + state, JSON.stringify(obj));
 	}
-	
+
 	/**
 	 * getStage()  returns the state object, but also removes it.
 	 * @type {Object}
@@ -44,11 +45,11 @@ class Store {
 
 		// console.log("LOG(), Arguments", arguments, msg)
 		if (arguments.length > 1) {
-			console.log(arguments);	
+			console.log(arguments);
 		} else {
 			console.log(msg);
 		}
-		
+
 	}
 
 
@@ -70,7 +71,7 @@ class Store {
 	 * are expired, and the ones that do not meet a scopes requirement.
 	 */
 	filterTokens(tokens, scopes) {
-		var i, j, 
+		var i, j,
 			result = [],
 			now = utils.epoch(),
 			usethis;
@@ -146,5 +147,4 @@ class Store {
 
 var s = new Store();
 
-export default s;
-
+exports.store = Store;

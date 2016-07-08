@@ -1,8 +1,9 @@
 {
   "name": "jso",
-  "version": "3.0.0-rc.2",
+  "version": "4.0.0-rc.1",
   "description": "OAuth 2.0 implementation in Javascript",
-  "main": "dist/bundle.js",
+  "_main": "dist/bundle.js",
+  "main": "src/JSO.js",
   "scripts": {
     "test": "node_modules/grunt-cli/bin/grunt test --verbose"
   },
@@ -24,6 +25,13 @@
     "ajax",
     "jquery"
   ],
+  "eslintConfig": {
+      "env": {
+          "es6": true,
+          "browser": true,
+          "node": false
+      }
+  },
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-preset-es2015": "^6.9.0",
