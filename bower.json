@@ -1,7 +1,7 @@
 {
   "name": "jso",
   "main": "jso.js",
-  "version": "3.0.0-rc.5",
+  "version": "3.0.0-rc.6",
   "homepage": "https://github.com/andreassolberg/jso",
   "description": "OAuth 2.0 implementation in Javascript",
   "keywords": [
