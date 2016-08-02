@@ -9,11 +9,11 @@ module.exports = function(grunt) {
 				files: ['package.json', 'bower.json', 'etc/buildinfo.js'],
 				updateConfigs: ['pkg', 'bower'],
 
-				commit: false,
+				commit: true,
 				commitMessage: 'Release v%VERSION%',
 				commitFiles: ['package.json', 'bower.json', 'etc/buildinfo.js', 'dist/jso.js', 'dist/jso.min.js'],
 
-				createTag: false,
+				createTag: true,
 				tagName: 'v%VERSION%',
 				tagMessage: 'Version %VERSION%',
 
