@@ -20,16 +20,15 @@ import Popup from './Loaders/Popup';
 // import HTTPError from './errors/HTTPError';
 // import OAuthResponseError from './errors/OAuthResponseError';
 
-
 import Config from './Config'
 import EventEmitter from './EventEmitter';
+
+const package_json = require('../package.json')
 
 
 // var _instance = null;
 // // var bi = require('text!../etc/buildinfo.js');
 // // var buildinfo = JSON.parse(bi);
-
-
 
 const default_config = {
  'lifetime': 3600,
@@ -651,6 +650,12 @@ class JSO {
 		if (h.indexOf("access_token") === -1) {return false;}
 		return true;
 	}
+
+  info() {
+    var data = {}
+    data.version = package_json.version
+    return data
+  }
 
 }
 
