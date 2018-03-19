@@ -1,12 +1,8 @@
-//define(['utils'], function(utils) {
-
-
-var utils = require('./utils').utils;
-
+import utils from './utils'
 
 class Store {
+
 	constructor() {
-		console.log("Store");
 	}
 
 	/*
@@ -31,25 +27,6 @@ class Store {
 		var obj = JSON.parse(localStorage.getItem("state-" + state));
 		localStorage.removeItem("state-" + state);
 		return obj;
-	}
-
-
-	/**
-	 * A log wrapper, that only logs if logging is turned on in the config
-	 * @param  {string} msg Log message
-	 */
-	log(msg) {
-		// if (!options.debug) return;
-		if (!console) return;
-		if (!console.log) return;
-
-		// console.log("LOG(), Arguments", arguments, msg)
-		if (arguments.length > 1) {
-			console.log(arguments);
-		} else {
-			console.log(msg);
-		}
-
 	}
 
 
@@ -113,7 +90,7 @@ class Store {
 		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider));
 		if (!tokens) tokens = [];
 
-		log("Token received", tokens);
+		utils.log("Token received", tokens);
 		return tokens;
 	}
 
@@ -127,7 +104,7 @@ class Store {
 	 */
 	saveToken(provider, token) {
 		var tokens = this.getTokens(provider);
-		tokens = store.filterTokens(tokens);
+		tokens = this.filterTokens(tokens);
 		tokens.push(token);
 		this.saveTokens(provider, tokens);
 	}
@@ -138,7 +115,7 @@ class Store {
 	 */
 	getToken(provider, scopes) {
 		var tokens = this.getTokens(provider);
-		tokens = store.filterTokens(tokens, scopes);
+		tokens = this.filterTokens(tokens, scopes);
 		if (tokens.length < 1) return null;
 		return tokens[0];
 	};
@@ -147,4 +124,4 @@ class Store {
 
 var s = new Store();
 
-exports.store = Store;
+export default s

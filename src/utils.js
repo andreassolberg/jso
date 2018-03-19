@@ -96,9 +96,9 @@ utils.log = function(msg) {
 
 	// console.log("LOG(), Arguments", arguments, msg)
 	if (arguments.length > 1) {
-		console.log(arguments);
+		console.log('[JSO]', ...arguments);
 	} else {
-		console.log(msg);
+		console.log('[JSO]', msg);
 	}
 
 };
@@ -141,4 +141,4 @@ utils.epoch = function() {
 };
 
 
-exports.utils = utils;
+export default utils

@@ -1,36 +1,27 @@
-define(function(require, exports, module) {
+export default class EventEmitter {
 
-	// var 
-	// 	// $ = require('jquery')
-	// 	// Class = require('lib/class')
-	// 	;
+  on(type, callback) {
+    if (!this._callbacks) {
+      this._callbacks = {};
+    }
+    if (!this._callbacks[type]) {
+      this._callbacks[type] = [];
+    }
 
-	var EventEmitter = {
+    this._callbacks[type].push(callback);
+  }
+  
+  emit(type) {
+    if (!this._callbacks) {
+      this._callbacks = {};
+    }
+    if (!this._callbacks[type]) {
+      this._callbacks[type] = [];
+    }
 
-		"on": function(type, callback) {
-			if (!this._callbacks) {
-				this._callbacks = {};
-			}
-			if (!this._callbacks[type]) {
-				this._callbacks[type] = [];
-			}
-
-			this._callbacks[type].push(callback);
-		},
-		"emit": function(type) {
-			if (!this._callbacks) {
-				this._callbacks = {};
-			}
-			if (!this._callbacks[type]) {
-				this._callbacks[type] = [];
-			}
-
-			var args = Array.prototype.slice.call(arguments, 1);
-			for(var i = 0; i < this._callbacks[type].length; i++) {
-				this._callbacks[type][i].apply(this, args);
-			}
-		}
-	};
-
-	return EventEmitter;
-});
+    var args = Array.prototype.slice.call(arguments, 1);
+    for(var i = 0; i < this._callbacks[type].length; i++) {
+      this._callbacks[type][i].apply(this, args);
+    }
+  }
+}

@@ -1,6 +1,6 @@
 /**
  * JSO - Javascript OAuth Library
- * 	Version 3.0
+ * 	Version 4.0
  *  UNINETT AS - http://uninett.no
  *  Author: Andreas Åkre Solberg <andreas.solberg@uninett.no>
  *  Licence: Simplified BSD Licence
@@ -8,26 +8,21 @@
  *  Documentation available at: https://github.com/andreassolberg/jso
  */
 
+import store from './store'
+import utils from './utils'
 
-var store = require('./store').store;
-var utils = require('./utils').utils;
-
-
-// import Store from './store';
-// import Utils from './utils';
-
-// import BasicLoader from './Loaders/BasicLoader';
-// import HTTPRedirect from './Loaders/HTTPRedirect';
-// import IFramePassive from './Loaders/IFramePassive';
-// import Popup from './Loaders/Popup';
+import BasicLoader from './Loaders/BasicLoader';
+import HTTPRedirect from './Loaders/HTTPRedirect';
+import IFramePassive from './Loaders/IFramePassive';
+import Popup from './Loaders/Popup';
 
 // import ExpiredTokenError from './errors/ExpiredTokenError';
 // import HTTPError from './errors/HTTPError';
 // import OAuthResponseError from './errors/OAuthResponseError';
 
 
-
-import {EventEmitter} from 'eventemitter2';
+import Config from './Config'
+import EventEmitter from './EventEmitter';
 
 
 // var _instance = null;
@@ -36,13 +31,12 @@ import {EventEmitter} from 'eventemitter2';
 
 
 
-var
- default_config = {
-	 "lifetime": 3600,
-	 "debug": true
- };
+const default_config = {
+ 'lifetime': 3600,
+ 'debug': true
+}
 
-var JSO = class {
+class JSO {
 	constructor(config) {
 		this.configure(config);
 		this.providerID = this.getProviderID();
@@ -59,7 +53,7 @@ var JSO = class {
 	}
 
 	setLoader(loader) {
-		if (typeof loader === "function") {
+		if (typeof loader === "function" && loader instanceof BasicLoader ) {
 			this.Loader = loader;
 		} else {
 			throw new Error("loader MUST be an instance of the JSO BasicLoader");
@@ -69,7 +63,6 @@ var JSO = class {
 	on(eventid, callback) {
 		if (typeof eventid !== 'string') {throw new Error('Registering triggers on JSO must be identified with an event id');}
 		if (typeof callback !== 'function') {throw new Error('Registering a callback on JSO must be a function.');}
-
 		this.callbacks[eventid] = callback;
 	}
 
@@ -83,11 +76,11 @@ var JSO = class {
 	 */
 	getProviderID() {
 
-		var c = this.config.get('providerID', null);
+		var c = this.config.getValue('providerID', null);
 		if (c !== null) {return c;}
 
-		var client_id = this.config.get('client_id', null, true);
-		var authorization = this.config.get('authorization', null, true);
+		var client_id = this.config.getValue('client_id', null, true);
+		var authorization = this.config.getValue('authorization', null, true);
 
 		return authorization + '|' + client_id;
 	}
@@ -129,14 +122,14 @@ var JSO = class {
 			 */
 			if (atoken.expires_in) {
 				atoken.expires = now + parseInt(atoken.expires_in, 10);
-			} else if (that.config.get('default_lifetime', null) === false) {
+			} else if (that.config.getValue('default_lifetime', null) === false) {
 				atoken.expires = null;
 			} else if (that.config.has('permanent_scope')) {
-				if (!store.hasScope(atoken, that.config.get('permanent_scope'))) {
+				if (!store.hasScope(atoken, that.config.getValue('permanent_scope'))) {
 					atoken.expires = null;
 				}
 			} else if (that.config.has('default_lifetime')) {
-				atoken.expires = now + that.config.get('default_lifetime');
+				atoken.expires = now + that.config.getValue('default_lifetime');
 			} else {
 				atoken.expires = now + 3600;
 			}
@@ -262,8 +255,11 @@ var JSO = class {
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
 		 */
-		if (this.config.get('scopes') && this.config.get('scopes').request) {
-			for(i = 0; i < this.config.get('scopes').request.length; i++) {scopes.push(this.config.get('scopes').request[i]);}
+		if (this.config.has('scopes.request')) {
+      let s = this.config.getValue('scopes.request')
+			for(i = 0; i < s.length; i++) {
+        scopes.push(s[i])
+      }
 		}
 		if (opts && opts.scopes && opts.scopes.request) {
 			for(i = 0; i < opts.scopes.request.length; i++) {scopes.push(opts.scopes.request[i]);}
@@ -276,8 +272,11 @@ var JSO = class {
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
 		 */
-		if (this.config.get('scopes') && this.config.get('scopes').require) {
-			for(i = 0; i < this.config.get('scopes').require.length; i++) {scopes.push(this.config.get('scopes').require[i]);}
+		if (this.config.has('scopes.require')) {
+      let s = this.config.getValue('scopes.require')
+      for(i = 0; i < s.length; i++) {
+        scopes.push(s[i])
+      }
 		}
 		if (opts && opts.scopes && opts.scopes.require) {
 			for(i = 0; i < opts.scopes.require.length; i++) {scopes.push(opts.scopes.require[i]);}
@@ -346,20 +345,19 @@ var JSO = class {
 			request,
 			authurl,
 			scopes;
-		var that = this;
 
-		return Promise.resolve().then(function() {
+		return Promise.resolve().then(() => {
 
-			var authorization = that.config.get('authorization', null, true);
-			var client_id = that.config.get('client_id', null, true);
+			var authorization = this.config.getValue('authorization', null, true);
+			var client_id = this.config.getValue('client_id', null, true);
 
 			utils.log("About to send an authorization request to this entry:", authorization);
 			utils.log("Options", opts);
 
 			request = {
-				"response_type": "token",
-				"state": utils.uuid()
-			};
+				'response_type': this.config.getValue('response_type', 'token'),
+				'state': utils.uuid()
+			}
 			if (opts.hasOwnProperty("allowia") && !opts.allowia) {
 				request.prompt = "none";
 			}
@@ -369,8 +367,8 @@ var JSO = class {
 				// JSO.internalStates[request.state] = resolve;
 			// }
 
-			if (that.config.has('redirect_uri')) {
-				request.redirect_uri = that.config.get('redirect_uri', '');
+			if (this.config.has('redirect_uri')) {
+				request.redirect_uri = this.config.getValue('redirect_uri', '');
 			}
 			if (opts.redirect_uri) {
 				request.redirect_uri = opts.redirect_uri;
@@ -382,7 +380,7 @@ var JSO = class {
 			/*
 			 * Calculate which scopes to request, based upon provider config and request config.
 			 */
-			scopes = that._getRequestScopes(opts);
+			scopes = this._getRequestScopes(opts);
 			if (scopes.length > 0) {
 				request.scope = utils.scopeList(scopes);
 			}
@@ -397,7 +395,7 @@ var JSO = class {
 			if (window.location.hash) {
 				request.restoreHash = window.location.hash;
 			}
-			request.providerID = that.providerID;
+			request.providerID = this.providerID;
 			if (scopes) {
 				request.scopes = scopes;
 			}
@@ -406,18 +404,18 @@ var JSO = class {
 			utils.log("Saving state [" + request.state + "]");
 			utils.log(JSON.parse(JSON.stringify(request)));
 
-			var loader = that.Loader;
+			var loader = this.Loader;
 			if (opts.hasOwnProperty("loader")) {
 				loader = opts.loader;
 			}
 
-			console.log("Looking for loader", opts, loader);
+			utils.log("Looking for loader", opts, loader);
 
 			store.saveState(request.state, request);
-			return that.gotoAuthorizeURL(authurl, loader)
-				.then(function(url) {
+			return this.gotoAuthorizeURL(authurl, loader)
+				.then((url) => {
 
-					return that.callback(url);
+					return this.callback(url);
 				});
 
 
@@ -503,7 +501,7 @@ var JSO = class {
 			.then(function(token) {
 
 				if (!token) {
-					console.log("No token no fun");
+					utils.log("No token no fun");
 					return;
 				}
 
@@ -541,7 +539,7 @@ var JSO = class {
 						resolve(data);
 					};
 
-					if (that.config.get('presenttoken', null) === 'qs') {
+					if (that.config.getValue('presenttoken', null) === 'qs') {
 						if (!settings.data) {
 							settings.data = {};
 						}
@@ -665,14 +663,14 @@ var JSO = class {
 
 
 // JSO.internalStates = [];
-JSO.instances = {};
-JSO.store = store;
-JSO.utils = utils;
+// JSO.instances = {};
+// JSO.store = store;
+// JSO.utils = utils;
 
 
-JSO.enablejQuery = function($) {
-	JSO.$ = $;
-};
+// JSO.enablejQuery = function($) {
+// 	JSO.$ = $;
+// };
 
 JSO.OAuthResponseError = class {
   constructor(props) {
@@ -700,18 +698,16 @@ JSO.HTTPError = class {
   }
 }
 
-JSO.info = function() {
-	return buildinfo;
-};
+// JSO.info = function() {
+// 	return buildinfo;
+// }
 
 
 Object.assign(JSO.prototype, new EventEmitter({}));
 
-_instance = new JSO();
+// _instance = new JSO();
+
+export {JSO, BasicLoader, HTTPRedirect, Popup}
 
 
-exports.JSO = _instance
-exports.Popup = Popup
-exports.IFramePassive = IFramePassive
-exports.HTTPRedirect = HTTPRedirect
-exports.BasicLoader = BasicLoader
+// exports.IFramePassive = IFramePassive
