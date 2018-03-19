@@ -25,11 +25,6 @@ import EventEmitter from './EventEmitter';
 
 const package_json = require('../package.json')
 
-
-// var _instance = null;
-// // var bi = require('text!../etc/buildinfo.js');
-// // var buildinfo = JSON.parse(bi);
-
 const default_config = {
  'lifetime': 3600,
  'debug': true
@@ -651,7 +646,7 @@ class JSO {
 		return true;
 	}
 
-  info() {
+  static info() {
     var data = {}
     data.version = package_json.version
     return data
@@ -703,16 +698,7 @@ JSO.HTTPError = class {
   }
 }
 
-// JSO.info = function() {
-// 	return buildinfo;
-// }
-
-
 Object.assign(JSO.prototype, new EventEmitter({}));
 
-// _instance = new JSO();
-
 export {JSO, BasicLoader, HTTPRedirect, Popup}
-
-
 // exports.IFramePassive = IFramePassive
