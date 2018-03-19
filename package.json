@@ -2,7 +2,7 @@
   "name": "jso",
   "version": "4.0.0-rc.2",
   "description": "OAuth 2.0 implementation in Javascript",
-  "main": "dist/JSO.js",
+  "main": "dist/jso.js",
   "module": "src/JSO.js",
   "scripts": {
     "test": "true",
