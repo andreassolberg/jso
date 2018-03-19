@@ -5,11 +5,11 @@
 ```
 npm run build
 
-npm version prerelease ...  -m "Upgrade to %s for reasons"
+npm version prerelease -m "Release %s"
 
-npm version patch && git push --follow-tags && npm publish
-npm version minor && git push --follow-tags && npm publish
-npm version major && git push --follow-tags && npm publish
+npm version patch
+npm version minor
+npm version major
 ```
 
 
