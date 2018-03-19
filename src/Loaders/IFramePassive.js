@@ -4,6 +4,9 @@ export default class HTTPRedirect extends BasicLoader {
 
 	constructor(url) {
 		super(url);
+
+    console.error("Constructor IFrame...")
+
 		var that = this;
 		this.timeout = 5000;
 		this.callback = null;
@@ -14,7 +17,7 @@ export default class HTTPRedirect extends BasicLoader {
 				try {
 					var url = this.contentWindow.window.location.href;
 					that._completed(url);
-					
+
 				} catch(err) {
 					console.error("Security exception with iframe loading.", err);
 				}
@@ -25,6 +28,7 @@ export default class HTTPRedirect extends BasicLoader {
 
 	execute() {
 		var that = this;
+    console.error("Execute IFrame...")
 		var p = new Promise(function(resolve, reject) {
 			that.callback = resolve;
 			$("body").prepend(that.iframe);
@@ -32,7 +36,7 @@ export default class HTTPRedirect extends BasicLoader {
 				if (!that.isCompleted) {
 					that.isCompleted = true;
 					that._cleanup();
-					reject(new Error("Loading iframe timed out"));	
+					reject(new Error("Loading iframe timed out"));
 				}
 			}, that.timeout);
 		});
@@ -55,5 +59,3 @@ export default class HTTPRedirect extends BasicLoader {
 		}
 	}
 }
-
-
