@@ -1,39 +1,26 @@
 # Release management
 
 
-Ensure environment is updated.
 
-	npm update
+```
+npm run build
+
+npm version prerelease ...  -m "Upgrade to %s for reasons"
+
+npm version patch && git push --follow-tags && npm publish
+npm version minor && git push --follow-tags && npm publish
+npm version major && git push --follow-tags && npm publish
+```
 
 
-Test code changes using AMD dynamic loading. To make a new build:
 
-	grunt build
+Reference for best practice library management with Webpack:
 
-Then publish
-
-	grunt bump:patch
-	grunt bump:minor
-	grunt bump:patch
-
-Release a new major prerelease
-
-	grunt bump:premajor
-
-Update prerelease:
-
-	grunt bump:prerelease
+* <https://webpack.js.org/guides/author-libraries/>
 
 
 
 # Branches
 
 
-Currently `master` is the 2.x branch. and `version3` is the 3.0 prerelease.
-
-
-## Development
-
-Run
-
-	watchify --debug -t [ babelify --presets [ es2015 ] ] src/JSO.js -o dist/bundle.js
+Currently `master` is the 2.x branch and `version3` is the 3.0 prerelease.
