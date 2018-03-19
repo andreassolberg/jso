@@ -2,10 +2,15 @@
   "name": "jso",
   "version": "4.0.0-rc.1",
   "description": "OAuth 2.0 implementation in Javascript",
-  "_main": "dist/bundle.js",
-  "main": "./src/JSO.js",
+  "main": "dist/JSO.js",
   "module": "src/JSO.js",
-  "scripts": {},
+  "scripts": {
+    "test": "true",
+    "preversion": "npm test",
+    "version": "npm run build && git add -A dist",
+    "postversion": "git push && git push --tags && npm publish",
+    "build": "webpack --mode production"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/andreassolberg/jso.git"
@@ -29,7 +34,10 @@
       "node": false
     }
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "qunit": "^2.5.1",
+    "webpack": "^4.1.1"
+  },
   "author": "Andreas Åkre Solberg",
   "license": "LGPL-2.1",
   "bugs": {
@@ -37,7 +45,6 @@
   },
   "homepage": "https://github.com/andreassolberg/jso",
   "dependencies": {
-    "babel-plugin-transform-es2015-spread": "^6.22.0",
-    "fbemitter": "^2.0.2"
+    "webpack-cli": "^2.0.12"
   }
 }
