@@ -1,6 +1,8 @@
 
-console.log("--- jso ---")
-console.log(jso.JSO)
+// var jso = require ('../dist/jso.js')
+
+// console.log("--- jso ---")
+// console.log(jso.JSO)
 var JSO = jso.JSO
 var config = {
   providerID: "google",
@@ -15,23 +17,20 @@ var config = {
 
 var rcatcher = function(callback) {
 
-	var RedirectCatcher = JSO.BasicLoader.extend({
+	class RedirectCatcher extends jso.BasicLoader {
 
-		"execute": function() {
-			var that = this;
-			return new Promise(function(resolve, reject) {
-
-				console.log("RedirectCatcherreceived redirect to ", that.url);
+		execute() {
+			return new Promise((resolve, reject) => {
+				console.log("RedirectCatcherreceived redirect to ", this.url)
 				if (typeof callback === 'function') {
-					callback(that.url);
+					callback(this.url)
 				} else {
-					console.error("Callback was not defined");
+					console.error("Callback was not defined")
 				}
-
-				resolve();
-			});
+				resolve()
+			})
 		}
-	});
+	}
 
 	return RedirectCatcher;
 
