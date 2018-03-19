@@ -52,7 +52,7 @@ class JSO {
 	}
 
 	setLoader(loader) {
-		if (typeof loader === "function" && loader instanceof BasicLoader ) {
+		if (typeof loader === "function") {
 			this.Loader = loader;
 		} else {
 			throw new Error("loader MUST be an instance of the JSO BasicLoader");
