@@ -1,12 +1,14 @@
 
-
+console.log("--- jso ---")
+console.log(jso.JSO)
+var JSO = jso.JSO
 var config = {
-    providerID: "google",
-    client_id: "541950296471.apps.googleusercontent.com",
-    redirect_uri: "http://bridge.uninett.no/jso/index.html",
-    authorization: "https://accounts.google.com/o/oauth2/auth",
-    scopes: { request: ["https://www.googleapis.com/auth/userinfo.profile"]},
-    debug:true
+  providerID: "google",
+  client_id: "541950296471.apps.googleusercontent.com",
+  redirect_uri: "http://bridge.uninett.no/jso/index.html",
+  authorization: "https://accounts.google.com/o/oauth2/auth",
+  scopes: { request: ["https://www.googleapis.com/auth/userinfo.profile"]},
+  debug: true
 };
 
 
@@ -23,7 +25,7 @@ var rcatcher = function(callback) {
 				if (typeof callback === 'function') {
 					callback(that.url);
 				} else {
-					console.error("Callback was not defined");	
+					console.error("Callback was not defined");
 				}
 
 				resolve();
