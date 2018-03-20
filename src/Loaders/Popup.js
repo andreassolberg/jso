@@ -17,15 +17,15 @@ export default class Popup extends BasicLoader {
 	    	var url = newwindow.location.href
 	    	// console.error("Popup location is ", url, newwindow.location)
         resolve(url)
-			});
+			})
 
   		window.popupCompleted = function() {
 	    	var url = newwindow.location.href
 	    	// console.error("Popup location is ", url, newwindow.location)
         resolve(url)
-			};
+			}
 
-			var newwindow = window.open(this.url, 'uwap-auth', 'height=600,width=800')
+			var newwindow = window.open(this.url, 'jso-popup-auth', 'height=600,width=800')
       // console.log("Newwindow is ", newwindow)
       if (newwindow === null) {
         throw new Error("Error loading popup window")
