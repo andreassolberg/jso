@@ -78,7 +78,7 @@ Here are more options to JSO:
 * `debug`: If debug is set to true, verbose logging will make it easier to debug problems with JSO.
 
 
-## Catching the response when the user is returning
+### Catching the response when the user is returning
 
 
 On the page (usually the same) that the user is sent back to after authorization, typically the `redirect_uri` endpoint, you would need to call the `callback`-function on JSO to tell it to check for response parameters:
@@ -92,7 +92,7 @@ Be aware to run the `callback()` function early, and before you *router* and bef
 
 
 
-## Getting the token
+### Getting the token
 
 To get an token, use the `getToken` function:
 
@@ -106,13 +106,26 @@ client.getToken(opts)
 You may also ensure that a token is available early in your application, to force all user interaction and redirection to happen before your application is fully loaded. To do that make a call to getToken, and wait for the callback before you continue.
 
 
-## Logout
+### Logout
 
 You may wipe all stored tokens, in order to simulate a *logout* experience:
 
 ```
 jso.wipeTokens();
 ```
+
+
+## Using the examples
+
+```
+cd examples
+cp ../dist/jso.js .
+python -m SimpleHTTPServer 8990
+```
+
+Then visit http://localhost:8990/
+
+
 
 
 ## Licence
