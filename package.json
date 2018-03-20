@@ -35,6 +35,10 @@
     }
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-loader": "^7.1.4",
+    "babel-preset-react": "^6.24.1",
     "qunit": "^2.5.1",
     "webpack": "^4.1.1"
   },

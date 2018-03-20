@@ -32,6 +32,9 @@ Main new features are:
 [It is already available for testing](http://oauth.no/jso)
 
 
+## Library size
+
+* 4.0.0-rc4: 12612 bytes
 
 ## Licence
 
