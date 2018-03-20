@@ -18,8 +18,6 @@ JSO may be used to make your web application (or mobile hybrid application) act 
 * [JSO Documentation](http://oauth.no/jso/)
 
 
-
-
 ## NOTICE: This is the preparations for the final version 4.0 of JSO
 
 The main news about 4.0 is the use of ES6 syntax, babel and webpack.
@@ -54,6 +52,67 @@ let j = new JSO({})
 ```
 
 
+To start using JSO, you need to initialize a new JSO object with configuration for an OAuth 2.0 Provider:
+
+```javascript
+let client = new JSO({
+	providerID: "google",
+	client_id: "541950296471.apps.googleusercontent.com",
+	redirect_uri: "http://bridge.uninett.no/jso/index.html",
+	authorization: "https://accounts.google.com/o/oauth2/auth",
+	scopes: { request: ["https://www.googleapis.com/auth/userinfo.profile"]}
+})
+```
+
+Here are more options to JSO:
+
+* `providerID`: OPTIONAL This is just a name tag that is used to prefix data stored in the browser. It can be anything you'd like :)
+* `client_id`: The client idenfier of your client that is trusted by the provider. As JSO uses the implicit grant flow, there is now use for a client secret.
+* `redirect_uri`: OPTIONAL (may be needed by the provider). The URI that the user will be redirected back to when completed. This should be the same URL that the page is presented on.
+* `presenttoken`: OPTIONAL How to present the token with the protected calls. Values can be `qs` (in query string) or `header` (default; in authorization header).
+* `default_lifetime` : OPTIONAL Seconds with default lifetime of an access token. If set to `false`, it means permanent.
+* `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not yet tested.)
+* `isDefault`: Some OAuth providers does not support the `state` parameter. When this parameter is missing, the consumer does not which provider that is sending the access_token. If you only provide one provider config, or set isDefault to `true` for one of them, the consumer will assume this is the provider that sent the token.
+* `scope`: For providers that does not support `state`: If state was not provided, and default provider contains a scope parameter we assume this is the one requested... Set this as the same list of scopes that you provide to `ensure_tokens`.
+* `scopes.request`: Control what scopes are requested in the authorization request.
+* `debug`: If debug is set to true, verbose logging will make it easier to debug problems with JSO.
+
+
+## Catching the response when the user is returning
+
+
+On the page (usually the same) that the user is sent back to after authorization, typically the `redirect_uri` endpoint, you would need to call the `callback`-function on JSO to tell it to check for response parameters:
+
+```javascript
+	client.callback();
+```
+
+
+Be aware to run the `callback()` function early, and before you *router* and before you start using the jso object to fetch data.
+
+
+
+## Getting the token
+
+To get an token, use the `getToken` function:
+
+```
+client.getToken(opts)
+    .then((token) => {
+    	console.log("I got the token: ", token)
+    })
+```
+
+You may also ensure that a token is available early in your application, to force all user interaction and redirection to happen before your application is fully loaded. To do that make a call to getToken, and wait for the callback before you continue.
+
+
+## Logout
+
+You may wipe all stored tokens, in order to simulate a *logout* experience:
+
+```
+jso.wipeTokens();
+```
 
 
 ## Licence
