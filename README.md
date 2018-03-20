@@ -17,24 +17,40 @@ JSO may be used to make your web application (or mobile hybrid application) act 
 
 * [JSO Documentation](http://oauth.no/jso/)
 
-## NOTICE: This is the preparations for the final version 3.0 of JSO
+
+## NOTICE: This is the preparations for the final version 4.0 of JSO
+
+The main news about 4.0 is the use of ES6 syntax, babel and webpack.
 
 
-This is the third generation of JSO.
+## How to use
 
-Main new features are:
+Install using npm:
 
-* Build with heavily use of ES6 Promises
-* Support for various loaders (hidden iframes, popup, passive, active)
-* Adding support for doing authentication (OpenID Connect, and others)
+```
+npm install jso --save
+```
+
+To load the javascript, you could use the distributed UMD module:
+
+```
+<script type="text/javascript" src="dist/jso.js">
+<script>
+var optps = {};
+var j = new jso.JSO();
+</script>
+```
+
+Alternatively you can use ES6 import using webpack or similar:
+
+```
+import {JSO, Popup} from 'jso'
+
+let j = new JSO({})
+```
 
 
-[It is already available for testing](http://oauth.no/jso)
 
-
-## Library size
-
-* 4.0.0-rc4: 12612 bytes
 
 ## Licence
 
@@ -49,28 +65,18 @@ The software is dual-licenced with *The GNU Lesser General Public License, versi
 
 ## Features
 
-* Registered with [bower.io](http://bower.io)
 * Implements **OAuth 2.0 Implicit Flow**.
 * AMD-compatible loading.
-* Supports the `Bearer` access token type.
 * No server component needed.
-* Adds an wrapper for to use `$.ajax()` as you're used to.
 * Can handle multiple providers at once.
 * Uses *HTML 5.0 localStorage* to cache Access Tokens. You do not need to implement a storage.
 * Can prefetch all needed tokens with sufficient scopes, to start with, then tokens can be used for requests later. This way, you can be sure that you would not need to redirect anywhere in your business logic, because you would need to refresh an expired token.
 * Excellent scope support.
 * Caches and restores the hash, your application will not loose state when sending the user to the authorization endpoint.
 
-## Dependencies
 
-The builds in the `dist/` folder has all dependencies included.
 
-When you run JSO from source, using AMD, you may re-use dependencies, which includes:
-
-* jQuery
-* ES6-Promise polyfill
-* requirejs/almond
-
+<!--
 
 ## Browser support
 
@@ -79,3 +85,9 @@ Version 3 of JSO makes use of ES6 Promises, which is not that well supported acr
 JSO uses localStorage for caching tokens. localStorage is supported in Firefox 3.5+, Safari 4+, IE8+, and Chrome. For better compatibility use the localstorage library that is included in the example.
 
 JSO uses JSON serialization functions (stringify and parse). These are supported in Firefox 3.5, Internet Explorer 8.0 and Chrome 3. For better compatibility use the JSON2.js library.
+
+-->
+
+## Library size
+
+* 4.0.0-rc4: 12612 bytes
