@@ -11,17 +11,17 @@
 import store from './store'
 import utils from './utils'
 
-import BasicLoader from './Loaders/BasicLoader';
-import HTTPRedirect from './Loaders/HTTPRedirect';
-import IFramePassive from './Loaders/IFramePassive';
-import Popup from './Loaders/Popup';
+import BasicLoader from './Loaders/BasicLoader'
+import HTTPRedirect from './Loaders/HTTPRedirect'
+import IFramePassive from './Loaders/IFramePassive'
+import Popup from './Loaders/Popup'
 
-// import ExpiredTokenError from './errors/ExpiredTokenError';
-// import HTTPError from './errors/HTTPError';
-// import OAuthResponseError from './errors/OAuthResponseError';
+// import ExpiredTokenError from './errors/ExpiredTokenError'
+// import HTTPError from './errors/HTTPError'
+// import OAuthResponseError from './errors/OAuthResponseError'
 
 import Config from './Config'
-import EventEmitter from './EventEmitter';
+import EventEmitter from './EventEmitter'
 
 const package_json = require('../package.json')
 
@@ -32,32 +32,32 @@ const default_config = {
 
 class JSO {
 	constructor(config) {
-		this.configure(config);
-		this.providerID = this.getProviderID();
+		this.configure(config)
+		this.providerID = this.getProviderID()
 
-		this.Loader = HTTPRedirect;
+		this.Loader = HTTPRedirect
 
-		// JSO.instances[this.providerID] = this;
+		// JSO.instances[this.providerID] = this
 
-		this.callbacks = {};
+		this.callbacks = {}
 	}
 
 	configure(config) {
-		this.config = new Config(default_config, config);
+		this.config = new Config(default_config, config)
 	}
 
 	setLoader(loader) {
 		if (typeof loader === "function") {
-			this.Loader = loader;
+			this.Loader = loader
 		} else {
-			throw new Error("loader MUST be an instance of the JSO BasicLoader");
+			throw new Error("loader MUST be an instance of the JSO BasicLoader")
 		}
 	}
 
 	on(eventid, callback) {
-		if (typeof eventid !== 'string') {throw new Error('Registering triggers on JSO must be identified with an event id');}
-		if (typeof callback !== 'function') {throw new Error('Registering a callback on JSO must be a function.');}
-		this.callbacks[eventid] = callback;
+		if (typeof eventid !== 'string') {throw new Error('Registering triggers on JSO must be identified with an event id')}
+		if (typeof callback !== 'function') {throw new Error('Registering a callback on JSO must be a function.')}
+		this.callbacks[eventid] = callback
 	}
 
 
@@ -70,13 +70,13 @@ class JSO {
 	 */
 	getProviderID() {
 
-		var c = this.config.getValue('providerID', null);
-		if (c !== null) {return c;}
+		var c = this.config.getValue('providerID', null)
+		if (c !== null) {return c}
 
-		var client_id = this.config.getValue('client_id', null, true);
-		var authorization = this.config.getValue('authorization', null, true);
+		var client_id = this.config.getValue('client_id', null, true)
+		var authorization = this.config.getValue('authorization', null, true)
 
-		return authorization + '|' + client_id;
+		return authorization + '|' + client_id
 	}
 
 	/**
@@ -85,26 +85,26 @@ class JSO {
 	 */
 	processTokenResponse(atoken) {
 
-		var that = this;
+		var that = this
 		return new Promise(function(resolve, reject) {
 
-			var state;
-			var now = utils.epoch();
+			var state
+			var now = utils.epoch()
 
 			if (atoken.state) {
-				state = store.getState(atoken.state);
+				state = store.getState(atoken.state)
 			} else {
-				throw new Error("Could not get state from storage.");
+				throw new Error("Could not get state from storage.")
 			}
 
 			if (!state) {
-				throw new Error("Could not retrieve state");
+				throw new Error("Could not retrieve state")
 			}
 			if (!state.providerID) {
-				throw new Error("Could not get providerid from state");
+				throw new Error("Could not get providerid from state")
 			}
 
-			utils.log("Checking atoken ", atoken, "");
+			utils.log("Checking atoken ", atoken, "")
 
 			/*
 			 * Decide when this token should expire.
@@ -115,40 +115,40 @@ class JSO {
 			 * 4. Default library lifetime:
 			 */
 			if (atoken.expires_in) {
-				atoken.expires = now + parseInt(atoken.expires_in, 10);
+				atoken.expires = now + parseInt(atoken.expires_in, 10)
 			} else if (that.config.getValue('default_lifetime', null) === false) {
-				atoken.expires = null;
+				atoken.expires = null
 			} else if (that.config.has('permanent_scope')) {
 				if (!store.hasScope(atoken, that.config.getValue('permanent_scope'))) {
-					atoken.expires = null;
+					atoken.expires = null
 				}
 			} else if (that.config.has('default_lifetime')) {
-				atoken.expires = now + that.config.getValue('default_lifetime');
+				atoken.expires = now + that.config.getValue('default_lifetime')
 			} else {
-				atoken.expires = now + 3600;
+				atoken.expires = now + 3600
 			}
 
 			/*
 			 * Handle scopes for this token
 			 */
 			if (atoken.scope) {
-				atoken.scopes = atoken.scope.split(" ");
+				atoken.scopes = atoken.scope.split(" ")
 			} else if (state.scopes) {
-				atoken.scopes = state.scopes;
+				atoken.scopes = state.scopes
 			} else {
-				atoken.scopes = [];
+				atoken.scopes = []
 			}
 
-			store.saveToken(state.providerID, atoken);
+			store.saveToken(state.providerID, atoken)
 
 			if (state.restoreHash) {
-				window.location.hash = state.restoreHash;
+				window.location.hash = state.restoreHash
 			} else {
-				window.location.hash = '';
+				window.location.hash = ''
 			}
-			resolve(atoken);
+			resolve(atoken)
 
-		});
+		})
 	}
 
 
@@ -156,30 +156,30 @@ class JSO {
 
 	processErrorResponse(err) {
 
-		var that = this;
+		var that = this
 		return new Promise(function(resolve, reject) {
 
-			var state;
+			var state
 			if (err.state) {
-				state = store.getState(err.state);
+				state = store.getState(err.state)
 			} else {
-				throw new Error("Could not get [state] and no default providerid is provided.");
+				throw new Error("Could not get [state] and no default providerid is provided.")
 			}
 
 			if (!state) {
-				throw new Error("Could not retrieve state");
+				throw new Error("Could not retrieve state")
 			}
 			if (!state.providerID) {
-				throw new Error("Could not get providerid from state");
+				throw new Error("Could not get providerid from state")
 			}
 
 			if (state.restoreHash) {
-				window.location.hash = state.restoreHash;
+				window.location.hash = state.restoreHash
 			} else {
-				window.location.hash = '';
+				window.location.hash = ''
 			}
-			reject(new JSO.OAuthResponseError(err));
-		});
+			reject(new JSO.OAuthResponseError(err))
+		})
 
 	}
 
@@ -195,57 +195,57 @@ class JSO {
 	 */
 	callback(url) {
 
-		var that = this;
+		var that = this
 		return Promise.resolve().then(function() {
 
 
-			var response;
-			var h = window.location.hash;
+			var response
+			var h = window.location.hash
 
-			utils.log("JSO.prototype.callback() " + url + "");
+			utils.log("JSO.prototype.callback() " + url + "")
 
 			// If a url is provided
 			if (url) {
-				// utils.log('Hah, I got the url and it ' + url);
-				if(url.indexOf('#') === -1) {return;}
-				h = url.substring(url.indexOf('#'));
-				// utils.log('Hah, I got the hash and it is ' +  h);
+				// utils.log('Hah, I got the url and it ' + url)
+				if(url.indexOf('#') === -1) {return}
+				h = url.substring(url.indexOf('#'))
+				// utils.log('Hah, I got the hash and it is ' +  h)
 			}
 
 			/*
 			 * Start with checking if there is a token in the hash
 			 */
-			if (h.length < 2) {return;}
-			// if (h.indexOf("access_token") === -1) {return;}
-			h = h.substring(1);
-			response = utils.parseQueryString(h);
+			if (h.length < 2) {return}
+			// if (h.indexOf("access_token") === -1) {return}
+			h = h.substring(1)
+			response = utils.parseQueryString(h)
 
 			if (response.hasOwnProperty("access_token")) {
-				return that.processTokenResponse(response);
+				return that.processTokenResponse(response)
 
 			} else if (response.hasOwnProperty("error")) {
-				return that.processErrorResponse(response);
+				return that.processErrorResponse(response)
 			}
 
 
-		});
+		})
 	}
 
 
 
 
 	dump() {
-		var tokens = store.getTokens(this.providerID);
+		var tokens = store.getTokens(this.providerID)
 		var x = {
 			"providerID": this.providerID,
 			"tokens": tokens,
 			"config": this.config
-		};
-		return x;
+		}
+		return x
 	}
 
 	_getRequestScopes(opts) {
-		var scopes = [], i;
+		var scopes = [], i
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
 		 */
@@ -256,13 +256,13 @@ class JSO {
       }
 		}
 		if (opts && opts.scopes && opts.scopes.request) {
-			for(i = 0; i < opts.scopes.request.length; i++) {scopes.push(opts.scopes.request[i]);}
+			for(i = 0; i < opts.scopes.request.length; i++) {scopes.push(opts.scopes.request[i])}
 		}
-		return utils.uniqueList(scopes);
+		return utils.uniqueList(scopes)
 	}
 
 	_getRequiredScopes(opts) {
-		var scopes = [], i;
+		var scopes = [], i
 		/*
 		 * Calculate which scopes to request, based upon provider config and request config.
 		 */
@@ -273,9 +273,9 @@ class JSO {
       }
 		}
 		if (opts && opts.scopes && opts.scopes.require) {
-			for(i = 0; i < opts.scopes.require.length; i++) {scopes.push(opts.scopes.require[i]);}
+			for(i = 0; i < opts.scopes.require.length; i++) {scopes.push(opts.scopes.require[i])}
 		}
-		return utils.uniqueList(scopes);
+		return utils.uniqueList(scopes)
 	}
 
 
@@ -287,44 +287,34 @@ class JSO {
 	 * @return {[type]}      [description]
 	 */
 	getToken(opts) {
+    opts = opts || {}
 
-		var that = this;
+    return new Promise((resolve, reject) => {
 
+      let scopesRequire = this._getRequiredScopes(opts)
+			let token = store.getToken(this.providerID, scopesRequire)
 
+			if (token) {
+				return resolve(token)
 
-		return Promise.resolve().then(function() {
+			} else {
 
-			var scopesRequire = that._getRequiredScopes(opts);
-			var token = store.getToken(that.providerID, scopesRequire);
-
-			return Promise.resolve().then(function() {
-
-				if (token) {
-					return token;
+				if (opts.hasOwnProperty("allowredir") && !opts.allowredir) {
+					throw new Error("Cannot obtain a token, when not allowed to redirect...")
 
 				} else {
-
-					if (opts.hasOwnProperty("allowredir") && !opts.allowredir) {
-						throw new Error("Cannot obtain a token, when not allowed to redirect...");
-
-					} else {
-						return that._authorize(opts);
-					}
-
+					return this._authorize(opts)
 				}
-
-			});
-
-
-		});
+			}
+    })
 
 	}
 
 	checkToken(opts) {
-		// var scopesRequest  = this._getRequestScopes(opts);
+		// var scopesRequest  = this._getRequestScopes(opts)
 
-		var scopesRequire = this._getRequiredScopes(opts);
-		return store.getToken(this.providerID, scopesRequire);
+		var scopesRequire = this._getRequiredScopes(opts)
+		return store.getToken(this.providerID, scopesRequire)
 	}
 
 
@@ -338,119 +328,119 @@ class JSO {
 		var
 			request,
 			authurl,
-			scopes;
+			scopes
 
 		return Promise.resolve().then(() => {
 
-			var authorization = this.config.getValue('authorization', null, true);
-			var client_id = this.config.getValue('client_id', null, true);
+			var authorization = this.config.getValue('authorization', null, true)
+			var client_id = this.config.getValue('client_id', null, true)
 
-			utils.log("About to send an authorization request to this entry:", authorization);
-			utils.log("Options", opts);
+			utils.log("About to send an authorization request to this entry:", authorization)
+			utils.log("Options", opts)
 
 			request = {
 				'response_type': this.config.getValue('response_type', 'token'),
 				'state': utils.uuid()
 			}
 			if (opts.hasOwnProperty("allowia") && !opts.allowia) {
-				request.prompt = "none";
+				request.prompt = "none"
 			}
 
 			// if (callback && typeof callback === 'function') {
-				// utils.log("About to store a callback for later with state=" + request.state);
-				// JSO.internalStates[request.state] = resolve;
+				// utils.log("About to store a callback for later with state=" + request.state)
+				// JSO.internalStates[request.state] = resolve
 			// }
 
 			if (this.config.has('redirect_uri')) {
-				request.redirect_uri = this.config.getValue('redirect_uri', '');
+				request.redirect_uri = this.config.getValue('redirect_uri', '')
 			}
 			if (opts.redirect_uri) {
-				request.redirect_uri = opts.redirect_uri;
+				request.redirect_uri = opts.redirect_uri
 			}
 
-			request.client_id = client_id;
+			request.client_id = client_id
 
 
 			/*
 			 * Calculate which scopes to request, based upon provider config and request config.
 			 */
-			scopes = this._getRequestScopes(opts);
+			scopes = this._getRequestScopes(opts)
 			if (scopes.length > 0) {
-				request.scope = utils.scopeList(scopes);
+				request.scope = utils.scopeList(scopes)
 			}
 
-			utils.log("DEBUG REQUEST"); utils.log(request);
+			utils.log("DEBUG REQUEST"); utils.log(request)
 
-			authurl = utils.encodeURL(authorization, request);
+			authurl = utils.encodeURL(authorization, request)
 
 			// We'd like to cache the hash for not loosing Application state.
 			// With the implciit grant flow, the hash will be replaced with the access
 			// token when we return after authorization.
 			if (window.location.hash) {
-				request.restoreHash = window.location.hash;
+				request.restoreHash = window.location.hash
 			}
-			request.providerID = this.providerID;
+			request.providerID = this.providerID
 			if (scopes) {
-				request.scopes = scopes;
+				request.scopes = scopes
 			}
 
 
-			utils.log("Saving state [" + request.state + "]");
-			utils.log(JSON.parse(JSON.stringify(request)));
+			utils.log("Saving state [" + request.state + "]")
+			utils.log(JSON.parse(JSON.stringify(request)))
 
-			var loader = this.Loader;
+			var loader = this.Loader
 			if (opts.hasOwnProperty("loader")) {
-				loader = opts.loader;
+				loader = opts.loader
 			}
 
-			utils.log("Looking for loader", opts, loader);
+			utils.log("Looking for loader", opts, loader)
 
-			store.saveState(request.state, request);
+			store.saveState(request.state, request)
 			return this.gotoAuthorizeURL(authurl, loader)
 				.then((url) => {
 
-					return this.callback(url);
-				});
+					return this.callback(url)
+				})
 
 
-		});
+		})
 
 	}
 
 	gotoAuthorizeURL(url, Loader) {
 
-		var that = this;
+		var that = this
 		var p = new Promise(function(resolve, reject) {
 			if (Loader !== null && typeof Loader === 'function') {
-				var loader = new Loader(url);
+				var loader = new Loader(url)
 				if (!(loader instanceof BasicLoader)) {
-					throw new Error("JSO selected Loader is not an instance of BasicLoader.");
+					throw new Error("JSO selected Loader is not an instance of BasicLoader.")
 				}
 				resolve(loader.execute()
 					.then(function(url) {
-						return url;
+						return url
 					})
-				);
+				)
 			} else {
-				reject(new Error('Cannot redirect to authorization endpoint because of missing redirect handler'));
+				reject(new Error('Cannot redirect to authorization endpoint because of missing redirect handler'))
 			}
-		});
-		return p;
+		})
+		return p
 
 	}
 
 	wipeTokens() {
-		store.wipeTokens(this.providerID);
+		store.wipeTokens(this.providerID)
 	}
 
 
 	request(opts) {
 
-		var that = this;
+		var that = this
 		var defaultAjaxConfig = {
 			"dataType": 'json'
-		};
-		var ajaxConfig = $.extend(true, {}, defaultAjaxConfig, opts);
+		}
+		var ajaxConfig = $.extend(true, {}, defaultAjaxConfig, opts)
 
 		return this.ajax(ajaxConfig)
 			.catch(function(error) {
@@ -459,34 +449,34 @@ class JSO {
 				if (error instanceof JSO.HTTPError) {
 
 
-					var str = 'HTTP status (' + error.jqXHR.status + '), JSO error on [' + opts.url + '] ' + error.jqXHR.textStatus + '';
-					error.message = str;
-					error.httpError = str;
+					var str = 'HTTP status (' + error.jqXHR.status + '), JSO error on [' + opts.url + '] ' + error.jqXHR.textStatus + ''
+					error.message = str
+					error.httpError = str
 
 					if (error.jqXHR.hasOwnProperty("responseText") && typeof error.jqXHR.responseText === 'string') {
 						try {
-							var xmsg = JSON.parse(error.jqXHR.responseText);
+							var xmsg = JSON.parse(error.jqXHR.responseText)
 							if (xmsg.hasOwnProperty("message")) {
-								error.message = xmsg.message;
+								error.message = xmsg.message
 							}
-							error.data = xmsg;
+							error.data = xmsg
 
 						} catch(err) {
-							err.message = err.message + '. Unable to parse JSON response of this HTTP error.';
+							err.message = err.message + '. Unable to parse JSON response of this HTTP error.'
 						}
 					}
 				}
 
-				throw error;
-			});
+				throw error
+			})
 
 	}
 
 
 	ajax(settings) {
 
-		var that = this;
-		var oauthOptions = settings.oauth || {};
+		var that = this
+		var oauthOptions = settings.oauth || {}
 
 
 
@@ -495,64 +485,64 @@ class JSO {
 			.then(function(token) {
 
 				if (!token) {
-					utils.log("No token no fun");
-					return;
+					utils.log("No token no fun")
+					return
 				}
 
 				if (token === null) {
-					throw new Error("Cannot perform AJAX call without a token.");
+					throw new Error("Cannot perform AJAX call without a token.")
 				}
-				utils.log("Ready. Got an token, and ready to perform an AJAX call", token);
+				utils.log("Ready. Got an token, and ready to perform an AJAX call", token)
 
 				return new Promise(function(resolve, reject) {
 
-					var allowia = oauthOptions.allowia || false;
+					var allowia = oauthOptions.allowia || false
 
 					settings.error = function(jqXHR, textStatus, errorThrown) {
-						utils.log('error(jqXHR, textStatus, errorThrown)');
-						utils.log(jqXHR);
-						utils.log(textStatus);
-						utils.log(errorThrown);
+						utils.log('error(jqXHR, textStatus, errorThrown)')
+						utils.log(jqXHR)
+						utils.log(textStatus)
+						utils.log(errorThrown)
 
 						if (jqXHR.status === 401) {
 
-							utils.log("Token expired. About to delete this token");
-							that.wipeTokens();
+							utils.log("Token expired. About to delete this token")
+							that.wipeTokens()
 
-							reject((new JSO.ExpiredTokenError({})).set("message", "Token was expired and is now deleted. Try again."));
+							reject((new JSO.ExpiredTokenError({})).set("message", "Token was expired and is now deleted. Try again."))
 						}
 						var httpError = new JSO.HTTPError({})
 							.set("jqXHR", jqXHR)
 							.set("textStatus", textStatus)
-							.set("errorThrown", errorThrown);
-						reject(httpError);
+							.set("errorThrown", errorThrown)
+						reject(httpError)
 
-					};
+					}
 
 					settings.success = function(data) {
-						resolve(data);
-					};
+						resolve(data)
+					}
 
 					if (that.config.getValue('presenttoken', null) === 'qs') {
 						if (!settings.data) {
-							settings.data = {};
+							settings.data = {}
 						}
-						settings.data.access_token = token.access_token;
+						settings.data.access_token = token.access_token
 
 					} else {
-						if (!settings.headers) {settings.headers = {};}
-						settings.headers.Authorization = "Bearer " + token.access_token;
+						if (!settings.headers) {settings.headers = {}}
+						settings.headers.Authorization = "Bearer " + token.access_token
 					}
-					utils.log('$.ajax settings', settings);
+					utils.log('$.ajax settings', settings)
 
-					JSO.$.ajax(settings);
+					JSO.$.ajax(settings)
 
-				});
-
-
+				})
 
 
-		});
+
+
+		})
 
 
 
@@ -564,62 +554,6 @@ class JSO {
 
 
 
-
-
-
-
-
-
-	inappbrowser(params) {
-		var that = this;
-		params = params || {};
-		return function(url, callback) {
-
-
-	        var onNewURLinspector = function(ref) {
-	        	return function(inAppBrowserEvent) {
-
-		            //  we'll check the URL for oauth fragments...
-		            var url = inAppBrowserEvent.url;
-		            utils.log("loadstop event triggered, and the url is now " + url);
-
-		            if (that.URLcontainsToken(url)) {
-		                // ref.removeEventListener('loadstop', onNewURLinspector);
-		                setTimeout(function() {
-		                	ref.close();
-		                }, 500);
-
-
-			            that.callback(url, function() {
-			                // When we've found OAuth credentials, we close the inappbrowser...
-			                utils.log("Closing window ", ref);
-			                if (typeof callback === 'function') { callback(); }
-			            });
-		            }
-
-		        };
-		    };
-
-			var target = '_blank';
-			if (params.hasOwnProperty('target')) {
-				target = params.target;
-			}
-			var options = {};
-
-			utils.log("About to open url " + url);
-
-			var ref = window.open(url, target, options);
-			utils.log("URL Loaded... ");
-	        ref.addEventListener('loadstart', onNewURLinspector(ref));
-	        utils.log("Event listeren ardded... ", ref);
-
-
-	        // Everytime the Phonegap InAppBrowsers moves to a new URL,
-
-
-
-		};
-	}
 
 
 
@@ -630,20 +564,20 @@ class JSO {
 	 */
 	URLcontainsToken(url) {
 		// If a url is provided
-		var h;
+		var h
 		if (url) {
-			// utils.log('Hah, I got the url and it ' + url);
-			if(url.indexOf('#') === -1) { return false;}
-			h = url.substring(url.indexOf('#'));
-			// utils.log('Hah, I got the hash and it is ' +  h);
+			// utils.log('Hah, I got the url and it ' + url)
+			if(url.indexOf('#') === -1) { return false}
+			h = url.substring(url.indexOf('#'))
+			// utils.log('Hah, I got the hash and it is ' +  h)
 		}
 
 		/*
 		 * Start with checking if there is a token in the hash
 		 */
-		if (h.length < 2){ return false;}
-		if (h.indexOf("access_token") === -1) {return false;}
-		return true;
+		if (h.length < 2){ return false}
+		if (h.indexOf("access_token") === -1) {return false}
+		return true
 	}
 
   static info() {
@@ -658,24 +592,10 @@ class JSO {
 
 
 
-
-
-
-
-// JSO.internalStates = [];
-// JSO.instances = {};
-// JSO.store = store;
-// JSO.utils = utils;
-
-
-// JSO.enablejQuery = function($) {
-// 	JSO.$ = $;
-// };
-
 JSO.OAuthResponseError = class {
   constructor(props) {
     for(var key in props) {
-			this[key] = props[key];
+			this[key] = props[key]
 		}
   }
 }
@@ -684,7 +604,7 @@ JSO.OAuthResponseError = class {
 JSO.ExpiredTokenError = class {
   constructor(props) {
     for(var key in props) {
-			this[key] = props[key];
+			this[key] = props[key]
 		}
   }
 }
@@ -693,12 +613,12 @@ JSO.ExpiredTokenError = class {
 JSO.HTTPError = class {
   constructor(props) {
     for(var key in props) {
-			this[key] = props[key];
+			this[key] = props[key]
 		}
   }
 }
 
-Object.assign(JSO.prototype, new EventEmitter({}));
+Object.assign(JSO.prototype, new EventEmitter({}))
 
 export {JSO, BasicLoader, HTTPRedirect, Popup}
 // exports.IFramePassive = IFramePassive
