@@ -18,9 +18,13 @@ JSO may be used to make your web application (or mobile hybrid application) act 
 * [JSO Documentation](http://oauth.no/jso/)
 
 
+
+
 ## NOTICE: This is the preparations for the final version 4.0 of JSO
 
 The main news about 4.0 is the use of ES6 syntax, babel and webpack.
+
+Check the `version1` branch for the older stable release.
 
 
 ## How to use
