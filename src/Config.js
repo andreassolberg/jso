@@ -1,28 +1,15 @@
-define(function() {
-	// Credits to Ryan Lynch
-	// http://stackoverflow.com/questions/11197247/javascript-equivalent-of-jquerys-extend-method
-	var extend = function (a){
-		for(var i=1; i<a.length; i++)
-			for(var key in a[i])
-				if(a[i].hasOwnProperty(key))
-					a[0][key] = a[i][key];
-		return a[0];
-	};
-
-
-	var Config = function() {
-		var ca = [{}];
+export default class Config {
+	constructor() {
+    this.config = {};
 		for(var i = 0; i < arguments.length; i++) {
-			ca.push(arguments[i]);
+      Object.assign(this.config, arguments[i]);
 		}
-		this.config = extend(ca);
-	};
+	}
 
-	Config.prototype.has = function(key) {
+	has(key) {
 		var pointer = this.config;
 		var splittedKeys = key.split('.');
 		var i = 0;
-
 		for(i = 0; i < splittedKeys.length; i++) {
 			if (pointer.hasOwnProperty(splittedKeys[i])) {
 				pointer = pointer[splittedKeys[i]];
@@ -31,21 +18,13 @@ define(function() {
 			}
 		}
 		return true;
-	};
+	}
 
-	Config.prototype.get = function(key, defaultValue, isRequired) {
-
-		// console.log("about to load config", key, this.config);
-
-		isRequired = isRequired || false;
-
+	getValue(key, defaultValue, isRequired) {
+		var isRequired = isRequired || false;
 		var pointer = this.config;
-
 		var splittedKeys = key.split('.');
 		var i = 0;
-
-		// console.log("splittedKeys", splittedKeys); 
-
 		for(i = 0; i < splittedKeys.length; i++) {
 
 			if (pointer.hasOwnProperty(splittedKeys[i])) {
@@ -64,7 +43,5 @@ define(function() {
 			return defaultValue;
 		}
 		return pointer;
-	};
-
-	return Config;
-});
+	}
+}

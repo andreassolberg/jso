@@ -1,10 +1,15 @@
 {
   "name": "jso",
-  "version": "2.0.3",
+  "version": "4.0.0-rc.4",
   "description": "OAuth 2.0 implementation in Javascript",
-  "main": "src/jso.js",
+  "main": "dist/jso.js",
+  "module": "src/JSO.js",
   "scripts": {
-    "test": "node_modules/grunt-cli/bin/grunt test --verbose"
+    "test": "true",
+    "preversion": "npm test",
+    "version": "npm run build && git add -A dist",
+    "postversion": "git push && git push --tags && npm publish",
+    "build": "webpack --mode production"
   },
   "repository": {
     "type": "git",
@@ -19,20 +24,31 @@
     "ajax",
     "jquery"
   ],
+  "files": [
+    "src"
+  ],
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "browser": true,
+      "node": false
+    }
+  },
   "devDependencies": {
-    "grunt-cli": "*",
-    "grunt": "~0.4.5",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-contrib-nodeunit": "~0.4.1",
-    "grunt-requirejs": "*",
-    "grunt-contrib-qunit": "*",
-    "grunt-bump": "^0.3.1",
-    "bower": "~1.4.1"
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-loader": "^7.1.4",
+    "babel-preset-react": "^6.24.1",
+    "qunit": "^2.5.1",
+    "webpack": "^4.1.1"
   },
   "author": "Andreas Åkre Solberg",
   "license": "LGPL-2.1",
   "bugs": {
     "url": "https://github.com/andreassolberg/jso/issues"
   },
-  "homepage": "https://github.com/andreassolberg/jso"
+  "homepage": "https://github.com/andreassolberg/jso",
+  "dependencies": {
+    "webpack-cli": "^2.0.12"
+  }
 }
