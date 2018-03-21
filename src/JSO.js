@@ -303,7 +303,7 @@ class JSO {
 					throw new Error("Cannot obtain a token, when not allowed to redirect...")
 
 				} else {
-					return this._authorize(opts)
+					resolve(this._authorize(opts))
 				}
 			}
     })
