@@ -339,7 +339,7 @@ class JSO {
 			utils.log("Options", opts)
 
 			request = {
-				'response_type': this.config.getValue('response_type', 'token'),
+				'response_type': opts.response_type || this.config.getValue('response_type', 'token'),
 				'state': utils.uuid()
 			}
 			if (opts.hasOwnProperty("allowia") && !opts.allowia) {
