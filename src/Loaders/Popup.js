@@ -4,7 +4,6 @@ export default class Popup extends BasicLoader {
 
   execute() {
 
-		// console.error("Popup loaded...");
 		/*
 		* In the popup's scripts, running on <http://example.org>:
 		*/
