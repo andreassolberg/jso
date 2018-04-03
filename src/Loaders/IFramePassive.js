@@ -1,4 +1,5 @@
-import BasicLoader from './BasicLoader';
+import BasicLoader from './BasicLoader'
+import utils from '../utils'
 
 export default class HTTPRedirect extends BasicLoader {
 
@@ -29,11 +30,21 @@ export default class HTTPRedirect extends BasicLoader {
 
 
     this.iframe = document.createElement('iframe')
-    this.iframe.setAttribute('id', 'jso_passive_iframe')
+    this.iframe.setAttribute('id', 'jso_passive_iframe_' + utils.uuid())
     this.iframe.setAttribute('src', url)
 
     this.iframe.addEventListener('load', (e) => {
       console.error(" IS Loaded! ", e)
+      console.log(this.iframe.contentWindow.location.hash)
+
+      if (this.iframe.contentWindow.location.hash) {
+        let encodedHash = this.iframe.contentWindow.location.hash.substring(1)
+        let object = utils.parseQueryString(encodedHash)
+        console.log("OBJECT", object)
+      } else {
+        console.error("Failed to obtain response value from iframe")
+      }
+
     })
 
 
