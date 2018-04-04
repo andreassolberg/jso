@@ -81,8 +81,7 @@ class JSO {
 	 */
 	processTokenResponse(atoken) {
 
-		var that = this
-		return new Promise(function(resolve, reject) {
+		return new Promise((resolve, reject) => {
 
 			var state
 			var now = utils.epoch()
@@ -114,14 +113,14 @@ class JSO {
 			if (atoken.expires_in) {
 				atoken.expires = now + parseInt(atoken.expires_in, 10)
         atoken.expires_in = parseInt(atoken.expires_in, 10)
-			} else if (that.config.getValue('default_lifetime', null) === false) {
+			} else if (this.config.getValue('default_lifetime', null) === false) {
 				atoken.expires = null
-			} else if (that.config.has('permanent_scope')) {
-				if (!store.hasScope(atoken, that.config.getValue('permanent_scope'))) {
+			} else if (this.config.has('permanent_scope')) {
+				if (!store.hasScope(atoken, this.config.getValue('permanent_scope'))) {
 					atoken.expires = null
 				}
-			} else if (that.config.has('default_lifetime')) {
-				atoken.expires = now + that.config.getValue('default_lifetime')
+			} else if (this.config.has('default_lifetime')) {
+				atoken.expires = now + this.config.getValue('default_lifetime')
 			} else {
 				atoken.expires = now + 3600
 			}
