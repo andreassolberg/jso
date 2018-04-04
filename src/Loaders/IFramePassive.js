@@ -1,7 +1,7 @@
 import BasicLoader from './BasicLoader'
 import utils from '../utils'
 
-export default class HTTPRedirect extends BasicLoader {
+export default class IFramePassive extends BasicLoader {
 
 	constructor(url) {
 		super(url);
