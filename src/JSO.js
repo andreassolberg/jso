@@ -30,8 +30,9 @@ const default_config = {
  'debug': true
 }
 
-class JSO {
+class JSO extends EventEmitter {
 	constructor(config) {
+    super()
 		this.configure(config)
 		this.providerID = this.getProviderID()
 		this.Loader = HTTPRedirect
@@ -48,12 +49,6 @@ class JSO {
 		} else {
 			throw new Error("loader MUST be an instance of the JSO BasicLoader")
 		}
-	}
-
-	on(eventid, callback) {
-		if (typeof eventid !== 'string') {throw new Error('Registering triggers on JSO must be identified with an event id')}
-		if (typeof callback !== 'function') {throw new Error('Registering a callback on JSO must be a function.')}
-		this.callbacks[eventid] = callback
 	}
 
 
@@ -151,6 +146,14 @@ class JSO {
 		})
 	}
 
+  // Experimental support for authorization code to be added
+  processAuthorizationCodeResponse(object) {
+    console.log(this)
+    this.emit('authorizationCode', object)
+
+    // throw new Exception("Implementation of authorization code flow is not yet implemented. Instead use the implicit grant flow")
+
+  }
 
 
 
@@ -212,6 +215,10 @@ class JSO {
 
 			if (response.hasOwnProperty("access_token")) {
 				return this.processTokenResponse(response)
+
+      // Implementation of authorization code flow is in beta.
+			} else if (response.hasOwnProperty("code")) {
+        return this.processAuthorizationCodeResponse(response)
 
 			} else if (response.hasOwnProperty("error")) {
 				return this.processErrorResponse(response)
