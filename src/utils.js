@@ -21,7 +21,19 @@ utils.uuid = function() {
 	});
 };
 
-
+/*
+ * Takes a full url as input and expect it to have an encoded response
+ * object as eigther a query string or an encoded fragment.
+ * Returns the decoded object, or throws an error if no query string or fragment.
+ */
+utils.getResponseFromURL = (url) => {
+  if (url.indexOf('#') !== -1) {
+    return utils.parseQueryString(url.substring(url.indexOf('#')+1))
+  } else if (url.indexOf('?') !== -1) {
+    return utils.parseQueryString(url.substring(url.indexOf('?')+1))
+  }
+  throw new Error("Could not obtain OAuth response object in callback url, neighter query string of hash fragment")
+}
 
 utils.parseQueryString = function (qs) {
 	var e,
