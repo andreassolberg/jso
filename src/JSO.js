@@ -611,7 +611,6 @@ JSO.HTTPError = class {
   }
 }
 
-Object.assign(JSO.prototype, new EventEmitter({}))
+// Object.assign(JSO.prototype, new EventEmitter({}))
 
 export {JSO, BasicLoader, HTTPRedirect, Popup, IFramePassive}
-// exports.IFramePassive = IFramePassive
