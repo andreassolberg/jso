@@ -100,7 +100,7 @@ class JSO {
 				throw new Error("Could not get providerid from state")
 			}
 
-			utils.log("Checking atoken ", atoken, "")
+			utils.log("processTokenResponse ", atoken, "")
 
 			/*
 			 * Decide when this token should expire.
