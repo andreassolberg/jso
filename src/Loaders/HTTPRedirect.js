@@ -5,7 +5,7 @@ export default class HTTPRedirect extends BasicLoader {
 		var that = this
 		return new Promise(function(resolve, reject) {
 			window.location = that.url
-			resolve()
+			// resolve(true)
 		})
 	}
 }
