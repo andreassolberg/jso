@@ -157,8 +157,7 @@ class JSO {
 
 	processErrorResponse(err) {
 
-		var that = this
-		return new Promise(function(resolve, reject) {
+		return new Promise((resolve, reject) => {
 
 			var state
 			if (err.state) {
@@ -194,40 +193,32 @@ class JSO {
 	 * childbrowser when the jso context is not receiving the response,
 	 * instead the response is received on a child browser.
 	 */
-	callback(url) {
+	callback(data) {
 
-		var that = this
-		return Promise.resolve().then(function() {
+		return Promise.resolve().then(() => {
 
+      let response = null
+      if (typeof data === 'object') {
+        response = data
+      } else if (typeof data === 'string') {
+        response = utils.getResponseFromURL(data)
+      } else if (typeof data === 'undefined') {
+        response = utils.getResponseFromURL(window.location.href)
+      }
+      if (response === null) {
+        throw new Error("Callback() function was called with an invalid argument")
+      }
 
-			var response
-			var h = window.location.hash
-
-			utils.log("JSO.prototype.callback() " + url + "")
-
-			// If a url is provided
-			if (url) {
-				// utils.log('Hah, I got the url and it ' + url)
-				if(url.indexOf('#') === -1) {return}
-				h = url.substring(url.indexOf('#'))
-				// utils.log('Hah, I got the hash and it is ' +  h)
-			}
-
-			/*
-			 * Start with checking if there is a token in the hash
-			 */
-			if (h.length < 2) {return}
-			// if (h.indexOf("access_token") === -1) {return}
-			h = h.substring(1)
-			response = utils.parseQueryString(h)
+      utils.log('Receving response in callbacj', response)
 
 			if (response.hasOwnProperty("access_token")) {
-				return that.processTokenResponse(response)
+				return this.processTokenResponse(response)
 
 			} else if (response.hasOwnProperty("error")) {
-				return that.processErrorResponse(response)
+				return this.processErrorResponse(response)
 			}
 
+      console.error("Silently ignoring callback with no respone data")
 
 		})
 	}
@@ -398,9 +389,10 @@ class JSO {
 
 			store.saveState(request.state, request)
 			return this.gotoAuthorizeURL(authurl, loader)
-				.then((url) => {
-
-					return this.callback(url)
+				.then((response) => {
+          if (response !== true) {
+            return this.callback(response)
+          }
 				})
 
 
@@ -410,23 +402,17 @@ class JSO {
 
 	gotoAuthorizeURL(url, Loader) {
 
-		var that = this
-		var p = new Promise(function(resolve, reject) {
+		return new Promise(function(resolve, reject) {
 			if (Loader !== null && typeof Loader === 'function') {
 				var loader = new Loader(url)
 				if (!(loader instanceof BasicLoader)) {
 					throw new Error("JSO selected Loader is not an instance of BasicLoader.")
 				}
-				resolve(loader.execute()
-					.then(function(url) {
-						return url
-					})
-				)
+				resolve(loader.execute())
 			} else {
 				reject(new Error('Cannot redirect to authorization endpoint because of missing redirect handler'))
 			}
 		})
-		return p
 
 	}
 
