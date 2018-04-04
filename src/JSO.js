@@ -110,8 +110,10 @@ class JSO {
 			 * 3. Specific permanent scope.
 			 * 4. Default library lifetime:
 			 */
+      atoken.received = now
 			if (atoken.expires_in) {
 				atoken.expires = now + parseInt(atoken.expires_in, 10)
+        atoken.expires_in = parseInt(atoken.expires_in, 10)
 			} else if (that.config.getValue('default_lifetime', null) === false) {
 				atoken.expires = null
 			} else if (that.config.has('permanent_scope')) {
@@ -129,11 +131,14 @@ class JSO {
 			 */
 			if (atoken.scope) {
 				atoken.scopes = atoken.scope.split(" ")
+        delete atoken.scope
 			} else if (state.scopes) {
 				atoken.scopes = state.scopes
 			} else {
 				atoken.scopes = []
 			}
+
+      utils.log("processTokenResponse completed ", atoken, "")
 
 			store.saveToken(state.providerID, atoken)
 
