@@ -29,15 +29,15 @@ utils.parseQueryString = function (qs) {
 		r = /([^&;=]+)=?([^&;]*)/g,
 		d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
 		q = qs,
-		urlParams = {};
+		urlParams = {}
 
 	/* jshint ignore:start */
 	while (e = r.exec(q)) {
-	   urlParams[d(e[1])] = d(e[2]);
+	   urlParams[d(e[1])] = d(e[2])
 	};
 	/* jshint ignore:end */
 
-	return urlParams;
+	return urlParams
 };
 
 
@@ -53,22 +53,22 @@ utils.parseQueryString = function (qs) {
  * @return {[type]}        [description]
  */
 utils.scopeList = function(scopes) {
-	return utils.uniqueList(scopes).join(' ');
+	return utils.uniqueList(scopes).join(' ')
 };
 
 
 utils.uniqueList = function(items) {
-	var uniqueItems = {};
-	var resultItems = [];
+	var uniqueItems = {}
+	var resultItems = []
 	for(var i = 0; i < items.length; i++) {
-		uniqueItems[items[i]] = 1;
+		uniqueItems[items[i]] = 1
 	}
 	for(var key in uniqueItems) {
 		if (uniqueItems.hasOwnProperty(key)) {
-			resultItems.push(key);
+			resultItems.push(key)
 		}
 	}
-	return resultItems;
+	return resultItems
 };
 
 
@@ -80,10 +80,10 @@ utils.uniqueList = function(items) {
  */
 utils.uuid = function() {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-		return v.toString(16);
-	});
-};
+		var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8)
+		return v.toString(16)
+	})
+}
 
 /**
  * A log wrapper, that only logs if logging is turned on in the config
@@ -91,14 +91,14 @@ utils.uuid = function() {
  */
 utils.log = function(msg) {
 	// if (!options.debug) return;
-	if (!console) return;
-	if (!console.log) return;
+	if (!console) return
+	if (!console.log) return
 
 	// console.log("LOG(), Arguments", arguments, msg)
 	if (arguments.length > 1) {
-		console.log('[JSO]', ...arguments);
+		console.log('[JSO]', ...arguments)
 	} else {
-		console.log('[JSO]', msg);
+		console.log('[JSO]', msg)
 	}
 
 };
@@ -122,13 +122,13 @@ utils.log = function(msg) {
  * Each property in the params is added to the url as query string parameters
  */
 utils.encodeURL = function(url, params) {
-	var res = url;
-	var k, i = 0;
-	var firstSeparator = (url.indexOf("?") === -1) ? '?' : '&';
+	var res = url
+	var k, i = 0
+	var firstSeparator = (url.indexOf("?") === -1) ? '?' : '&'
 	for(k in params) {
-		res += (i++ === 0 ? firstSeparator : '&') + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+		res += (i++ === 0 ? firstSeparator : '&') + encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
 	}
-	return res;
+	return res
 };
 
 
@@ -137,7 +137,7 @@ utils.encodeURL = function(url, params) {
  * Used for calculation of expire times.
  */
 utils.epoch = function() {
-	return Math.round(new Date().getTime()/1000.0);
+	return Math.round(new Date().getTime()/1000.0)
 };
 
 
