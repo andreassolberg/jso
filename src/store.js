@@ -90,7 +90,7 @@ class Store {
 		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider));
 		if (!tokens) tokens = [];
 
-		utils.log("Token received", tokens);
+		utils.log("Token found when loooking up provider " + provider + " in store " + window.location.href, tokens);
 		return tokens;
 	}
 
