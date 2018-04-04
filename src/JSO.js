@@ -34,11 +34,7 @@ class JSO {
 	constructor(config) {
 		this.configure(config)
 		this.providerID = this.getProviderID()
-
 		this.Loader = HTTPRedirect
-
-		// JSO.instances[this.providerID] = this
-
 		this.callbacks = {}
 	}
 
