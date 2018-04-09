@@ -16,6 +16,8 @@ import HTTPRedirect from './Loaders/HTTPRedirect'
 import IFramePassive from './Loaders/IFramePassive'
 import Popup from './Loaders/Popup'
 
+import Fetcher from './HTTP/Fetcher'
+
 // import ExpiredTokenError from './errors/ExpiredTokenError'
 // import HTTPError from './errors/HTTPError'
 import OAuthResponseError from './errors/OAuthResponseError'
@@ -606,4 +608,4 @@ JSO.HTTPError = class {
 
 // Object.assign(JSO.prototype, new EventEmitter({}))
 
-export {JSO, BasicLoader, HTTPRedirect, Popup, IFramePassive}
+export {JSO, BasicLoader, HTTPRedirect, Popup, IFramePassive, Fetcher}
