@@ -44,6 +44,11 @@ class JSO extends EventEmitter {
 		this.config = new Config(default_config, config)
 	}
 
+  // Experimental, nothing but default store exists yet. Not documented.
+  setStore(newstore) {
+    this.store = newstore
+  }
+
 	setLoader(loader) {
 		if (typeof loader === "function") {
 			this.Loader = loader
