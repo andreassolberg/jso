@@ -291,6 +291,7 @@ JSO uses JSON serialization functions (stringify and parse). These are supported
 
 ## Library size
 
+* 4.0.0:     12577 bytes
 * 4.0.0-rc6: 12582 bytes
 * 4.0.0-rc4: 12612 bytes
 
