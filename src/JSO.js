@@ -36,6 +36,7 @@ class JSO extends EventEmitter {
 		this.configure(config)
 		this.providerID = this.getProviderID()
 		this.Loader = HTTPRedirect
+    this.store = store
 		this.callbacks = {}
 	}
 
@@ -81,7 +82,7 @@ class JSO extends EventEmitter {
 		var now = utils.epoch()
 
 		if (atoken.state) {
-			state = store.getState(atoken.state)
+			state = this.store.getState(atoken.state)
 		} else {
 			throw new Error("Could not get state from storage.")
 		}
@@ -110,7 +111,7 @@ class JSO extends EventEmitter {
 		} else if (this.config.getValue('default_lifetime', null) === false) {
 			atoken.expires = null
 		} else if (this.config.has('permanent_scope')) {
-			if (!store.hasScope(atoken, this.config.getValue('permanent_scope'))) {
+			if (!this.store.hasScope(atoken, this.config.getValue('permanent_scope'))) {
 				atoken.expires = null
 			}
 		} else if (this.config.has('default_lifetime')) {
@@ -133,7 +134,7 @@ class JSO extends EventEmitter {
 
     utils.log("processTokenResponse completed ", atoken, "")
 
-		store.saveToken(state.providerID, atoken)
+		this.store.saveToken(state.providerID, atoken)
 
 		if (state.restoreHash) {
 			window.location.hash = state.restoreHash
@@ -159,7 +160,7 @@ class JSO extends EventEmitter {
 
 		var state
 		if (err.state) {
-			state = store.getState(err.state)
+			state = this.store.getState(err.state)
 		} else {
 			throw new Error("Could not get [state] and no default providerid is provided.")
 		}
@@ -221,7 +222,7 @@ class JSO extends EventEmitter {
 
 
 	dump() {
-		var tokens = store.getTokens(this.providerID)
+		var tokens = this.store.getTokens(this.providerID)
 		var x = {
 			"providerID": this.providerID,
 			"tokens": tokens,
@@ -278,7 +279,7 @@ class JSO extends EventEmitter {
     return new Promise((resolve, reject) => {
 
       let scopesRequire = this._getRequiredScopes(opts)
-			let token = store.getToken(this.providerID, scopesRequire)
+			let token = this.store.getToken(this.providerID, scopesRequire)
 
 			if (token) {
 				return resolve(token)
@@ -300,7 +301,7 @@ class JSO extends EventEmitter {
 		// var scopesRequest  = this._getRequestScopes(opts)
 
 		var scopesRequire = this._getRequiredScopes(opts)
-		return store.getToken(this.providerID, scopesRequire)
+		return this.store.getToken(this.providerID, scopesRequire)
 	}
 
 
@@ -381,7 +382,7 @@ class JSO extends EventEmitter {
 
 			utils.log("Looking for loader", opts, loader)
 
-			store.saveState(request.state, request)
+			this.store.saveState(request.state, request)
 			return this.gotoAuthorizeURL(authurl, loader)
 				.then((response) => {
           if (response !== true) {
@@ -411,7 +412,7 @@ class JSO extends EventEmitter {
 	}
 
 	wipeTokens() {
-		store.wipeTokens(this.providerID)
+		this.store.wipeTokens(this.providerID)
 	}
 
 
