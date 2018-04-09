@@ -5,6 +5,9 @@
 ```
 npm run build
 
+npm version 4.1.0-rc.6
+npm version 4.0.0
+
 npm version prerelease -m "Release %s"
 
 npm version patch
