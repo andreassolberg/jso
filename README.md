@@ -121,7 +121,7 @@ You may also ensure that a token is available early in your application, to forc
 You may wipe all stored tokens, in order to simulate a *logout* experience:
 
 ```
-jso.wipeTokens();
+client.wipeTokens();
 ```
 
 
@@ -129,7 +129,6 @@ jso.wipeTokens();
 
 ```
 cd examples
-cp ../dist/jso.js .
 python -m SimpleHTTPServer 8990
 ```
 
