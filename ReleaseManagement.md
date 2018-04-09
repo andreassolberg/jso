@@ -13,14 +13,11 @@ npm version major
 ```
 
 
-
 Reference for best practice library management with Webpack:
 
 * <https://webpack.js.org/guides/author-libraries/>
 
 
-
 # Branches
 
-
-Currently `master` is the 2.x branch and `version3` is the 3.0 prerelease.
+Currently `master` is the 4.x branch and `version1` is the 1.0 release.
