@@ -6,23 +6,22 @@
 
 OAuth 2.0 from your javascript client web application or mobile application in a secure way. JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company working for educational and research institutions in Norway.
 
-See also our javascript API mock-up tool <http://httpjs.net>.
-
-* [Follow Andreas Åkre Solberg on twitter](https://twitter.com/erlang)
-* [Read more about UNINETT](http://uninett.no)
-* Contact address: <mailto:andreas.solberg@uninett.no>
+*Version 4, (current master branch) is rather new. Check the `version1` branch for the older stable release.*
 
 
-JSO may be used to make your web application (or mobile hybrid application) act as an OAuth 2.0 Consumer/client, and access remote APIs that are protected by OAuth 2.0 and supports CORS (or JSONP).
 
-* [JSO Documentation](http://oauth.no/jso/)
+## Features
+
+* Implements **OAuth 2.0 Implicit Flow**.
+* AMD-compatible loading.
+* No server component needed.
+* Can handle multiple providers at once.
+* Uses *HTML 5.0 localStorage* to cache Access Tokens. You do not need to implement a storage.
+* Can prefetch all needed tokens with sufficient scopes, to start with, then tokens can be used for requests later. This way, you can be sure that you would not need to redirect anywhere in your business logic, because you would need to refresh an expired token.
+* Excellent scope support.
+* Caches and restores the hash, your application will not loose state when sending the user to the authorization endpoint.
 
 
-**JSO version 4.x**
-
-The main news about 4.x is the use of ES6 syntax, babel and webpack.
-
-Check the `version1` branch for the older stable release.
 
 
 ## How to use
@@ -150,17 +149,6 @@ The software is dual-licenced with *The GNU Lesser General Public License, versi
 * <http://opensource.org/licenses/LGPL-3.0>
 
 
-## Features
-
-* Implements **OAuth 2.0 Implicit Flow**.
-* AMD-compatible loading.
-* No server component needed.
-* Can handle multiple providers at once.
-* Uses *HTML 5.0 localStorage* to cache Access Tokens. You do not need to implement a storage.
-* Can prefetch all needed tokens with sufficient scopes, to start with, then tokens can be used for requests later. This way, you can be sure that you would not need to redirect anywhere in your business logic, because you would need to refresh an expired token.
-* Excellent scope support.
-* Caches and restores the hash, your application will not loose state when sending the user to the authorization endpoint.
-
 
 
 <!--
@@ -178,3 +166,12 @@ JSO uses JSON serialization functions (stringify and parse). These are supported
 ## Library size
 
 * 4.0.0-rc4: 12612 bytes
+
+
+## More from Uninett
+
+See also our javascript API mock-up tool <http://httpjs.net>.
+
+* [Follow Andreas Åkre Solberg on twitter](https://twitter.com/erlang)
+* [Read more about UNINETT](http://uninett.no)
+* Contact address: <mailto:andreas.solberg@uninett.no>
