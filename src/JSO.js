@@ -222,7 +222,6 @@ class JSO extends EventEmitter {
       return this.processAuthorizationCodeResponse(response)
 
 		} else if (response.hasOwnProperty("error")) {
-			return this.processErrorResponse(response)
 			throw this.processErrorResponse(response)
 		}
 
