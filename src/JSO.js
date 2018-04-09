@@ -421,44 +421,6 @@ class JSO extends EventEmitter {
 	}
 
 
-	request(opts) {
-
-		var that = this
-		var defaultAjaxConfig = {
-			"dataType": 'json'
-		}
-		var ajaxConfig = $.extend(true, {}, defaultAjaxConfig, opts)
-
-		return this.ajax(ajaxConfig)
-			.catch(function(error) {
-
-
-				if (error instanceof JSO.HTTPError) {
-
-
-					var str = 'HTTP status (' + error.jqXHR.status + '), JSO error on [' + opts.url + '] ' + error.jqXHR.textStatus + ''
-					error.message = str
-					error.httpError = str
-
-					if (error.jqXHR.hasOwnProperty("responseText") && typeof error.jqXHR.responseText === 'string') {
-						try {
-							var xmsg = JSON.parse(error.jqXHR.responseText)
-							if (xmsg.hasOwnProperty("message")) {
-								error.message = xmsg.message
-							}
-							error.data = xmsg
-
-						} catch(err) {
-							err.message = err.message + '. Unable to parse JSON response of this HTTP error.'
-						}
-					}
-				}
-
-				throw error
-			})
-
-	}
-
 
 	ajax(settings) {
 
