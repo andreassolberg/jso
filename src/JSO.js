@@ -26,8 +26,7 @@ import EventEmitter from './EventEmitter'
 const package_json = require('../package.json')
 
 const default_config = {
- 'lifetime': 3600,
- 'debug': true
+ 'lifetime': 3600
 }
 
 class JSO extends EventEmitter {
