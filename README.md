@@ -4,16 +4,17 @@
 
 <!-- * [JSO Documentation](http://oauth.no/jso/) --->
 
-OAuth 2.0 from your javascript client web application or mobile application in a secure way. JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company working for educational and research institutions in Norway.
+JSO is a simple and flexible OAuth javascript library to use in your web application or native mobile app.
 
-*Version 4, (current master branch) is rather new. Check the `version1` branch for the older stable release.*
-
+JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company working for educational and research institutions in Norway.
 
 
 ## Features
 
 * Implements **OAuth 2.0 Implicit Flow**.
-* AMD-compatible loading.
+* Can also be used with OpenID Connect to some extent.
+* ES6 compatible loading via npm/webpack
+* Also included a UMD-bundled version in the `dist/` folder
 * No server component needed.
 * Can handle multiple providers at once.
 * Uses *HTML 5.0 localStorage* to cache Access Tokens. You do not need to implement a storage.
@@ -24,32 +25,40 @@ OAuth 2.0 from your javascript client web application or mobile application in a
 
 
 
-## How to use
+## How to use (Basic usage)
 
 Install using npm:
 
-```
+```bash
 npm install jso --save
+```
+
+If you use webpack or similar it is recommended to import the needed components like this:
+
+```javascript
+import {JSO, Popup} from 'jso'
+
+let config = {...}
+let j = new JSO(config)
 ```
 
 To load the javascript, you could use the distributed UMD module:
 
-```
-<script type="text/javascript" src="dist/jso.js">
-<script>
-var optps = {};
-var j = new jso.JSO();
+```html
+<script type="text/javascript" src="dist/jso.js"></script>
+<script type="text/javascript">
+	var config = {...}
+	var j = new jso.JSO(config)
 </script>
 ```
 
-Alternatively you can use ES6 import using webpack or similar:
+The same bundle is available through CDN:
 
-```
-import {JSO, Popup} from 'jso'
-
-let j = new JSO({})
+```html
+<script type="text/javascript" src="https://unpkg.com/jso/dist/jso.js"></script>
 ```
 
+### Initializing the client
 
 To start using JSO, you need to initialize a new JSO object with configuration for an OAuth 2.0 Provider:
 
@@ -65,28 +74,16 @@ let client = new JSO({
 
 Options to JSO constructor
 
-* `providerID`: OPTIONAL This is just a name tag that is used to prefix data stored in the browser. It can be anything you'd like :)
-* `client_id`: The client idenfier of your client that is trusted by the provider. As JSO uses the implicit grant flow, there is now use for a client secret.
-* `authorization`: REQUIRED The authorization URL endpoint of the OAuth server
-* `redirect_uri`: OPTIONAL (may be needed by the provider). The URI that the user will be redirected back to when completed. This should be the same URL that the page is presented on.
-* `default_lifetime` : Seconds with default lifetime of an access token. If set to `false`, it means permanent. Default is 3600. This only matters if expires_in was not sent from the server, which should ALWAYS be the case.
-* `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not well-tested.)
+* `providerID`: **OPTIONAL** This is just a name tag that is used to prefix data stored in the browser. It can be anything you'd like :)
+* `client_id`: **REQUIRED** The client idenfier of your client that is trusted by the provider. As JSO uses the implicit grant flow, there is now use for a client secret.
+* `authorization`: **REQUIRED** The authorization URL endpoint of the OAuth server
+* `redirect_uri`: **OPTIONAL** (may be needed by the provider). The URI that the user will be redirected back to when completed. This should be the same URL that the page is presented on.
 * `scopes.require`: Control what scopes are required in the authorization request. This list if used when looking through cached tokens to see if we would like to use any of the existing.
 * `scopes.request`: Control what scopes are requested in the authorization request. When none of the cached tokens will be used, and a new one will be request, the `scopes.request` list will be included in the authorization request.
+* `default_lifetime` : Seconds with default lifetime of an access token. If set to `false`, it means permanent. Default is 3600. This only matters if expires_in was not sent from the server, which should ALWAYS be the case.
+* `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not well-tested.)
 * `response_type`: Default response_type for all authorization requests. Default: `token`. Can be overriden to in example use OpenID Connect
 
-
-Options to `getToken(opts)`
-
-* `allowia`: Set to false if user interaction is not allowed. Used for passive iframe loader.  If set to false a `prompt=none` paramter is added to the authorizatino request as specified in OpenID Connect.
-* `allowredir`: Throw an exception if getToken would imply redirecting the user. Typically you would like to use checkToken() instead of using this.
-* `response_type`: Override for this specific request.
-* `scopes.require`: Override for this specific request.
-* `scopes.request`: Override for this specific request.
-
-Options to `checkToken(opts)`
-
-* `scopes.require`: Override for this specific request.
 
 
 
@@ -96,7 +93,7 @@ Options to `checkToken(opts)`
 On the page (usually the same) that the user is sent back to after authorization, typically the `redirect_uri` endpoint, you would need to call the `callback`-function on JSO to tell it to check for response parameters:
 
 ```javascript
-client.callback();
+client.callback()
 ```
 Be aware to run the `callback()` function early, and before you *router* and before you start using the jso object to fetch data.
 
@@ -106,7 +103,7 @@ Be aware to run the `callback()` function early, and before you *router* and bef
 
 To get an token, use the `getToken` function:
 
-```
+```javascript
 client.getToken(opts)
     .then((token) => {
     	console.log("I got the token: ", token)
@@ -118,25 +115,153 @@ You may also ensure that a token is available early in your application, to forc
 REMEMBER to ALWAYS call the callback() function to process the response from the OAuth server, before you use getToken(), if not you will end up in an redirect_loop
 
 
+Options to `getToken(opts)`
+
+* `allowia`: Set to false if user interaction is not allowed. Used for passive iframe loader.  If set to false a `prompt=none` paramter is added to the authorizatino request as specified in OpenID Connect.
+* `allowredir`: Throw an exception if getToken would imply redirecting the user. Typically you would like to use checkToken() instead of using this.
+* `response_type`: Override for this specific request.
+* `scopes.require`: Override for this specific request.
+* `scopes.request`: Override for this specific request.
+
+
+As an alternative to getToken(), you can check if the token is available with `checkToken()`.
+
+```javascript
+let token = client.getToken(opts)
+if (token !== null) {
+	console.log("I got the token: ", token)
+}
+```
+
+Options to `checkToken(opts)`
+
+* `scopes.require`: Override for this specific request.
+
 ### Logout
 
 You may wipe all stored tokens, in order to simulate a *logout* experience:
 
+```javascript
+client.wipeTokens()
 ```
-client.wipeTokens();
+
+
+### Fetching data from a OAuth protected endpoint
+
+JSO provides a simple wrapper around the [javascript Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
+
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+
+
+```javascript
+
+// Initialization
+let config = {...}
+let client = new JSO(config)
+client.callback()
+
+// When your application wants to access the protected data
+let f = new Fetcher(client)
+let url = 'https://some-api.httpjs.net/rest/me'
+f.fetch(url, {})
+	.then((data) => {
+		return data.json()
+	})
+	.then((data) => {
+		console.log("I got protected json data from the API", data)
+	})
+	.catch((err) => {
+		console.error("Error from fetcher", err)
+	})
 ```
+
+If you would like to ensure that the required access token is obtained earlier than when you would like to access data, you may use `getToken()` for that, and you do not need to read or process the response.
+
+```javascript
+// Making sure the token is obtained.
+// Will redirect the user for authentication if token is not available.
+client.getToken({
+	scopes: {
+		request: ["profile", "restdata", "longterm", "email"]
+		require: ["profile", "restdata", "longterm"]
+	}
+})
+```
+
+## Sending passive OpenID Connect authentication requests using hidden iframes (Advanced)
+
+If your OpenID Connect provider support passive requests and the enduser is already authenticated with single sign-on, you may obtain an authenticated state using a hidden iframe without redirecting the user at all.
+
+First, you will need a separate redirect page, as the provided `example/passiveCallback.html`.
+
+```javascript
+let opts = {
+	scopes: {
+		request: ['email','longterm', 'openid', 'profile']
+	},
+	allowia: false,
+	response_type: 'id_token token',
+	redirect_uri: "http://localhost:8001/passiveCallback.html"
+}
+client.setLoader(IFramePassive)
+client.getToken(opts)
+	.then((token) => {
+		console.log("I got the token: ", token)
+	})
+	.catch((err) => {
+		console.error("Error from passive loader", err)
+	})
+```
+
+
+## Making authentication of end user in a popup, avoiding interruption of the state of your web application (Advanced)
+
+If you would like to redirect the end user to login without loosing the state in your web app, you may use a popup window. This
+
+First, you will need a separate redirect page, as the provided `example/popupCallback.html`.
+
+```javascript
+function authorizePopup() {
+	let opts = {
+		redirect_uri: "http://localhost:8001/popupCallback.html"
+	}
+	client.setLoader(Popup)
+	client.getToken(opts)
+		.then((token) => {
+			console.log("I got the token: ", token)
+		})
+		.catch((err) => {
+			console.error("Error from passive loader", err)
+		})
+}
+$("#btnAuthenticate").on('click', (e) => {
+	e.preventDefault()
+	authorizePopup()
+})
+```
+
+## Implementing a custom loader for use with in-app browser (Advanced)
+
+Look at the `src/Loaders/*.js` files to see how loaders are implemented, and create a custom loader for your use case.
+
+Contributions of loaders for Cordova in-app browser and similar are welcome.
+
+Then use the `client.setLoader(Loader)` to use the custom loader. Out of the box, JSO comes with:
+
+* HTTPRedirect - default usage
+* Popup
+* IFramePassive
+
 
 
 ## Using the examples
 
-```
+```bash
 cd examples
 python -m SimpleHTTPServer 8990
 ```
 
 Then visit http://localhost:8990/
-
-
 
 
 ## Licence
@@ -166,12 +291,13 @@ JSO uses JSON serialization functions (stringify and parse). These are supported
 
 ## Library size
 
+* 4.0.0-rc6: 12582 bytes
 * 4.0.0-rc4: 12612 bytes
 
 
 ## More from Uninett
 
-See also our javascript API mock-up tool <http://httpjs.net>.
+See also our javascript API mock-up tool <https://httpjs.net>, and our OAuth play tool <https://play.oauth.no>.
 
 * [Follow Andreas Åkre Solberg on twitter](https://twitter.com/erlang)
 * [Read more about UNINETT](http://uninett.no)
