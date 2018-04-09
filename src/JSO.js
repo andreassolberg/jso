@@ -363,7 +363,8 @@ class JSO extends EventEmitter {
 				request.scope = utils.scopeList(scopes)
 			}
 
-			utils.log("DEBUG REQUEST"); utils.log(request)
+			utils.log("DEBUG REQUEST")
+      utils.log(request)
 
 			authurl = utils.encodeURL(authorization, request)
 
