@@ -18,7 +18,7 @@ import Popup from './Loaders/Popup'
 
 // import ExpiredTokenError from './errors/ExpiredTokenError'
 // import HTTPError from './errors/HTTPError'
-// import OAuthResponseError from './errors/OAuthResponseError'
+import OAuthResponseError from './errors/OAuthResponseError'
 
 import Config from './Config'
 import EventEmitter from './EventEmitter'
@@ -182,7 +182,7 @@ class JSO extends EventEmitter {
 		} else {
 			window.location.hash = ''
 		}
-		return new JSO.OAuthResponseError(err)
+		return new OAuthResponseError(err)
 
 	}
 
