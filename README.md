@@ -64,18 +64,31 @@ let client = new JSO({
 })
 ```
 
-Here are more options to JSO:
+Options to JSO constructor
 
 * `providerID`: OPTIONAL This is just a name tag that is used to prefix data stored in the browser. It can be anything you'd like :)
 * `client_id`: The client idenfier of your client that is trusted by the provider. As JSO uses the implicit grant flow, there is now use for a client secret.
+* `authorization`: REQUIRED The authorization URL endpoint of the OAuth server
 * `redirect_uri`: OPTIONAL (may be needed by the provider). The URI that the user will be redirected back to when completed. This should be the same URL that the page is presented on.
-* `presenttoken`: OPTIONAL How to present the token with the protected calls. Values can be `qs` (in query string) or `header` (default; in authorization header).
-* `default_lifetime` : OPTIONAL Seconds with default lifetime of an access token. If set to `false`, it means permanent.
-* `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not yet tested.)
-* `isDefault`: Some OAuth providers does not support the `state` parameter. When this parameter is missing, the consumer does not which provider that is sending the access_token. If you only provide one provider config, or set isDefault to `true` for one of them, the consumer will assume this is the provider that sent the token.
-* `scope`: For providers that does not support `state`: If state was not provided, and default provider contains a scope parameter we assume this is the one requested... Set this as the same list of scopes that you provide to `ensure_tokens`.
-* `scopes.request`: Control what scopes are requested in the authorization request.
-* `debug`: If debug is set to true, verbose logging will make it easier to debug problems with JSO.
+* `default_lifetime` : Seconds with default lifetime of an access token. If set to `false`, it means permanent. Default is 3600. This only matters if expires_in was not sent from the server, which should ALWAYS be the case.
+* `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not well-tested.)
+* `scopes.require`: Control what scopes are required in the authorization request. This list if used when looking through cached tokens to see if we would like to use any of the existing.
+* `scopes.request`: Control what scopes are requested in the authorization request. When none of the cached tokens will be used, and a new one will be request, the `scopes.request` list will be included in the authorization request.
+* `response_type`: Default response_type for all authorization requests. Default: `token`. Can be overriden to in example use OpenID Connect
+
+
+Options to `getToken(opts)`
+
+* `allowia`: Set to false if user interaction is not allowed. Used for passive iframe loader.  If set to false a `prompt=none` paramter is added to the authorizatino request as specified in OpenID Connect.
+* `allowredir`: Throw an exception if getToken would imply redirecting the user. Typically you would like to use checkToken() instead of using this.
+* `response_type`: Override for this specific request.
+* `scopes.require`: Override for this specific request.
+* `scopes.request`: Override for this specific request.
+
+Options to `checkToken(opts)`
+
+* `scopes.require`: Override for this specific request.
+
 
 
 ### Catching the response when the user is returning
@@ -84,10 +97,8 @@ Here are more options to JSO:
 On the page (usually the same) that the user is sent back to after authorization, typically the `redirect_uri` endpoint, you would need to call the `callback`-function on JSO to tell it to check for response parameters:
 
 ```javascript
-	client.callback();
+client.callback();
 ```
-
-
 Be aware to run the `callback()` function early, and before you *router* and before you start using the jso object to fetch data.
 
 
