@@ -166,6 +166,7 @@ class JSO extends EventEmitter {
 
 		var state
 		if (err.state) {
+
 			state = this.store.getState(err.state)
 		} else {
 			throw new Error("Could not get [state] and no default providerid is provided.")
@@ -403,7 +404,6 @@ class JSO extends EventEmitter {
 	}
 
 	gotoAuthorizeURL(url, Loader) {
-
 		return new Promise(function(resolve, reject) {
 			if (Loader !== null && typeof Loader === 'function') {
 				var loader = new Loader(url)
@@ -415,7 +415,6 @@ class JSO extends EventEmitter {
 				reject(new Error('Cannot redirect to authorization endpoint because of missing redirect handler'))
 			}
 		})
-
 	}
 
 	wipeTokens() {
