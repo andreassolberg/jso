@@ -76,74 +76,72 @@ class JSO extends EventEmitter {
 	 */
 	processTokenResponse(atoken) {
 
-		return new Promise((resolve, reject) => {
 
-			var state
-			var now = utils.epoch()
+		var state
+		var now = utils.epoch()
 
-			if (atoken.state) {
-				state = store.getState(atoken.state)
-			} else {
-				throw new Error("Could not get state from storage.")
-			}
+		if (atoken.state) {
+			state = store.getState(atoken.state)
+		} else {
+			throw new Error("Could not get state from storage.")
+		}
 
-			if (!state) {
-				throw new Error("Could not retrieve state")
-			}
-			if (!state.providerID) {
-				throw new Error("Could not get providerid from state")
-			}
+		if (!state) {
+			throw new Error("Could not retrieve state")
+		}
+		if (!state.providerID) {
+			throw new Error("Could not get providerid from state")
+		}
 
-			utils.log("processTokenResponse ", atoken, "")
+		utils.log("processTokenResponse ", atoken, "")
 
-			/*
-			 * Decide when this token should expire.
-			 * Priority fallback:
-			 * 1. Access token expires_in
-			 * 2. Life time in config (may be false = permanent...)
-			 * 3. Specific permanent scope.
-			 * 4. Default library lifetime:
-			 */
-      atoken.received = now
-			if (atoken.expires_in) {
-				atoken.expires = now + parseInt(atoken.expires_in, 10)
-        atoken.expires_in = parseInt(atoken.expires_in, 10)
-			} else if (this.config.getValue('default_lifetime', null) === false) {
+		/*
+		 * Decide when this token should expire.
+		 * Priority fallback:
+		 * 1. Access token expires_in
+		 * 2. Life time in config (may be false = permanent...)
+		 * 3. Specific permanent scope.
+		 * 4. Default library lifetime:
+		 */
+    atoken.received = now
+		if (atoken.expires_in) {
+			atoken.expires = now + parseInt(atoken.expires_in, 10)
+      atoken.expires_in = parseInt(atoken.expires_in, 10)
+		} else if (this.config.getValue('default_lifetime', null) === false) {
+			atoken.expires = null
+		} else if (this.config.has('permanent_scope')) {
+			if (!store.hasScope(atoken, this.config.getValue('permanent_scope'))) {
 				atoken.expires = null
-			} else if (this.config.has('permanent_scope')) {
-				if (!store.hasScope(atoken, this.config.getValue('permanent_scope'))) {
-					atoken.expires = null
-				}
-			} else if (this.config.has('default_lifetime')) {
-				atoken.expires = now + this.config.getValue('default_lifetime')
-			} else {
-				atoken.expires = now + 3600
 			}
+		} else if (this.config.has('default_lifetime')) {
+			atoken.expires = now + this.config.getValue('default_lifetime')
+		} else {
+			atoken.expires = now + 3600
+		}
 
-			/*
-			 * Handle scopes for this token
-			 */
-			if (atoken.scope) {
-				atoken.scopes = atoken.scope.split(" ")
-        delete atoken.scope
-			} else if (state.scopes) {
-				atoken.scopes = state.scopes
-			} else {
-				atoken.scopes = []
-			}
+		/*
+		 * Handle scopes for this token
+		 */
+		if (atoken.scope) {
+			atoken.scopes = atoken.scope.split(" ")
+      delete atoken.scope
+		} else if (state.scopes) {
+			atoken.scopes = state.scopes
+		} else {
+			atoken.scopes = []
+		}
 
-      utils.log("processTokenResponse completed ", atoken, "")
+    utils.log("processTokenResponse completed ", atoken, "")
 
-			store.saveToken(state.providerID, atoken)
+		store.saveToken(state.providerID, atoken)
 
-			if (state.restoreHash) {
-				window.location.hash = state.restoreHash
-			} else {
-				window.location.hash = ''
-			}
-			resolve(atoken)
+		if (state.restoreHash) {
+			window.location.hash = state.restoreHash
+		} else {
+			window.location.hash = ''
+		}
+		return atoken
 
-		})
 	}
 
   // Experimental support for authorization code to be added
@@ -159,29 +157,26 @@ class JSO extends EventEmitter {
 
 	processErrorResponse(err) {
 
-		return new Promise((resolve, reject) => {
+		var state
+		if (err.state) {
+			state = store.getState(err.state)
+		} else {
+			throw new Error("Could not get [state] and no default providerid is provided.")
+		}
 
-			var state
-			if (err.state) {
-				state = store.getState(err.state)
-			} else {
-				throw new Error("Could not get [state] and no default providerid is provided.")
-			}
+		if (!state) {
+			throw new Error("Could not retrieve state")
+		}
+		if (!state.providerID) {
+			throw new Error("Could not get providerid from state")
+		}
 
-			if (!state) {
-				throw new Error("Could not retrieve state")
-			}
-			if (!state.providerID) {
-				throw new Error("Could not get providerid from state")
-			}
-
-			if (state.restoreHash) {
-				window.location.hash = state.restoreHash
-			} else {
-				window.location.hash = ''
-			}
-			reject(new JSO.OAuthResponseError(err))
-		})
+		if (state.restoreHash) {
+			window.location.hash = state.restoreHash
+		} else {
+			window.location.hash = ''
+		}
+		return new JSO.OAuthResponseError(err)
 
 	}
 
@@ -197,39 +192,32 @@ class JSO extends EventEmitter {
 	 */
 	callback(data) {
 
-		return Promise.resolve().then(() => {
+    let response = null
+    if (typeof data === 'object') {
+      response = data
+    } else if (typeof data === 'string') {
+      response = utils.getResponseFromURL(data)
+    } else if (typeof data === 'undefined') {
+      response = utils.getResponseFromURL(window.location.href)
+    } else {
+      // no response provided.
+      return
+    }
 
-      let response = null
-      if (typeof data === 'object') {
-        response = data
-      } else if (typeof data === 'string') {
-        response = utils.getResponseFromURL(data)
-      } else if (typeof data === 'undefined') {
-        response = utils.getResponseFromURL(window.location.href)
-      }
-      if (response === null) {
-        throw new Error("Callback() function was called with an invalid argument")
-      }
+    utils.log('Receving response in callback', response)
 
-      utils.log('Receving response in callbacj', response)
+		if (response.hasOwnProperty("access_token")) {
+			return this.processTokenResponse(response)
 
-			if (response.hasOwnProperty("access_token")) {
-				return this.processTokenResponse(response)
+    // Implementation of authorization code flow is in beta.
+		} else if (response.hasOwnProperty("code")) {
+      return this.processAuthorizationCodeResponse(response)
 
-      // Implementation of authorization code flow is in beta.
-			} else if (response.hasOwnProperty("code")) {
-        return this.processAuthorizationCodeResponse(response)
+		} else if (response.hasOwnProperty("error")) {
+			return this.processErrorResponse(response)
+		}
 
-			} else if (response.hasOwnProperty("error")) {
-				return this.processErrorResponse(response)
-			}
-
-      console.error("Silently ignoring callback with no respone data")
-
-		})
 	}
-
-
 
 
 	dump() {
