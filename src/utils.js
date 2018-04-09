@@ -31,7 +31,7 @@ utils.getResponseFromURL = (url) => {
   } else if (url.indexOf('?') !== -1) {
     return utils.parseQueryString(url.substring(url.indexOf('?')+1))
   }
-  throw new Error("Could not obtain OAuth response object in callback url, neighter query string of hash fragment")
+  return {}
 }
 
 utils.parseQueryString = function (qs) {
