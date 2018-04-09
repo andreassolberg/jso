@@ -115,6 +115,8 @@ client.getToken(opts)
 
 You may also ensure that a token is available early in your application, to force all user interaction and redirection to happen before your application is fully loaded. To do that make a call to getToken, and wait for the callback before you continue.
 
+REMEMBER to ALWAYS call the callback() function to process the response from the OAuth server, before you use getToken(), if not you will end up in an redirect_loop
+
 
 ### Logout
 
