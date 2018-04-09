@@ -1,5 +1,5 @@
 
-var utils = {};
+var utils = {}
 
 
 /*
@@ -7,19 +7,18 @@ var utils = {};
  * Used for calculation of expire times.
  */
 utils.epoch = function() {
-	return Math.round(new Date().getTime()/1000.0);
-};
-
+	return Math.round(new Date().getTime()/1000.0)
+}
 
 /*
  * Returns a random string used for state
  */
 utils.uuid = function() {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-	    return v.toString(16);
-	});
-};
+		var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8)
+	    return v.toString(16)
+	})
+}
 
 /*
  * Takes a full url as input and expect it to have an encoded response
@@ -39,7 +38,7 @@ utils.parseQueryString = function (qs) {
 	var e,
 		a = /\+/g,  // Regex for replacing addition symbol with a space
 		r = /([^&;=]+)=?([^&;]*)/g,
-		d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+		d = function (s) { return decodeURIComponent(s.replace(a, " ")) },
 		q = qs,
 		urlParams = {}
 
@@ -50,7 +49,7 @@ utils.parseQueryString = function (qs) {
 	/* jshint ignore:end */
 
 	return urlParams
-};
+}
 
 
 
@@ -66,7 +65,7 @@ utils.parseQueryString = function (qs) {
  */
 utils.scopeList = function(scopes) {
 	return utils.uniqueList(scopes).join(' ')
-};
+}
 
 
 utils.uniqueList = function(items) {
@@ -81,7 +80,7 @@ utils.uniqueList = function(items) {
 		}
 	}
 	return resultItems
-};
+}
 
 
 
@@ -113,7 +112,7 @@ utils.log = function(msg) {
 		console.log('[JSO]', msg)
 	}
 
-};
+}
 
 /**
  * Set the global options.
@@ -141,7 +140,7 @@ utils.encodeURL = function(url, params) {
 		res += (i++ === 0 ? firstSeparator : '&') + encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
 	}
 	return res
-};
+}
 
 
 /*
@@ -150,7 +149,7 @@ utils.encodeURL = function(url, params) {
  */
 utils.epoch = function() {
 	return Math.round(new Date().getTime()/1000.0)
-};
+}
 
 
 export default utils

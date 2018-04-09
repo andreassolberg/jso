@@ -4,7 +4,7 @@ import utils from '../utils'
 export default class IFramePassive extends BasicLoader {
 
 	constructor(url) {
-		super(url);
+		super(url)
 
 		this.timeout = 5000
 		this.callback = null

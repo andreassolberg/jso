@@ -1,4 +1,4 @@
-import BasicLoader from './BasicLoader';
+import BasicLoader from './BasicLoader'
 
 export default class Popup extends BasicLoader {
 

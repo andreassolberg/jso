@@ -15,7 +15,7 @@ class Store {
 
 	 */
 	saveState(state, obj) {
-		localStorage.setItem("state-" + state, JSON.stringify(obj));
+		localStorage.setItem("state-" + state, JSON.stringify(obj))
 	}
 
 	/**
@@ -24,9 +24,9 @@ class Store {
 	 */
 	getState(state) {
 		// log("getState (" + state+ ")");
-		var obj = JSON.parse(localStorage.getItem("state-" + state));
-		localStorage.removeItem("state-" + state);
-		return obj;
+		var obj = JSON.parse(localStorage.getItem("state-" + state))
+		localStorage.removeItem("state-" + state)
+		return obj
 	}
 
 
@@ -35,12 +35,12 @@ class Store {
 	 * If token has no scope at all, false is returned.
 	 */
 	hasScope(token, scope) {
-		var i;
-		if (!token.scopes) return false;
+		var i
+		if (!token.scopes) return false
 		for(i = 0; i < token.scopes.length; i++) {
-			if (token.scopes[i] === scope) return true;
+			if (token.scopes[i] === scope) return true
 		}
-		return false;
+		return false
 	}
 
 	/*
@@ -51,24 +51,24 @@ class Store {
 		var i, j,
 			result = [],
 			now = utils.epoch(),
-			usethis;
+			usethis
 
-		if (!scopes) scopes = [];
+		if (!scopes) scopes = []
 
 		for(i = 0; i < tokens.length; i++) {
-			usethis = true;
+			usethis = true
 
 			// Filter out expired tokens. Tokens that is expired in 1 second from now.
-			if (tokens[i].expires && tokens[i].expires < (now+1)) usethis = false;
+			if (tokens[i].expires && tokens[i].expires < (now+1)) usethis = false
 
 			// Filter out this token if not all scope requirements are met
 			for(j = 0; j < scopes.length; j++) {
-				if (!store.hasScope(tokens[i], scopes[j])) usethis = false;
+				if (!store.hasScope(tokens[i], scopes[j])) usethis = false
 			}
 
-			if (usethis) result.push(tokens[i]);
+			if (usethis) result.push(tokens[i])
 		}
-		return result;
+		return result
 	}
 
 
@@ -82,20 +82,20 @@ class Store {
 	 */
 	saveTokens(provider, tokens) {
 		// log("Save Tokens (" + provider+ ")");
-		localStorage.setItem("tokens-" + provider, JSON.stringify(tokens));
+		localStorage.setItem("tokens-" + provider, JSON.stringify(tokens))
 	}
 
 	getTokens(provider) {
 		// log("Get Tokens (" + provider+ ")");
-		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider));
-		if (!tokens) tokens = [];
+		var tokens = JSON.parse(localStorage.getItem("tokens-" + provider))
+		if (!tokens) tokens = []
 
-		utils.log("Token found when loooking up provider " + provider + " in store " + window.location.href, tokens);
-		return tokens;
+		utils.log("Token found when loooking up provider " + provider + " in store " + window.location.href, tokens)
+		return tokens
 	}
 
 	wipeTokens(provider) {
-		localStorage.removeItem("tokens-" + provider);
+		localStorage.removeItem("tokens-" + provider)
 	}
 
 	/*
@@ -103,10 +103,10 @@ class Store {
 	 * This also cleans up expired tokens for the same provider.
 	 */
 	saveToken(provider, token) {
-		var tokens = this.getTokens(provider);
-		tokens = this.filterTokens(tokens);
-		tokens.push(token);
-		this.saveTokens(provider, tokens);
+		var tokens = this.getTokens(provider)
+		tokens = this.filterTokens(tokens)
+		tokens.push(token)
+		this.saveTokens(provider, tokens)
 	}
 
 	/*
@@ -114,14 +114,14 @@ class Store {
 	 * The scopes parameter is OPTIONAL.
 	 */
 	getToken(provider, scopes) {
-		var tokens = this.getTokens(provider);
-		tokens = this.filterTokens(tokens, scopes);
-		if (tokens.length < 1) return null;
-		return tokens[0];
+		var tokens = this.getTokens(provider)
+		tokens = this.filterTokens(tokens, scopes)
+		if (tokens.length < 1) return null
+		return tokens[0]
 	};
 
 }
 
-var s = new Store();
+var s = new Store()
 
 export default s
