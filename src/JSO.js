@@ -578,32 +578,6 @@ class JSO extends EventEmitter {
 
 
 
-
-
-JSO.OAuthResponseError = class {
-  constructor(props) {
-    for(var key in props) {
-			this[key] = props[key]
-		}
-  }
-}
-
-
-JSO.ExpiredTokenError = class {
-  constructor(props) {
-    for(var key in props) {
-			this[key] = props[key]
-		}
-  }
-}
-
-
-JSO.HTTPError = class {
-  constructor(props) {
-    for(var key in props) {
-			this[key] = props[key]
-		}
-  }
 }
 
 // Object.assign(JSO.prototype, new EventEmitter({}))
