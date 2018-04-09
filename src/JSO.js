@@ -420,48 +420,6 @@ class JSO extends EventEmitter {
 		this.store.wipeTokens(this.providerID)
 	}
 
-
-
-
-
-
-
-
-
-
-	/**
-	 * Do some sanity checking whether an URL contains a access_token in an hash fragment.
-	 * Used in URL change event trackers, to detect responses from the provider.
-	 * @param {[type]} url [description]
-	 */
-	URLcontainsToken(url) {
-		// If a url is provided
-		var h
-		if (url) {
-			// utils.log('Hah, I got the url and it ' + url)
-			if(url.indexOf('#') === -1) { return false}
-			h = url.substring(url.indexOf('#'))
-			// utils.log('Hah, I got the hash and it is ' +  h)
-		}
-
-		/*
-		 * Start with checking if there is a token in the hash
-		 */
-		if (h.length < 2){ return false}
-		if (h.indexOf("access_token") === -1) {return false}
-		return true
-	}
-
-  static info() {
-    var data = {}
-    data.version = package_json.version
-    return data
-  }
-
-}
-
-
-
 }
 
 // Object.assign(JSO.prototype, new EventEmitter({}))
