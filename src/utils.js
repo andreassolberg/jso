@@ -25,7 +25,7 @@ utils.uuid = function() {
  * object as eigther a query string or an encoded fragment.
  * Returns the decoded object, or throws an error if no query string or fragment.
  */
-utils.getResponseFromURL = (url) => {
+utils.getResponseFromURL = function (url) {
   if (url.indexOf('#') !== -1) {
     return utils.parseQueryString(url.substring(url.indexOf('#')+1))
   } else if (url.indexOf('?') !== -1) {
@@ -97,7 +97,7 @@ utils.log = function(msg) {
 
 	// console.log("LOG(), Arguments", arguments, msg)
 	if (arguments.length > 1) {
-		console.log('[JSO]', ...arguments)
+		console.log('[JSO]', arguments)
 	} else {
 		console.log('[JSO]', msg)
 	}
