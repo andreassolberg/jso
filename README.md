@@ -75,7 +75,7 @@ let client = new JSO({
 Options to JSO constructor
 
 * `providerID`: **OPTIONAL** This is just a name tag that is used to prefix data stored in the browser. It can be anything you'd like :)
-* `client_id`: **REQUIRED** The client idenfier of your client that is trusted by the provider. As JSO uses the implicit grant flow, there is now use for a client secret.
+* `client_id`: **REQUIRED** The client idenfier of your client that is trusted by the provider. As JSO uses the implicit grant flow, there is no use for a client secret.
 * `authorization`: **REQUIRED** The authorization URL endpoint of the OAuth server
 * `redirect_uri`: **OPTIONAL** (may be needed by the provider). The URI that the user will be redirected back to when completed. This should be the same URL that the page is presented on.
 * `scopes.require`: Control what scopes are required in the authorization request. This list if used when looking through cached tokens to see if we would like to use any of the existing.
