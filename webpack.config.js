@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   entry: './src/JSO.js',
@@ -8,7 +8,7 @@ module.exports = {
     library: 'jso',
     libraryTarget: 'umd'
   },
-
+  devtool: "source-map",
   module: {
     rules: [
       {
