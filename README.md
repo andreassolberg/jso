@@ -83,7 +83,7 @@ Options to JSO constructor
 * `default_lifetime` : Seconds with default lifetime of an access token. If set to `false`, it means permanent. Default is 3600. This only matters if expires_in was not sent from the server, which should ALWAYS be the case.
 * `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not well-tested.)
 * `response_type`: Default response_type for all authorization requests. Default: `token`. Can be overriden to in example use OpenID Connect
-
+* `debug`: Default set to `false`. Set this to `true` to enable debug logging to console.
 
 
 
