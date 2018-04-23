@@ -63,7 +63,7 @@ class Store {
 
 			// Filter out this token if not all scope requirements are met
 			for(j = 0; j < scopes.length; j++) {
-				if (!store.hasScope(tokens[i], scopes[j])) usethis = false
+				if (!this.hasScope(tokens[i], scopes[j])) usethis = false
 			}
 
 			if (usethis) result.push(tokens[i])
