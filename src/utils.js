@@ -133,6 +133,14 @@ utils.encodeURL = function(url, params) {
 }
 
 
+utils.nonce = function(length) {
+	var res = ""
+	var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+	for(var i = 0; i < length; i++) {
+		res += chars.charAt(Math.floor(Math.random() * chars.length))
+	}
+	return res
+}
 
 
 export default utils

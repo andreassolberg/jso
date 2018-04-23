@@ -334,7 +334,8 @@ class JSO extends EventEmitter {
 
 			request = {
 				'response_type': opts.response_type || this.config.getValue('response_type', 'token'),
-				'state': utils.uuid()
+				'state': utils.uuid(),
+				'nonce': utils.nonce(8)
 			}
 			if (opts.hasOwnProperty("allowia") && !opts.allowia) {
 				request.prompt = "none"
