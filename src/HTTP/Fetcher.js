@@ -40,7 +40,7 @@ export default class Fetcher {
         console.error("Error fetching token to use ", err)
       })
       .then((token) => {
-      	console.log("I got the token: ", token.access_token)
+      	// console.log("I got the token: ", token.access_token)
 
         if (!fetchOpts.headers) {
           fetchOpts.headers = {}
