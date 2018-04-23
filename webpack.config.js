@@ -9,18 +9,25 @@ module.exports = {
     libraryTarget: 'umd'
   },
   devtool: "source-map",
+
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        include: path.resolve(__dirname, './src'),
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env']
+            presets: [
+              ["env", {
+                  useBuiltIns: 'entry'
+              }],
+              "react"
+            ]
           }
         }
       }
+
     ]
   }
 }

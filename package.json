@@ -9,7 +9,12 @@
     "preversion": "npm test",
     "version": "npm run build && git add -A dist",
     "postversion": "git push && git push --tags && npm publish",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production --config webpack.config.js"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
   },
   "repository": {
     "type": "git",
@@ -36,8 +41,8 @@
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
     "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "qunit": "^2.5.1",
     "webpack": "^4.1.1"
