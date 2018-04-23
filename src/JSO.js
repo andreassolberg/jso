@@ -39,6 +39,10 @@ class JSO extends EventEmitter {
 		this.Loader = HTTPRedirect
     this.store = store
 		this.callbacks = {}
+
+    if (this.config.getValue('debug', false)) {
+      utils.debug = true
+    }
 	}
 
 	configure(config) {

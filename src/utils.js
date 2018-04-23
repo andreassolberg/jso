@@ -1,6 +1,5 @@
 
-var utils = {}
-
+let utils = {}
 
 /*
  * Returns epoch, seconds since 1970.
@@ -9,6 +8,8 @@ var utils = {}
 utils.epoch = function() {
 	return Math.round(new Date().getTime()/1000.0)
 }
+
+utils.debug = false
 
 /*
  * Returns a random string used for state
@@ -91,9 +92,9 @@ utils.uniqueList = function(items) {
  * @param  {string} msg Log message
  */
 utils.log = function(msg) {
-	// if (!options.debug) return;
 	if (!console) return
 	if (!console.log) return
+  if (!utils.debug) return
 
 	// console.log("LOG(), Arguments", arguments, msg)
 	if (arguments.length > 1) {
