@@ -8,6 +8,12 @@
  *  Documentation available at: https://github.com/andreassolberg/jso
  */
 
+
+// Polyfills to support >= IE10
+import assign from 'core-js/fn/object/assign'
+import 'core-js/fn/promise'
+// ------
+
 import store from './store'
 import utils from './utils'
 
