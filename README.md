@@ -188,7 +188,30 @@ client.getToken({
 })
 ```
 
-## Sending passive OpenID Connect authentication requests using hidden iframes (Advanced)
+
+The `FetcherJQuery` is an alternative interface that uses `jQuery.ajax()` instead of `fetch()`. Consider the `FetcherJQuery` *beta*.
+
+Notice that this class takes the jQuery object as a second argument to the constructor. The fetch options argument is provided as options to `jQuery.ajax()`.
+
+The `fetch()` function returns a Promise that resolves the response data.
+
+```javascript
+
+// Initialization
+let f = new FetcherJQuery(client, $)
+let url = 'https://some-api.httpjs.net/rest/me'
+f.fetch(url, {})
+	.then((data) => {
+		console.log("I got protected json data from the API", data)
+	})
+	.catch((err) => {
+		console.error("Error from fetcher", err)
+	})
+```
+
+
+
+## Sending passive OpenID Connect authentication requests using hidden iFrames (Advanced)
 
 If your OpenID Connect provider support passive requests and the enduser is already authenticated with single sign-on, you may obtain an authenticated state using a hidden iframe without redirecting the user at all.
 

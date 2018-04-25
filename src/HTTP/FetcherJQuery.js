@@ -1,19 +1,28 @@
-
 import ExpiredTokenError from '../errors/ExpiredTokenError'
 
-export default class Fetcher {
-	constructor(jso) {
+export default class FetcherJQuery {
+	constructor(jso, jquery) {
     this.jso = jso
+    this.jquery = jquery
 	}
 
   _fetch(url, opts) {
-    return fetch(url, opts)
-      .then((response) => {
-        if (response.status === 401) {
-          throw new ExpiredTokenError()
+
+    return new Promise((resolve, reject) => {
+
+      opts.done = resolve
+      opts.fail = (jqXHR, textStatus, errorThrown) => {
+        let status = parseInt(textStatus, 10)
+        if (status === 401) {
+          this.jso.wipeTokens()
+          return reject(new ExpiredTokenError())
         }
-        return response
-      })
+        return reject(errorThrown)
+      }
+      return this.jquery.ajax(url, opts)
+
+    })
+
   }
 
 	fetch(url, opts, reccur) {

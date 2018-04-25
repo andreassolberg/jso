@@ -23,6 +23,7 @@ import IFramePassive from './Loaders/IFramePassive'
 import Popup from './Loaders/Popup'
 
 import Fetcher from './HTTP/Fetcher'
+import FetcherJQuery from './HTTP/FetcherJQuery'
 
 // import ExpiredTokenError from './errors/ExpiredTokenError'
 // import HTTPError from './errors/HTTPError'
@@ -435,4 +436,4 @@ class JSO extends EventEmitter {
 
 // Object.assign(JSO.prototype, new EventEmitter({}))
 
-export {JSO, BasicLoader, HTTPRedirect, Popup, IFramePassive, Fetcher}
+export {JSO, BasicLoader, HTTPRedirect, Popup, IFramePassive, Fetcher, FetcherJQuery}
