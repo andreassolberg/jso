@@ -1,11 +1,12 @@
 import BasicLoader from './BasicLoader'
+import utils from '../utils'
 
 export default class HTTPRedirect extends BasicLoader {
 	execute() {
-		var that = this
-		return new Promise(function(resolve, reject) {
-			window.location = that.url
-			// resolve(true)
+		return new Promise((resolve, reject) => {
+      utils.log("HTTPRedirect sending user to url", this.url)
+			window.location = this.url
+			resolve(true)
 		})
 	}
 }
