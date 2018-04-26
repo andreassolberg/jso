@@ -96,12 +96,9 @@ utils.log = function(msg) {
 	if (!console.log) return
   if (!utils.debug) return
 
-	// console.log("LOG(), Arguments", arguments, msg)
-	if (arguments.length > 1) {
-		console.log('[JSO]', arguments)
-	} else {
-		console.log('[JSO]', msg)
-	}
+  let args = Array.prototype.slice.call(arguments)
+  args.unshift('[JSO]')
+	console.log.apply(console, args)
 
 }
 
