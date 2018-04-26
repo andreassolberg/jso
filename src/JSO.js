@@ -351,9 +351,17 @@ class JSO extends EventEmitter {
 
 			request = {}
 
+      if (this.config.has('request')) {
+        let r = this.config.getValue('request')
+        request = assign(request, r)
+      }
+      if (opts.hasOwnProperty('request')) {
+        request = assign(request, opts.request)
+      }
+
+
       request.response_type = opts.response_type || this.config.getValue('response_type', 'id_token token')
       request.state = utils.uuid()
-
 
 			if (this.config.has('redirect_uri')) {
 				request.redirect_uri = this.config.getValue('redirect_uri', '')
