@@ -11,6 +11,7 @@
 
 // Polyfills to support >= IE10
 import assign from 'core-js/fn/object/assign'
+import 'core-js/fn/array/includes'
 import 'core-js/fn/promise'
 // ------
 
@@ -364,12 +365,21 @@ class JSO extends EventEmitter {
 			 * Calculate which scopes to request, based upon provider config and request config.
 			 */
 			scopes = this._getRequestScopes(opts)
+      openid = scopes.includes('openid')
 			if (scopes.length > 0) {
 				request.scope = utils.scopeList(scopes)
 			}
+      utils.log("Running in mode: " + (openid ? 'OpenID Connect mode' : 'OAuth mode'))
 
-			utils.log("DEBUG REQUEST")
-      utils.log(request)
+      if (openid && !request.hasOwnProperty('redirect_uri')) {
+        throw new Error('An OpenID Request requires a redirect_uri to be set. Please add to configuration. A redirect_uri is not required for plain OAuth')
+      }
+
+      if (openid) {
+        request.nonce = utils.uuid()
+      }
+
+			utils.log("Debug Authentication request object", JSON.stringify(request, undefined, 2))
 
 			authurl = utils.encodeURL(authorization, request)
 
