@@ -84,7 +84,7 @@ Options to JSO constructor
 * `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not well-tested.)
 * `response_type`: Default response_type for all authorization requests. Default: `token`. Can be overriden to in example use OpenID Connect
 * `debug`: Default set to `false`. Set this to `true` to enable debug logging to console.
-
+* `request`: Optional additional request paramters added to the request. Useful for adding all the available OpenID Connect options
 
 
 ### Catching the response when the user is returning
@@ -117,7 +117,6 @@ REMEMBER to ALWAYS call the callback() function to process the response from the
 
 Options to `getToken(opts)`
 
-* `allowia`: Set to false if user interaction is not allowed. Used for passive iframe loader.  If set to false a `prompt=none` paramter is added to the authorizatino request as specified in OpenID Connect.
 * `allowredir`: Throw an exception if getToken would imply redirecting the user. Typically you would like to use checkToken() instead of using this.
 * `response_type`: Override for this specific request.
 * `scopes.require`: Override for this specific request.
@@ -222,7 +221,9 @@ let opts = {
 	scopes: {
 		request: ['email','longterm', 'openid', 'profile']
 	},
-	allowia: false,
+	request: {
+		prompt: "none"
+	},
 	response_type: 'id_token token',
 	redirect_uri: "http://localhost:8001/passiveCallback.html"
 }

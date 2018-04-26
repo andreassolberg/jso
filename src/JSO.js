@@ -337,24 +337,18 @@ class JSO extends EventEmitter {
 
 		return Promise.resolve().then(() => {
 
-			var authorization = this.config.getValue('authorization', null, true)
-			var client_id = this.config.getValue('client_id', null, true)
+			let authorization = this.config.getValue('authorization', null, true)
+			let client_id = this.config.getValue('client_id', null, true)
+      let openid = false
 
-			utils.log("About to send an authorization request to this entry:", authorization)
+			utils.log("About to send an authorization request to this endpoint", authorization)
 			utils.log("Options", opts)
 
-			request = {
-				'response_type': opts.response_type || this.config.getValue('response_type', 'token'),
-				'state': utils.uuid()
-			}
-			if (opts.hasOwnProperty("allowia") && !opts.allowia) {
-				request.prompt = "none"
-			}
+			request = {}
 
-			// if (callback && typeof callback === 'function') {
-				// utils.log("About to store a callback for later with state=" + request.state)
-				// JSO.internalStates[request.state] = resolve
-			// }
+      request.response_type = opts.response_type || this.config.getValue('response_type', 'id_token token')
+      request.state = utils.uuid()
+
 
 			if (this.config.has('redirect_uri')) {
 				request.redirect_uri = this.config.getValue('redirect_uri', '')
