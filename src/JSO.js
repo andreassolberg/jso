@@ -342,6 +342,10 @@ class JSO extends EventEmitter {
 			let client_id = this.config.getValue('client_id', null, true)
       let openid = false
 
+      if (opts.hasOwnProperty('allowia') || this.config.has('allowia')) {
+        throw new Error('The allowia option was removed in JSO 4.1.0. Instead use {request: {prompt: "none"}}')
+      }
+
 			utils.log("About to send an authorization request to this endpoint", authorization)
 			utils.log("Options", opts)
 
