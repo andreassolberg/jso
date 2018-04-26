@@ -85,8 +85,6 @@ utils.uniqueList = function(items) {
 
 
 
-
-
 /**
  * A log wrapper, that only logs if logging is turned on in the config
  * @param  {string} msg Log message
@@ -102,18 +100,6 @@ utils.log = function(msg) {
 
 }
 
-/**
- * Set the global options.
- */
-// utils.setOptions = function(opts) {
-// 	if (!opts) return;
-// 	for(var k in opts) {
-// 		if (opts.hasOwnProperty(k)) {
-// 			options[k] = opts[k];
-// 		}
-// 	}
-// 	log("Options is set to ", options);
-// }
 
 
 /*
@@ -129,8 +115,6 @@ utils.encodeURL = function(url, params) {
 	}
 	return res
 }
-
-
 
 
 export default utils
