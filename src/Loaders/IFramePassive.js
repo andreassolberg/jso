@@ -37,7 +37,7 @@ export default class IFramePassive extends BasicLoader {
         } else {
           this._failed(new Error("Failed to obtain response value from iframe"))
         }
-      } catch( err) {
+      } catch(err) {
         // Most likely not able to access the content window because of same-origin policy.
         //
         // Ignore this error, as this is likely to happen during the SSO redirect loop, but the load
