@@ -100,7 +100,14 @@ utils.log = function(msg) {
 
 }
 
-
+utils.encodeQS = function(params) {
+  let res = ''
+	var k, i = 0
+	for(k in params) {
+		res += (i++ === 0 ? '' : '&') + encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
+	}
+	return res
+}
 
 /*
  * Takes an URL as input and a params object.
