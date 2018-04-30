@@ -97,11 +97,7 @@ class JSO extends EventEmitter {
 	 * @return {[type]} [description]
 	 */
 	processTokenResponse(atoken) {
-
-
-		var state
-		var now = utils.epoch()
-
+		let state
 		if (atoken.state) {
 			state = this.store.getState(atoken.state)
 		} else {
@@ -114,10 +110,12 @@ class JSO extends EventEmitter {
 		if (!state.providerID) {
 			throw new Error("Could not get providerid from state")
 		}
-
 		utils.log("processTokenResponse ", atoken, "")
+    return this.processReceivedToken(atoken, state)
+	}
 
-		/*
+  processReceivedToken(atoken, state) {
+    /*
 		 * Decide when this token should expire.
 		 * Priority fallback:
 		 * 1. Access token expires_in
@@ -125,6 +123,7 @@ class JSO extends EventEmitter {
 		 * 3. Specific permanent scope.
 		 * 4. Default library lifetime:
 		 */
+		let now = utils.epoch()
     atoken.received = now
 		if (atoken.expires_in) {
 			atoken.expires = now + parseInt(atoken.expires_in, 10)
@@ -163,13 +162,60 @@ class JSO extends EventEmitter {
 			window.location.hash = ''
 		}
 		return atoken
-
-	}
+  }
 
   // Experimental support for authorization code to be added
   processAuthorizationCodeResponse(object) {
     console.log(this)
     this.emit('authorizationCode', object)
+
+
+		let state
+		if (object.state) {
+			state = this.store.getState(object.state)
+      if (state === null) {
+        throw new Error("Could not find retrieve state object.")
+      }
+		} else {
+			throw new Error("Could not find state paramter from callback.")
+		}
+    console.log("state", state)
+
+    if (!this.config.has('token')) {
+      utils.log("Received an authorization code. Will not process it as the config option [token] endpoint is not set. If you would like to process the code yourself, please subscribe to the [authorizationCode] event")
+      return
+    }
+    if (!this.config.has('client_secret')) {
+      throw new Error("Configuration missing [client_secret]")
+    }
+    let headers = new Headers()
+    headers.append('Authorization', 'Basic ' + btoa(this.config.getValue('client_id') + ":" + this.config.getValue('client_secret')))
+    headers.append('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8')
+
+    let tokenRequest = {
+      'grant_type': 'authorization_code',
+      'code': object.code
+    }
+
+    if (state.hasOwnProperty('redirect_uri')) {
+      tokenRequest.redirect_uri = state.redirect_uri
+    }
+
+    let opts = {
+      mode: 'cors',
+      headers: headers,
+      method: 'POST', // or 'PUT'
+      body: utils.encodeQS(tokenRequest), // data can be `string` or {object}!
+    }
+    return fetch(this.config.getValue('token'), opts)
+      .then((httpResponse) => {
+        return httpResponse.json()
+      })
+      .then((tokenResponse) => {
+        // let tokenResponse = httpResponse.json()
+        utils.log("Received response on token endpoint ", tokenResponse, "")
+        return this.processReceivedToken(tokenResponse, state)
+      })
 
     // throw new Exception("Implementation of authorization code flow is not yet implemented. Instead use the implicit grant flow")
 
