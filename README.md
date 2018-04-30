@@ -11,8 +11,9 @@ JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company wor
 
 ## Features
 
+
 * Implements **OAuth 2.0 Implicit Flow**.
-* Can also be used with OpenID Connect to some extent.
+* Can also be used with **OpenID Connect**.
 * ES6 compatible loading via npm/webpack
 * Also included a UMD-bundled version in the `dist/` folder
 * No server component needed.
@@ -21,11 +22,13 @@ JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company wor
 * Can prefetch all needed tokens with sufficient scopes, to start with, then tokens can be used for requests later. This way, you can be sure that you would not need to redirect anywhere in your business logic, because you would need to refresh an expired token.
 * Excellent scope support.
 * Caches and restores the hash, your application will not loose state when sending the user to the authorization endpoint.
+* Provided with easy to use `fetch()` wrapper that takes care of all you need to get the token, and then returns the API data you want
+* Experimental feature: *OAuth 2.0 Authorization Code* flow.
+* Experimental feature: `Jquery.ajax()`-wrapper, if you have jquery loaded, and does not want to require or polyfill fetch
 
 
 
-
-## How to use (Basic usage)
+## How to use
 
 Install using npm:
 
@@ -207,6 +210,21 @@ f.fetch(url, {})
 		console.error("Error from fetcher", err)
 	})
 ```
+
+
+## OAuth 2.0 Authorization Code flow
+
+In the config include these parameters:
+
+```
+	response_type: 'code',
+	client_secret: "xxxxx-xxxx-xxx-xxx",
+	token: "https://auth.dataporten.no/oauth/token",
+```
+
+Also be aware that the implementation of this flow uses `fetch`, to support older browser you would need to polyfill that.
+
+
 
 
 
