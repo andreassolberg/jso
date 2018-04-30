@@ -18,6 +18,9 @@ import 'core-js/fn/promise'
 import store from './store'
 import utils from './utils'
 
+// Work in progress
+// import Authentication from './Authentication/Authentication'
+
 import BasicLoader from './Loaders/BasicLoader'
 import HTTPRedirect from './Loaders/HTTPRedirect'
 import IFramePassive from './Loaders/IFramePassive'
@@ -453,3 +456,5 @@ class JSO extends EventEmitter {
 // Object.assign(JSO.prototype, new EventEmitter({}))
 
 export {JSO, BasicLoader, HTTPRedirect, Popup, IFramePassive, Fetcher, FetcherJQuery}
+// Work in progress
+// Authentication
