@@ -69,7 +69,7 @@ To start using JSO, you need to initialize a new JSO object with configuration f
 let client = new JSO({
 	providerID: "google",
 	client_id: "541950296471.apps.googleusercontent.com",
-	redirect_uri: "http://bridge.uninett.no/jso/index.html",
+	redirect_uri: "http://localhost:8080/", // The URL where you is redirected back, and where you perform run the callback() function.
 	authorization: "https://accounts.google.com/o/oauth2/auth",
 	scopes: { request: ["https://www.googleapis.com/auth/userinfo.profile"]}
 })
