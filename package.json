@@ -45,7 +45,8 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "qunit": "^2.5.1",
-    "webpack": "^4.1.1"
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12"
   },
   "author": "Andreas Åkre Solberg",
   "license": "LGPL-2.1",
@@ -54,6 +55,6 @@
   },
   "homepage": "https://github.com/andreassolberg/jso",
   "dependencies": {
-    "webpack-cli": "^2.0.12"
+
   }
 }
