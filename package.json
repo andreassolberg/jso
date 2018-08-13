@@ -1,6 +1,6 @@
 {
   "name": "jso",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "OAuth 2.0 implementation in Javascript",
   "main": "dist/jso.js",
   "module": "src/JSO.js",
@@ -54,7 +54,5 @@
     "url": "https://github.com/andreassolberg/jso/issues"
   },
   "homepage": "https://github.com/andreassolberg/jso",
-  "dependencies": {
-
-  }
+  "dependencies": {}
 }
