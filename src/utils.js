@@ -27,12 +27,16 @@ utils.uuid = function() {
  * Returns the decoded object, or throws an error if no query string or fragment.
  */
 utils.getResponseFromURL = function (url) {
-  if (url.indexOf('#') !== -1) {
-    return utils.parseQueryString(url.substring(url.indexOf('#')+1))
-  } else if (url.indexOf('?') !== -1) {
-    return utils.parseQueryString(url.substring(url.indexOf('?')+1))
+  var u = new URL(url);
+  var hash = {};
+  var search = {};
+  if (u.hash.indexOf('#') !== -1) {
+    hash = utils.parseQueryString(u.hash.substring(u.hash.indexOf('#')+1))
   }
-  return {}
+  if (u.search.indexOf('?') !== -1) {
+    search = utils.parseQueryString(u.search.substring(u.search.indexOf('?')+1))
+  }
+  return Object.assign({}, hash, search)
 }
 
 utils.parseQueryString = function (qs) {
