@@ -19,10 +19,11 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              ["env", {
-                  useBuiltIns: 'entry'
+              ["@babel/preset-env", {
+                  useBuiltIns: 'entry',
+                  corejs: '3'
               }],
-              "react"
+              "@babel/preset-react"
             ]
           }
         }
