@@ -49,7 +49,7 @@ export declare class JSO extends EventEmitter {
   constructor(config: ConfigOptions)
 
   callback(data?: Response | string): Token | Promise<Token> | undefined
-  checkToken(opts: TokenOptions): Token | undefined
+  checkToken(opts?: TokenOptions): Token | undefined
   configure(config: ConfigOptions): void
   dump(): Token[]
   getProviderID(): string
