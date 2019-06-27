@@ -1,12 +1,12 @@
-const path = require('path')
+const path = require("path");
 
 module.exports = {
-  entry: './src/JSO.js',
+  entry: "./src/JSO.js",
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'jso.js',
-    library: 'jso',
-    libraryTarget: 'umd'
+    path: path.resolve(__dirname, "dist"),
+    filename: "jso.js",
+    library: "jso",
+    libraryTarget: "umd"
   },
   devtool: "source-map",
 
@@ -14,20 +14,14 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        include: path.resolve(__dirname, './src'),
+        include: path.resolve(__dirname, "./src"),
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
-            presets: [
-              ["env", {
-                  useBuiltIns: 'entry'
-              }],
-              "react"
-            ]
+            presets: ["@babel/preset-env", "@babel/preset-react"]
           }
         }
       }
-
     ]
   }
-}
+};
