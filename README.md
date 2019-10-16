@@ -218,7 +218,7 @@ In the config include these parameters:
 
 ```
 	response_type: 'code',
-	client_secret: "xxxxx-xxxx-xxx-xxx",
+	client_secret: "xxxxx-xxxx-xxx-xxx", (if necessary)
 	token: "https://auth.dataporten.no/oauth/token",
 ```
 

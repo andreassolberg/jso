@@ -166,7 +166,6 @@ class JSO extends EventEmitter {
 
   // Experimental support for authorization code to be added
   processAuthorizationCodeResponse(object) {
-    console.log(this)
     this.emit('authorizationCode', object)
 
 
@@ -179,22 +178,23 @@ class JSO extends EventEmitter {
 		} else {
 			throw new Error("Could not find state paramter from callback.")
 		}
-    console.log("state", state)
 
     if (!this.config.has('token')) {
       utils.log("Received an authorization code. Will not process it as the config option [token] endpoint is not set. If you would like to process the code yourself, please subscribe to the [authorizationCode] event")
       return
     }
-    if (!this.config.has('client_secret')) {
-      throw new Error("Configuration missing [client_secret]")
-    }
+
     let headers = new Headers()
-    headers.append('Authorization', 'Basic ' + btoa(this.config.getValue('client_id') + ":" + this.config.getValue('client_secret')))
     headers.append('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8')
 
     let tokenRequest = {
       'grant_type': 'authorization_code',
-      'code': object.code
+      'code': object.code,
+      'client_id': this.config.getValue('client_id')
+    }
+
+    if (this.config.has('client_secret')) {
+      tokenRequest.client_secret = this.config.getValue('client_secret')
     }
 
     if (state.hasOwnProperty('redirect_uri')) {
@@ -209,6 +209,17 @@ class JSO extends EventEmitter {
     }
     return fetch(this.config.getValue('token'), opts)
       .then((httpResponse) => {
+        if (!httpResponse.ok) {
+          if (httpResponse.status === 401) {
+            throw Error(
+              'Unauthorized: it lacks valid authentication credentials for the target resource. ' + httpResponse.statusText
+            );
+          } else {
+            throw Error(
+              httpResponse.status + ' could not get a token for the target resource'
+            );
+          }
+        }
         return httpResponse.json()
       })
       .then((tokenResponse) => {
