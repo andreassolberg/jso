@@ -295,7 +295,10 @@ class JSO extends EventEmitter {
 
 		} else if (response.hasOwnProperty("error")) {
 			throw this.processErrorResponse(response)
-		}
+
+    } else if (this.config.has('token')) {
+      return Promise.resolve()
+    }
 
 	}
 
