@@ -173,7 +173,8 @@ class JSO extends EventEmitter {
 		if (object.state) {
 			state = this.store.getState(object.state)
       if (state === null) {
-        throw new Error("Could not find retrieve state object.")
+        utils.log("Could not find retrieve state object.")
+        return
       }
 		} else {
 			throw new Error("Could not find state paramter from callback.")
