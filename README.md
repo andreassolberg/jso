@@ -218,8 +218,43 @@ In the config include these parameters:
 
 ```
 	response_type: 'code',
-	client_secret: "xxxxx-xxxx-xxx-xxx",
+	client_secret: "xxxxx-xxxx-xxx-xxx", (if necessary)
 	token: "https://auth.dataporten.no/oauth/token",
+```
+
+To resolve async issue after authorization, use `then()` method to return a Promise:
+
+```
+client.callback().then(callback => {
+    let token = null;
+    
+    if (callback) {
+      token = callback;
+      console.log('I got the token', token);
+
+    } else {
+      client.getToken().then(tokenFromStore => {
+        token = tokenFromStore;
+        console.log('I got the token', token);
+      });
+    }
+  });
+```
+
+You can use async function and the `await` keyword:
+```
+async function MyFunction() {
+  let token = null;
+  const callback = await client.callback();
+
+  if (callback) {
+    token = callback;
+  } else {
+    token = await client.getToken();
+  }
+
+  console.log('I got the token', token);
+}
 ```
 
 Also be aware that the implementation of this flow uses `fetch`, to support older browser you would need to polyfill that.
