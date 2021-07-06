@@ -177,7 +177,7 @@ class JSO extends EventEmitter {
         throw new Error("Could not find retrieve state object.")
       }
 		} else {
-			throw new Error("Could not find state paramter from callback.")
+			throw new Error("Could not find state parameter from callback.")
 		}
     console.log("state", state)
 
