@@ -104,7 +104,7 @@ Be aware to run the `callback()` function early, and before you *router* and bef
 
 ### Getting the token
 
-To get an token, use the `getToken` function:
+To get a token, use the `getToken` function:
 
 ```javascript
 client.getToken(opts)
