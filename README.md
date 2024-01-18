@@ -16,15 +16,15 @@ JSO is provided by [UNINETT AS](http://www.uninett.no), a non-profit company wor
 * Can also be used with **OpenID Connect**.
 * ES6 compatible loading via npm/webpack
 * Also included a UMD-bundled version in the `dist/` folder
-* No server component needed.
+* No server component is needed.
 * Can handle multiple providers at once.
 * Uses *HTML 5.0 localStorage* to cache Access Tokens. You do not need to implement a storage.
-* Can prefetch all needed tokens with sufficient scopes, to start with, then tokens can be used for requests later. This way, you can be sure that you would not need to redirect anywhere in your business logic, because you would need to refresh an expired token.
+* Can prefetch all needed tokens with sufficient scopes, to start with, then tokens can be used for requests later. This way, you can be sure that you would not need to redirect anywhere in your business logic because you would need to refresh an expired token.
 * Excellent scope support.
 * Caches and restores the hash, your application will not loose state when sending the user to the authorization endpoint.
 * Provided with easy to use `fetch()` wrapper that takes care of all you need to get the token, and then returns the API data you want
 * Experimental feature: *OAuth 2.0 Authorization Code* flow.
-* Experimental feature: `Jquery.ajax()`-wrapper, if you have jquery loaded, and does not want to require or polyfill fetch
+* Experimental feature: `Jquery.ajax()`-wrapper, if you have jQuery loaded, and do not want to require or polyfill fetch
 
 
 
@@ -36,7 +36,7 @@ Install using npm:
 npm install jso --save
 ```
 
-If you use webpack or similar it is recommended to import the needed components like this:
+If you use Webpack or similar it is recommended to import the needed components like this:
 
 ```javascript
 import {JSO, Popup} from 'jso'
@@ -85,9 +85,9 @@ Options to JSO constructor
 * `scopes.request`: Control what scopes are requested in the authorization request. When none of the cached tokens will be used, and a new one will be request, the `scopes.request` list will be included in the authorization request.
 * `default_lifetime` : Seconds with default lifetime of an access token. If set to `false`, it means permanent. Default is 3600. This only matters if expires_in was not sent from the server, which should ALWAYS be the case.
 * `permanent_scope`: A scope that indicates that the lifetime of the access token is infinite. (not well-tested.)
-* `response_type`: Default response_type for all authorization requests. Default: `token`. Can be overriden to in example use OpenID Connect
+* `response_type`: Default response_type for all authorization requests. Default: `token`. Can be overridden to in example use OpenID Connect
 * `debug`: Default set to `false`. Set this to `true` to enable debug logging to console.
-* `request`: Optional additional request paramters added to the request. Useful for adding all the available OpenID Connect options
+* `request`: Optional additional request parameters added to the request. Useful for adding all the available OpenID Connect options
 
 
 ### Catching the response when the user is returning
@@ -104,7 +104,7 @@ Be aware to run the `callback()` function early, and before you *router* and bef
 
 ### Getting the token
 
-To get an token, use the `getToken` function:
+To get a token, use the `getToken` function:
 
 ```javascript
 client.getToken(opts)
@@ -148,7 +148,7 @@ client.wipeTokens()
 ```
 
 
-### Fetching data from a OAuth protected endpoint
+### Fetching data from an OAuth protected endpoint
 
 JSO provides a simple wrapper around the [javascript Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
 
@@ -222,7 +222,7 @@ In the config include these parameters:
 	token: "https://auth.dataporten.no/oauth/token",
 ```
 
-Also be aware that the implementation of this flow uses `fetch`, to support older browser you would need to polyfill that.
+Also be aware that the implementation of this flow uses `fetch`, to support older browsers you would need to polyfill that.
 
 
 
@@ -230,7 +230,7 @@ Also be aware that the implementation of this flow uses `fetch`, to support olde
 
 ## Sending passive OpenID Connect authentication requests using hidden iFrames (Advanced)
 
-If your OpenID Connect provider support passive requests and the enduser is already authenticated with single sign-on, you may obtain an authenticated state using a hidden iframe without redirecting the user at all.
+If your OpenID Connect provider supports passive requests and the end-user is already authenticated with single sign-on, you may obtain an authenticated state using a hidden iframe without redirecting the user at all.
 
 First, you will need a separate redirect page, as the provided `example/passiveCallback.html`.
 
@@ -258,7 +258,7 @@ client.getToken(opts)
 
 ## Making authentication of end user in a popup, avoiding interruption of the state of your web application (Advanced)
 
-If you would like to redirect the end user to login without loosing the state in your web app, you may use a popup window. This
+If you would like to redirect the end user to login without losing the state in your web app, you may use a popup window. This
 
 First, you will need a separate redirect page, as the provided `example/popupCallback.html`.
 
